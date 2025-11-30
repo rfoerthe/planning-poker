@@ -218,7 +218,6 @@ describe('CreateGame component', () => {
 
     const createButton = screen.getByText('Create');
     userEvent.click(createButton);
-    // eslint-disable-next-line testing-library/await-async-utils
     waitFor(() =>
       expect(
         screen.getByText('Please enter values for at least two custom option'),

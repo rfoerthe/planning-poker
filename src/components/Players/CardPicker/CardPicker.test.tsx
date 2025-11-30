@@ -1,6 +1,4 @@
 import { vi } from 'vitest';
-/* eslint-disable testing-library/no-node-access */
-/* eslint-disable testing-library/no-container */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';

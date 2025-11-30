@@ -6,7 +6,6 @@ import App from './App';
 vi.mock('./service/players');
 vi.mock('./service/games');
 
-// eslint-disable-next-line jest/valid-describe-callback
 describe('App', () =>
   it('Should display toolbar with header', () => {
     render(<App />);

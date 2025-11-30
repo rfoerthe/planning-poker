@@ -7,7 +7,6 @@ describe('AlertDialog component', () => {
   const onCancelFunction = vi.fn();
 
   beforeEach(() => {
-    // eslint-disable-next-line testing-library/no-render-in-setup
     render(
       <AlertDialog title='title test' message='message test' onConfirm={onConfirmFunction} onCancel={onCancelFunction}>
         <button data-testid='alert-dialog-button'>AlertDialog button</button>
