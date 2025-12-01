@@ -1,23 +1,23 @@
-import { Button, Slide, useMediaQuery } from '@material-ui/core';
-import AppBar from '@material-ui/core/AppBar';
-import AppToolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
-import GamesIcon from '@material-ui/icons/Games';
-import GithubIcon from '@material-ui/icons/GitHub';
-import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
-import MergeTypeOutlinedIcon from '@material-ui/icons/MergeTypeOutlined';
-import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
-import BookOutlinedIcon from '@material-ui/icons/MenuBookOutlined';
-import SearchOutlinedIcon from '@material-ui/icons/SearchOutlined';
-import PolicyOutlinedIcon from '@material-ui/icons/PolicyOutlined';
+import { Button, Slide, useMediaQuery } from '@mui/material';
+import AppBar from '@mui/material/AppBar';
+import AppToolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
+import GamesIcon from '@mui/icons-material/Games';
+import GithubIcon from '@mui/icons-material/GitHub';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import MergeTypeOutlinedIcon from '@mui/icons-material/MergeTypeOutlined';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import BookOutlinedIcon from '@mui/icons-material/MenuBookOutlined';
+import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
+import PolicyOutlinedIcon from '@mui/icons-material/PolicyOutlined';
 import React from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import './Toolbar.css';
 import { useTranslation } from 'react-i18next';
 export const title = 'Planning Poker';
 
 export const Toolbar = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const isSmallScreen = useMediaQuery((theme: any) => theme.breakpoints.down('xs'));
   const { t } = useTranslation();
 
@@ -26,9 +26,12 @@ export const Toolbar = () => {
       <AppBar position='sticky' className='AppBar'>
         <AppToolbar>
           <div className='HeaderContainer'>
-            <div className='HeaderLeftContainer' onClick={() => history.push('/')}>
+            <div className='HeaderLeftContainer' onClick={() => navigate('/')}>
               <GamesIcon className='HeaderIcon' />
-              <Typography variant={isSmallScreen ? 'subtitle1' : 'h5'} color='inherit' noWrap>
+              <Typography variant={isSmallScreen ? 'subtitle1' : 'h5'}
+                          color='inherit'
+                          noWrap
+                          title={`Version: ${import.meta.env.PACKAGE_VERSION}`}>
                 {title}
               </Typography>
             </div>
@@ -37,7 +40,7 @@ export const Toolbar = () => {
                 title={t('toolbar.menu.about')}
                 startIcon={<InfoOutlinedIcon />}
                 color='inherit'
-                onClick={() => history.push('/about-planning-poker')}
+                onClick={() => navigate('/about-planning-poker')}
               >
                 {!isSmallScreen ? t('toolbar.menu.about') : null}
               </Button>
@@ -45,7 +48,7 @@ export const Toolbar = () => {
                 title={t('toolbar.menu.guide')}
                 startIcon={<SearchOutlinedIcon />}
                 color='inherit'
-                onClick={() => history.push('/guide')}
+                onClick={() => navigate('/guide')}
               >
                 {!isSmallScreen ? t('toolbar.menu.guide') : null}
               </Button>
@@ -53,7 +56,7 @@ export const Toolbar = () => {
                 title={t('toolbar.menu.examples')}
                 startIcon={<BookOutlinedIcon />}
                 color='inherit'
-                onClick={() => history.push('/examples')}
+                onClick={() => navigate('/examples')}
               >
                 {!isSmallScreen ? t('toolbar.menu.examples') : null}
               </Button>
@@ -61,7 +64,7 @@ export const Toolbar = () => {
                 title={t('toolbar.menu.newSession')}
                 startIcon={<AddCircleOutlineIcon />}
                 color='inherit'
-                onClick={() => history.push('/')}
+                onClick={() => navigate('/')}
                 data-testid='toolbar.menu.newSession'
               >
                 {!isSmallScreen ? t('toolbar.menu.newSession') : null}
@@ -71,7 +74,7 @@ export const Toolbar = () => {
                 startIcon={<MergeTypeOutlinedIcon />}
                 size={isSmallScreen ? 'small' : 'large'}
                 color='inherit'
-                onClick={() => history.push('/join')}
+                onClick={() => navigate('/join')}
                 data-testid='toolbar.menu.joinSession'
               >
                 {!isSmallScreen ? t('toolbar.menu.joinSession') : null}

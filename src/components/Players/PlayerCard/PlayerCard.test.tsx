@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
@@ -130,10 +131,10 @@ describe('PlayerCard component', () => {
 
     expect(screen.queryByTestId('remove-button')).not.toBeInTheDocument();
   });
-  it('should call remove function on Remove action', () => {
+  it('should call remove function on Remove action', async () => {
     const coffeePlayer = { ...mockPlayer, status: Status.InProgress };
     const finishedGame = { ...mockGame, gameStatus: Status.Finished };
-    jest.spyOn(playerService, 'removePlayer').mockResolvedValue();
+    vi.spyOn(playerService, 'removePlayer').mockResolvedValue();
     render(
       <PlayerCard
         game={finishedGame}
@@ -142,7 +143,7 @@ describe('PlayerCard component', () => {
       />,
     );
 
-    userEvent.click(screen.getByTestId('remove-button'));
+    await userEvent.click(screen.getByTestId('remove-button'));
     expect(playerService.removePlayer).toHaveBeenCalledWith(finishedGame.id, coffeePlayer.id);
   });
 });

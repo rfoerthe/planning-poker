@@ -8,20 +8,20 @@ import {
   Grow,
   Snackbar,
   TextField,
-} from '@material-ui/core';
+} from '@mui/material';
 import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react';
-import { useHistory, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router';
 import { getGame } from '../../../service/games';
 import {
   addPlayerToGame,
   isCurrentPlayerInGame,
   removeGameFromCache,
 } from '../../../service/players';
-import Alert from '@material-ui/lab/Alert';
+import Alert from '@mui/material/Alert';
 import './JoinGame.css';
 
 export const JoinGame = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
   let { id } = useParams<{ id: string }>();
 
   const [joinGameId, setJoinGameId] = useState(id);
@@ -36,13 +36,13 @@ export const JoinGame = () => {
         if (await getGame(joinGameId)) {
           setIsGameFound(true);
           if (await isCurrentPlayerInGame(joinGameId)) {
-            history.push(`/game/${joinGameId}`);
+            navigate(`/game/${joinGameId}`);
           }
         } else {
           removeGameFromCache(joinGameId);
           setShowNotExistMessage(true);
           setTimeout(() => {
-            history.push('/');
+            navigate('/');
           }, 5000);
         }
       }
@@ -59,7 +59,7 @@ export const JoinGame = () => {
       setIsGameFound(res);
       setLoading(false);
       if (res) {
-        history.push(`/game/${joinGameId}`);
+        navigate(`/game/${joinGameId}`);
       }
     }
   };
@@ -73,7 +73,7 @@ export const JoinGame = () => {
               <CardHeader
                 className='JoinGameCardHeader'
                 title='Join a Session'
-                titleTypographyProps={{ variant: 'h4' }}
+                slotProps={{ title: { variant: 'h4' } }}
               />
               <CardContent className='JoinGameCardContent'>
                 <TextField
@@ -122,7 +122,7 @@ export const JoinGame = () => {
         anchorOrigin={{ horizontal: 'right', vertical: 'top' }}
         open={showNotExistMessage}
         autoHideDuration={5000}
-        TransitionComponent={Fade}
+        slotProps={{ transition: Fade }}
         transitionDuration={1000}
         onClose={() => setShowNotExistMessage(false)}
       >

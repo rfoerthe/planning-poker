@@ -1,6 +1,7 @@
-import { Box, Divider, Grid, Slide, Typography } from '@material-ui/core';
+import { Box, Divider, Slide, Typography } from '@mui/material';
+import Grid from '@mui/material/Grid';
 import React from 'react';
-import { useRouteMatch } from 'react-router-dom';
+import { useMatch } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { CreateGame } from '../../components/Poker/CreateGame/CreateGame';
 import { JoinGame } from '../../components/Poker/JoinGame/JoinGame';
@@ -13,14 +14,14 @@ import { Footer } from '../../components/Footer/Footer';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 
 export const HomePage = () => {
-  const isJoin = useRouteMatch('/join');
+  const isJoin = useMatch('/join');
   const { t } = useTranslation();
 
   return (
     <>
-      <Grid container direction='column' justify='center' alignItems='center'>
-        <Grid container item sm={12} lg={11} justify='center' alignItems='center'>
-          <Grid item sm={12} lg={6}>
+      <Grid container direction='column' justifyContent='center' alignItems='center'>
+        <Grid container size={{ xs: 12, sm: 12, lg: 11 }} justifyContent='center' alignItems='center'>
+          <Grid size={{ xs: 12, sm: 12, lg: 6 }}>
             <Slide direction='down' in={true} timeout={1000}>
               <div className='HomePageContainer'>
                 <Typography variant='h5'>{t('HomePage.heroSection.title')}</Typography>
@@ -36,19 +37,19 @@ export const HomePage = () => {
               </div>
             </Slide>
           </Grid>
-          <Grid item sm={12} lg={6}>
+          <Grid size={{ xs: 12, sm: 12, lg: 6 }}>
             <div className='HomePageContainer'>{isJoin ? <JoinGame /> : <CreateGame />}</div>
           </Grid>
         </Grid>
-        <Grid container item sm={12} lg={9} justify='center' alignItems='center'>
-          <Grid item sm={12} lg={6}>
+        <Grid container size={{ xs: 12, sm: 12, lg: 9 }} justifyContent='center' alignItems='center'>
+          <Grid size={{ xs: 12, sm: 12, lg: 6 }}>
             <Slide in={true} direction='up' timeout={1000}>
               <Divider variant='middle'></Divider>
             </Slide>
           </Grid>
         </Grid>
-        <Grid container item sm={12} lg={9} justify='center' alignItems='center'>
-          <Grid item sm={12} lg={6}>
+        <Grid container size={{ xs: 12, sm: 12, lg: 9 }} justifyContent='center' alignItems='center'>
+          <Grid size={{ xs: 12, sm: 12, lg: 6 }}>
             <Slide in={true} direction='up' timeout={1000}>
               <div className='HomePageContainer'>
                 <RecentGames />
@@ -56,7 +57,7 @@ export const HomePage = () => {
             </Slide>
           </Grid>
 
-          <Grid item sm={12} lg={6}>
+          <Grid size={{ xs: 12, sm: 12, lg: 6 }}>
             <Slide in={true} direction='up' timeout={1000}>
               <div className='HomePageContainer'>
                 <Typography variant='subtitle1'>
@@ -67,15 +68,15 @@ export const HomePage = () => {
             </Slide>
           </Grid>
         </Grid>
-        <Grid container item sm={12} lg={9} justify='center' alignItems='center'>
-          <Grid item sm={12} lg={6}>
+        <Grid container size={{ xs: 12, sm: 12, lg: 9 }} justifyContent='center' alignItems='center'>
+          <Grid size={{ xs: 12, sm: 12, lg: 6 }}>
             <Slide in={true} direction='up' timeout={1500}>
               <Divider variant='middle'></Divider>
             </Slide>
           </Grid>
         </Grid>
-        <Grid container item sm={12} lg={9} justify='center' alignItems='center'>
-          <Grid item sm={12} lg={6}>
+        <Grid container size={{ xs: 12, sm: 12, lg: 9 }} justifyContent='center' alignItems='center'>
+          <Grid size={{ xs: 12, sm: 12, lg: 6 }}>
             <Slide in={true} direction='up' timeout={1500}>
               <div className='HomePageContainer'>
                 <Typography variant='h5'> Intuitive UI Design</Typography>
@@ -89,7 +90,7 @@ export const HomePage = () => {
               </div>
             </Slide>
           </Grid>
-          <Grid item sm={12} lg={6}>
+          <Grid size={{ xs: 12, sm: 12, lg: 6 }}>
             <Slide in={true} direction='up' timeout={1500}>
               <div className='HomePageContainer'>
                 <Box padding={2}>

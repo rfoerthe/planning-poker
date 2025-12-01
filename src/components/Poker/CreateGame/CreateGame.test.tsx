@@ -1,21 +1,25 @@
 import { render, screen, within, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
+import { vi } from 'vitest';
 import { CreateGame } from './CreateGame';
 import * as gamesService from '../../../service/games';
 
-jest.mock('../../../service/games');
-jest.mock('react-router-dom', () => ({
-  useHistory: () => ({
-    push: jest.fn(),
-  }),
-}));
-jest.mock('unique-names-generator', () => ({
+const mockNavigate = vi.fn();
+vi.mock('../../../service/games');
+vi.mock('react-router', async () => {
+  const actual = await vi.importActual('react-router');
+  return {
+    ...actual,
+    useNavigate: () => mockNavigate,
+  };
+});
+vi.mock('unique-names-generator', () => ({
   starWars: ['Jabba'],
   colors: ['red'],
   animals: ['kangaroo'],
-  uniqueNamesGenerator: jest.fn(),
-  Config: jest.fn(),
+  uniqueNamesGenerator: vi.fn(),
+  Config: vi.fn(),
 }));
 describe('CreateGame component', () => {
   it('should display correct text fields', () => {
@@ -46,15 +50,15 @@ describe('CreateGame component', () => {
   it('should be able to create new session', async () => {
     render(<CreateGame />);
     const sessionName = screen.getByPlaceholderText('Enter a session name');
-    userEvent.clear(sessionName);
-    userEvent.type(sessionName, 'Marvels');
+    await userEvent.clear(sessionName);
+    await userEvent.type(sessionName, 'Marvels');
 
     const userName = screen.getByPlaceholderText('Enter your name');
-    userEvent.clear(userName);
-    userEvent.type(userName, 'Rock');
+    await userEvent.clear(userName);
+    await userEvent.type(userName, 'Rock');
 
     const createButton = screen.getByText('Create');
-    userEvent.click(createButton);
+    await userEvent.click(createButton);
 
     expect(gamesService.addNewGame).toHaveBeenCalled();
 
@@ -70,18 +74,18 @@ describe('CreateGame component', () => {
   it('should be able to create new session with Allow members to manage session', async () => {
     render(<CreateGame />);
     const sessionName = screen.getByPlaceholderText('Enter a session name');
-    userEvent.clear(sessionName);
-    userEvent.type(sessionName, 'Marvels');
+    await userEvent.clear(sessionName);
+    await userEvent.type(sessionName, 'Marvels');
 
     const userName = screen.getByPlaceholderText('Enter your name');
-    userEvent.clear(userName);
-    userEvent.type(userName, 'Rock');
+    await userEvent.clear(userName);
+    await userEvent.type(userName, 'Rock');
 
     const allowMembersToManageSession = screen.getByText('Allow members to manage session');
-    userEvent.click(allowMembersToManageSession);
+    await userEvent.click(allowMembersToManageSession);
 
     const createButton = screen.getByText('Create');
-    userEvent.click(createButton);
+    await userEvent.click(createButton);
 
     expect(gamesService.addNewGame).toHaveBeenCalled();
 
@@ -97,18 +101,18 @@ describe('CreateGame component', () => {
   it('should be able to create new session of TShirt Sizing', async () => {
     render(<CreateGame />);
     const sessionName = screen.getByPlaceholderText('Enter a session name');
-    userEvent.clear(sessionName);
-    userEvent.type(sessionName, 'Marvels');
+    await userEvent.clear(sessionName);
+    await userEvent.type(sessionName, 'Marvels');
 
     const userName = screen.getByPlaceholderText('Enter your name');
-    userEvent.clear(userName);
-    userEvent.type(userName, 'Rock');
+    await userEvent.clear(userName);
+    await userEvent.type(userName, 'Rock');
 
     const tShirt = screen.getByText('T-Shirt (XXS, XS, S, M, L, XL, XXL)', { exact: false });
-    userEvent.click(tShirt);
+    await userEvent.click(tShirt);
 
     const createButton = screen.getByText('Create');
-    userEvent.click(createButton);
+    await userEvent.click(createButton);
 
     expect(gamesService.addNewGame).toHaveBeenCalled();
 
@@ -119,18 +123,18 @@ describe('CreateGame component', () => {
   it('should be able to create new session of Short Fibonacci Sizing', async () => {
     render(<CreateGame />);
     const sessionName = screen.getByPlaceholderText('Enter a session name');
-    userEvent.clear(sessionName);
-    userEvent.type(sessionName, 'Marvels');
+    await userEvent.clear(sessionName);
+    await userEvent.type(sessionName, 'Marvels');
 
     const userName = screen.getByPlaceholderText('Enter your name');
-    userEvent.clear(userName);
-    userEvent.type(userName, 'Rock');
+    await userEvent.clear(userName);
+    await userEvent.type(userName, 'Rock');
 
     const gameType = screen.getByText('Short Fibonacci', { exact: false });
-    userEvent.click(gameType);
+    await userEvent.click(gameType);
 
     const createButton = screen.getByText('Create');
-    userEvent.click(createButton);
+    await userEvent.click(createButton);
 
     expect(gamesService.addNewGame).toHaveBeenCalled();
 
@@ -141,20 +145,20 @@ describe('CreateGame component', () => {
   it('should be able to create new session of TShirt & Numbers', async () => {
     render(<CreateGame />);
     const sessionName = screen.getByPlaceholderText('Enter a session name');
-    userEvent.clear(sessionName);
-    userEvent.type(sessionName, 'Marvels');
+    await userEvent.clear(sessionName);
+    await userEvent.type(sessionName, 'Marvels');
 
     const userName = screen.getByPlaceholderText('Enter your name');
-    userEvent.clear(userName);
-    userEvent.type(userName, 'Rock');
+    await userEvent.clear(userName);
+    await userEvent.type(userName, 'Rock');
 
     const tShirt = screen.getByText('T-Shirt & Numbers (S, M, L, XL, 1, 2, 3, 4, 5)', {
       exact: false,
     });
-    userEvent.click(tShirt);
+    await userEvent.click(tShirt);
 
     const createButton = screen.getByText('Create');
-    userEvent.click(createButton);
+    await userEvent.click(createButton);
 
     expect(gamesService.addNewGame).toHaveBeenCalled();
 
@@ -165,25 +169,25 @@ describe('CreateGame component', () => {
   it('should be able to create new session of Custom option', async () => {
     render(<CreateGame />);
     const sessionName = screen.getByPlaceholderText('Enter a session name');
-    userEvent.clear(sessionName);
-    userEvent.type(sessionName, 'Marvels');
+    await userEvent.clear(sessionName);
+    await userEvent.type(sessionName, 'Marvels');
 
     const userName = screen.getByPlaceholderText('Enter your name');
-    userEvent.clear(userName);
-    userEvent.type(userName, 'Rock');
+    await userEvent.clear(userName);
+    await userEvent.type(userName, 'Rock');
 
     const custom = screen.getByText('Custom', { exact: false });
-    userEvent.click(custom);
+    await userEvent.click(custom);
 
     // input custom values
     const input1 = within(screen.getByTestId('custom-option-1')).getByRole('textbox');
-    userEvent.type(input1, '1');
+    await userEvent.type(input1, '1');
 
     const input2 = within(screen.getByTestId('custom-option-2')).getByRole('textbox');
-    userEvent.type(input2, '2');
+    await userEvent.type(input2, '2');
 
     const createButton = screen.getByText('Create');
-    userEvent.click(createButton);
+    await userEvent.click(createButton);
 
     expect(gamesService.addNewGame).toHaveBeenCalled();
 
@@ -214,7 +218,6 @@ describe('CreateGame component', () => {
 
     const createButton = screen.getByText('Create');
     userEvent.click(createButton);
-    // eslint-disable-next-line testing-library/await-async-utils
     waitFor(() =>
       expect(
         screen.getByText('Please enter values for at least two custom option'),

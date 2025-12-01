@@ -1,17 +1,37 @@
-# Stage 2: Serve the app
-FROM node:lts-alpine3.21
+# ==========================================
+# Stage 1: Build the React Application
+# ==========================================
+FROM node:lts-alpine3.22 AS builder
 
-# https://www.npmjs.com/package/serve
-RUN npm install -g serve
-
-# Set the working directory
+# Set working directory
 WORKDIR /app
 
-# Copy the built React app from the previous stage
-COPY build /app/build
+# Copy package files to install dependencies first (caching optimization)
+COPY package.json package-lock.json ./
 
-# Expose port for the React app
-EXPOSE 3000
+# Install dependencies (use 'npm ci' for deterministic builds)
+RUN npm ci
 
-# Start the React app
-CMD ["sh", "-c", "serve -n -s build -l 3000"]
+# Copy the rest of the application source code
+COPY . .
+
+# Build the Vite application
+# This usually outputs to the /dist folder
+RUN --mount=type=secret,id=myenv,target=/app/.env npm run build
+
+# ==========================================
+# Stage 2: Serve with Nginx
+# ==========================================
+FROM nginx:alpine AS production
+
+# Copy the custom Nginx configuration (see step 2 below)
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# Copy the built artifacts from the builder stage to Nginx web root
+COPY --from=builder /app/dist /usr/share/nginx/html
+
+# Expose port 80
+EXPOSE 80
+
+# Start Nginx
+CMD ["nginx", "-g", "daemon off;"]

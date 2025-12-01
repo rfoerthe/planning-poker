@@ -1,12 +1,12 @@
 import { render, screen, fireEvent } from '@testing-library/react';
+import { vi } from 'vitest';
 import { AlertDialog } from './AlertDialog';
 
 describe('AlertDialog component', () => {
-  const onConfirmFunction = jest.fn();
-  const onCancelFunction = jest.fn();
+  const onConfirmFunction = vi.fn();
+  const onCancelFunction = vi.fn();
 
   beforeEach(() => {
-    // eslint-disable-next-line testing-library/no-render-in-setup
     render(
       <AlertDialog title='title test' message='message test' onConfirm={onConfirmFunction} onCancel={onCancelFunction}>
         <button data-testid='alert-dialog-button'>AlertDialog button</button>

@@ -1,11 +1,11 @@
 import { render, screen, fireEvent } from '@testing-library/react';
+import { vi } from 'vitest';
 import { InfoDialog } from './InfoDialog';
 
 describe('InfoDialog component', () => {
-  const onOkFunction = jest.fn();
+  const onOkFunction = vi.fn();
 
   beforeEach(() => {
-    // eslint-disable-next-line testing-library/no-render-in-setup
     render(
       <InfoDialog title='title test' message='message test' onOk={onOkFunction}>
         <button data-testid='info-dialog-button'>InfoDialog button</button>

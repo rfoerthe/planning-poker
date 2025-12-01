@@ -1,17 +1,24 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
-import reactRouter from 'react-router';
+import { vi } from 'vitest';
 import * as playersService from '../../../service/players';
 import { RecentGames } from './RecentGames';
 import { PlayerGame } from '../../../types/player';
 
-jest.mock('../../../service/players');
-const mockHistoryPush = jest.fn();
+const mockNavigate = vi.fn();
+vi.mock('../../../service/players');
+vi.mock('react-router', async () => {
+  const actual = await vi.importActual('react-router');
+  return {
+    ...actual,
+    useNavigate: () => mockNavigate,
+  };
+});
 
 describe('RecentGames component', () => {
   beforeEach(() => {
-    jest.spyOn(reactRouter, 'useHistory').mockReturnValue({ push: mockHistoryPush } as any);
+    vi.clearAllMocks();
   });
   it('should display no recent session when no games found in user local storage', async () => {
     render(<RecentGames />);
@@ -22,7 +29,7 @@ describe('RecentGames component', () => {
       { id: 'abv', name: 'avengers', createdById: 'IronManId', createdBy: 'IronMan', playerId: 'abv' },
       { id: 'xyz', name: 'endgame', createdById: 'SpiderManId', createdBy: 'SpiderMan', playerId: 'abc' },
     ];
-    jest.spyOn(playersService, 'getPlayerRecentGames').mockResolvedValue(mockGames);
+    vi.spyOn(playersService, 'getPlayerRecentGames').mockResolvedValue(mockGames);
 
     render(<RecentGames />);
 
@@ -39,12 +46,12 @@ describe('RecentGames component', () => {
       { id: 'abc', name: 'avengers', createdById: 'IronManId', createdBy: 'IronMan', playerId: 'abc' },
       { id: 'xyz', name: 'endgame', createdById: 'SpiderManId', createdBy: 'SpiderMan', playerId: 'aaa' },
     ];
-    jest.spyOn(playersService, 'getPlayerRecentGames').mockResolvedValue(mockGames);
+    vi.spyOn(playersService, 'getPlayerRecentGames').mockResolvedValue(mockGames);
 
     render(<RecentGames />);
 
     await screen.findByText(mockGames[0].name);
     userEvent.click(screen.getByText(mockGames[0].name));
-    await waitFor(() => expect(mockHistoryPush).toHaveBeenCalledWith('/game/abc'));
+    await waitFor(() => expect(mockNavigate).toHaveBeenCalledWith('/game/abc'));
   });
 });

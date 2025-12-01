@@ -1,5 +1,5 @@
-import { Divider, Link, Slide, Typography } from '@material-ui/core';
-import CopyrightIcon from '@material-ui/icons/Copyright';
+import { Divider, Link, Slide, Typography } from '@mui/material';
+import CopyrightIcon from '@mui/icons-material/Copyright';
 import React from 'react';
 import './Footer.css';
 
@@ -19,6 +19,11 @@ export const Footer = () => {
                 <CopyrightIcon color='secondary' fontSize='small' /> hellomuthu23
               </Typography>
               </Link>
+            </div>
+            <div className='FooterItemContainer'>
+              <Typography color='textSecondary' variant='body2'>
+                v{import.meta.env.PACKAGE_VERSION}
+              </Typography>
             </div>
           </div>
         </div>

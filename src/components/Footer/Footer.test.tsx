@@ -1,14 +1,17 @@
 import { render, screen } from '@testing-library/react';
 import React from 'react';
+import { vi } from 'vitest';
 import { Footer } from './Footer';
 
-const mockHistoryPush = jest.fn();
+const mockNavigate = vi.fn();
 
-jest.mock('react-router-dom', () => ({
-  useHistory: () => ({
-    push: mockHistoryPush,
-  }),
-}));
+vi.mock('react-router', async () => {
+  const actual = await vi.importActual('react-router');
+  return {
+    ...actual,
+    useNavigate: () => mockNavigate,
+  };
+});
 
 describe('Footer component', () => {
   const { location } = window;
