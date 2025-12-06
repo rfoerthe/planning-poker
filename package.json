@@ -1,6 +1,6 @@
 {
   "name": "planning-poker",
-  "version": "2.0.0",
+  "version": "2.0.1",
     "type": "module",
   "private": true,
   "dependencies": {
@@ -14,9 +14,9 @@
     "i18next": "^23.2.11",
     "i18next-browser-languagedetector": "^7.1.0",
     "i18next-http-backend": "^2.2.1",
-    "react": "19.2",
+    "react": "19.2.1",
     "react-cookie-consent": "^9.0.0",
-    "react-dom": "19.2",
+    "react-dom": "19.2.1",
     "react-i18next": "^13.0.2",
     "react-lazy-load-image-component": "^1.6.3",
     "react-router": "^7.9.6",
