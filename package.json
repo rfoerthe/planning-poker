@@ -1,7 +1,7 @@
 {
   "name": "planning-poker",
   "version": "2.0.1",
-    "type": "module",
+  "type": "module",
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.14.0",
@@ -29,6 +29,7 @@
     "start": "vite",
     "build": "vite build",
     "preview": "vite preview --port 5000",
+    "clean": "rimraf dist node_modules",
     "test": "vitest",
     "lint": "eslint ."
   },
@@ -75,6 +76,7 @@
     "jsdom": "^27.2.0",
     "lint-staged": "^11.0.0",
     "prettier": "^2.3.0",
+    "rimraf": "^6.1.2",
     "typescript-eslint": "^8.18.2",
     "vite": "^7.2.4",
     "vitest": "^4.0.13"

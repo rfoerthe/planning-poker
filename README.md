@@ -46,7 +46,7 @@ Pre-req
 1. Clone the repo
 
     ```bash
-    git clone hhttps://github.com/rfoerthe/planning-poker.git
+    git clone https://github.com/rfoerthe/planning-poker.git
     ```
 
 2. Run `npm install` command to install the required npm package.

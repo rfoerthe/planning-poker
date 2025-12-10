@@ -22,4 +22,10 @@ export default defineConfig({
     restoreMocks: true,
     mockReset: true,
   },
+  server: {
+    // Open the default browser with the dev server URL
+    open: true,            // or 'string' to open a specific path
+    // host: true,          // helpful in WSL/Docker to expose to network
+    // port: 5173,          // set a fixed port if you prefer
+  },
 });
