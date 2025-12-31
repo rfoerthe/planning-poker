@@ -51,7 +51,7 @@ describe('RecentGames component', () => {
     render(<RecentGames />);
 
     await screen.findByText(mockGames[0].name);
-    userEvent.click(screen.getByText(mockGames[0].name));
+    await userEvent.click(screen.getByText(mockGames[0].name));
     await waitFor(() => expect(mockNavigate).toHaveBeenCalledWith('/game/abc'));
   });
 });

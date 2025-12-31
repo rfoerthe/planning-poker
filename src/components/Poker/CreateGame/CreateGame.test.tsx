@@ -36,12 +36,12 @@ describe('CreateGame component', () => {
     expect(screen.getByRole('button')).toHaveTextContent('Create');
   });
 
-  it('should empty inputs when clicked', () => {
+  it('should empty inputs when clicked', async () => {
     render(<CreateGame />);
     const sessionName = screen.getByPlaceholderText('Enter a session name');
     const userName = screen.getByPlaceholderText('Enter your name');
-    userEvent.click(sessionName);
-    userEvent.click(userName);
+    await userEvent.click(sessionName);
+    await userEvent.click(userName);
 
     expect(sessionName).toHaveValue('');
     expect(userName).toHaveValue('');
@@ -206,22 +206,25 @@ describe('CreateGame component', () => {
   it('should display error when no custom options entered', async () => {
     render(<CreateGame />);
     const sessionName = screen.getByPlaceholderText('Enter a session name');
-    userEvent.clear(sessionName);
-    userEvent.type(sessionName, 'Marvels');
+    await userEvent.clear(sessionName);
+    await userEvent.type(sessionName, 'Marvels');
 
     const userName = screen.getByPlaceholderText('Enter your name');
-    userEvent.clear(userName);
-    userEvent.type(userName, 'Rock');
+    await userEvent.clear(userName);
+    await userEvent.type(userName, 'Rock');
 
     const custom = screen.getByText('Custom', { exact: false });
-    userEvent.click(custom);
+    await userEvent.click(custom);
 
     const createButton = screen.getByText('Create');
-    userEvent.click(createButton);
-    waitFor(() =>
-      expect(
-        screen.getByText('Please enter values for at least two custom option'),
-      ).toBeInTheDocument(),
-    );
+    await userEvent.click(createButton);
+
+    await waitFor(() => {
+      const errorMsg = screen.queryByText(/Please enter values for at least two custom option/i);
+      if (!errorMsg) {
+        screen.debug();
+      }
+      expect(errorMsg).toBeInTheDocument();
+    });
   });
 });
