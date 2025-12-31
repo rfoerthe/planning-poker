@@ -1,2 +1,2 @@
 #!/bin/bash
-docker run -it -p 3000:3000 planning-poker:latest
+docker run -it -p 3000:80 planning-poker:latest
