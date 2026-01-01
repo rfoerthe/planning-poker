@@ -1,17 +1,16 @@
 import { CssBaseline } from '@mui/material';
 import { StyledEngineProvider, ThemeProvider } from '@mui/material/styles';
-import { BrowserRouter as Router, Route, Routes } from 'react-router';
+import CookieConsent from 'react-cookie-consent';
+import { Route, BrowserRouter as Router, Routes } from 'react-router';
 import { Toolbar } from './components/Toolbar/Toolbar';
+import { AboutPage } from './pages/AboutPage/AboutPage';
 import DeleteOldGames from './pages/DeleteOldGames/DeleteOldGames';
+import { ExamplesPage } from './pages/ExamplesPage/ExamplesPage';
 import { GamePage } from './pages/GamePage/GamePage';
+import { GuidePage } from './pages/GuidePage/GuidePage';
 import HomePage from './pages/HomePage/HomePage';
 import JoinPage from './pages/JoinPage/JoinPage';
 import { theme } from './service/theme';
-import { AboutPage } from './pages/AboutPage/AboutPage';
-import { ExamplesPage } from './pages/ExamplesPage/ExamplesPage';
-import { GuidePage } from './pages/GuidePage/GuidePage';
-import CookieConsent from 'react-cookie-consent';
-import React from 'react';
 
 function App() {
   return (

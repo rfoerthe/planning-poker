@@ -1,17 +1,17 @@
+import DeleteForeverIcon from '@mui/icons-material/DeleteForeverTwoTone';
+import EditIcon from '@mui/icons-material/Edit';
+import HighlightOffIcon from '@mui/icons-material/HighlightOff';
+import SaveIcon from '@mui/icons-material/Save';
 import { Card, CardContent, CardHeader, IconButton, Typography } from '@mui/material';
+import { blue, red } from '@mui/material/colors';
 import React, { useState } from 'react';
+import { removePlayer, updatePlayerName } from '../../../service/players';
 import { Game } from '../../../types/game';
 import { Player } from '../../../types/player';
 import { Status } from '../../../types/status';
+import { isModerator } from '../../../utils/isModerator';
 import { getCards } from '../CardPicker/CardConfigs';
 import './PlayerCard.css';
-import DeleteForeverIcon from '@mui/icons-material/DeleteForeverTwoTone';
-import EditIcon from '@mui/icons-material/Edit';
-import SaveIcon from '@mui/icons-material/Save';
-import HighlightOffIcon from '@mui/icons-material/HighlightOff';
-import { blue, red } from '@mui/material/colors';
-import { removePlayer, updatePlayerName } from '../../../service/players';
-import { isModerator } from '../../../utils/isModerator';
 
 interface PlayerCardProps {
   game: Game;

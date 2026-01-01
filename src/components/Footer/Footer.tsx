@@ -1,6 +1,5 @@
-import { Divider, Link, Slide, Typography } from '@mui/material';
 import CopyrightIcon from '@mui/icons-material/Copyright';
-import React from 'react';
+import { Divider, Link, Slide, Typography } from '@mui/material';
 import './Footer.css';
 
 export const Footer = () => {

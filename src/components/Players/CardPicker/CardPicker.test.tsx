@@ -1,14 +1,13 @@
-import { vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import React from 'react';
+import { vi } from 'vitest';
 import * as playersService from '../../../service/players';
 import { Game, GameType } from '../../../types/game';
 import { Player } from '../../../types/player';
 import { Status } from '../../../types/status';
-import { getCards} from './CardConfigs';
-import { CardPicker } from './CardPicker';
 import * as cardConfigs from './CardConfigs';
+import { getCards } from './CardConfigs';
+import { CardPicker } from './CardPicker';
 
 vi.mock('../../../service/players');
 describe('CardPicker component', () => {
