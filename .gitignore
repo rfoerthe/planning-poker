@@ -1,6 +1,6 @@
+pnpm-debug.log*
 node_modules
 dist
-yarn-error.log
 coverage
 .env
 firestore-debug.log

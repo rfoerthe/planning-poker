@@ -41,7 +41,7 @@ Free / Open source Scrum/Agile Planning Poker Web App to estimate user stories f
 Pre-req
 
 - Node.js version 22.0 or higher.
-- npm
+- pnpm
 
 1. Clone the repo
 
@@ -49,10 +49,10 @@ Pre-req
     git clone https://github.com/rfoerthe/planning-poker.git
     ```
 
-2. Run `npm install` command to install the required npm package.
+2. Run `pnpm install` command to install the required npm package.
 
 3. Copy `.env.example` file as `.env` file and update your firebase connection data
-4. Run `npm run dev` to start the app.
+4. Run `pnpm run dev` to start the app.
 5. Access the app at `http://localhost:5173`.
 
 ## Creating docker container

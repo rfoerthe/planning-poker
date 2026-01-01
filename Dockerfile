@@ -7,17 +7,17 @@ FROM node:lts-alpine3.22 AS builder
 WORKDIR /app
 
 # Copy package files to install dependencies first (caching optimization)
-COPY package.json package-lock.json ./
+COPY package.json pnpm-lock.yaml ./
 
-# Install dependencies (use 'npm ci' for deterministic builds)
-RUN npm ci
+# Install pnpm and dependencies
+RUN npm install -g pnpm && pnpm install --frozen-lockfile
 
 # Copy the rest of the application source code
 COPY . .
 
 # Build the Vite application
 # This usually outputs to the /dist folder
-RUN --mount=type=secret,id=myenv,target=/app/.env npm run build
+RUN --mount=type=secret,id=myenv,target=/app/.env pnpm run build
 
 # ==========================================
 # Stage 2: Serve with Nginx
