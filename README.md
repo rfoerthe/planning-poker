@@ -1,23 +1,18 @@
 
-<h1>Planning Poker App</h1>
+# Planning Poker App
 
 Free / Open source Scrum/Agile Planning Poker Web App to estimate user stories for the Agile/Scrum teams. Create session and invite team members to estimate user stories efficiently. Intuitive UI/UX for voting the story points, showing team members voting status with emojis(👍 - Voting Done, 🤔 - Yet to Vote). Session Moderator has full control on revealing story points and restarting the session.
 
-<div>
-  
-[![Build and Tests](https://github.com/hellomuthu23/planning-poker/actions/workflows/build-and-tests.yml/badge.svg)](https://github.com/hellomuthu23/planning-poker/actions/workflows/build-and-tests.yml)
-[![Deploy to Firebase](https://github.com/hellomuthu23/planning-poker/actions/workflows/deploy-to-firebase-on-master.yml/badge.svg)](https://github.com/hellomuthu23/planning-poker/actions/workflows/deploy-to-firebase-on-master.yml)
-
-</div>
-
+[![Build and Tests](https://github.com/rfoerthe/planning-poker/actions/workflows/build-and-tests.yml/badge.svg)](https://github.com/rfoerthe/planning-poker/actions/workflows/build-and-tests.yml)
+[![Deploy to Firebase](https://github.com/rfoerthe/planning-poker/actions/workflows/firebase-hosting-pull-request.yml/badge.svg)](https://github.com/rfoerthe/planning-poker/actions/workflows/firebase-hosting-pull-request.yml)
 
 ## Home Page
 
-<img src="docs/HomePage.jpg"   alt=""/>
+![Home](docs/HomePage.jpg)
 
 ## Active Session
 
-<img src="docs/ActiveSession.jpg"   alt=""/>
+![Active Session](docs/ActiveSession.jpg)
 
 ## Features
 
@@ -59,7 +54,6 @@ Pre-req
 
 0. pre-req: Docker installed in your machine
 
-
 1. Build docker image
 
     ```bash
@@ -68,7 +62,7 @@ Pre-req
 
 2. Running the container
 
-   ```
+   ```bash
    docker run -d -p 8080:80 --name planning-poker planning-poker
    ```
 
