@@ -166,6 +166,28 @@ describe('CardPicker component', () => {
     }).rejects.toThrow('pointer-events: none');
     expect(updatePlayerValueSpy).toHaveBeenCalledTimes(0);
   });
+  it('should use the same disabled card background when game is finished', () => {
+    const finishedGameMock = {
+      ...mockGame,
+      gameStatus: Status.Finished,
+      cards: getCards(GameType.TShirt),
+      gameType: GameType.TShirt,
+    };
+    const view = render(
+      <CardPicker
+        game={finishedGameMock}
+        players={mockPlayers}
+        currentPlayerId={currentPlayerId}
+      />,
+    );
+
+    getCards(GameType.TShirt).forEach((card) => {
+      const cardElement = view.container.querySelector(`#card-${card.displayValue}`);
+      expect(cardElement).toHaveStyle({
+        backgroundColor: 'var(--color-background-secondary)',
+      });
+    });
+  });
   it('should display Click on the card to vote when game is not finished', () => {
     const currentPlayerId = mockPlayers[0].id;
 

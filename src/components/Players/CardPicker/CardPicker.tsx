@@ -112,6 +112,7 @@ const getCardStyle = (
   };
 
   const finishedStyle = {
+    backgroundColor: 'var(--color-background-secondary)',
     filter: 'grayscale(100%)',
     color: 'var(--color-text-secondary)',
   };

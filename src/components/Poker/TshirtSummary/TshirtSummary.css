@@ -1,0 +1,59 @@
+.TshirtSummaryCard {
+  width: min(800px, calc(100% - 20px));
+  margin: 0 auto 20px;
+  border-radius: 4px;
+  background-color: var(--color-background-secondary);
+}
+
+.TshirtSummaryContent {
+  text-align: center;
+}
+
+.TshirtSummaryTitle {
+  color: var(--color-text-secondary);
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.TshirtSummaryValues {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+.TshirtSummaryItem {
+  min-width: 180px;
+  max-width: 250px;
+  padding: 10px 14px;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  background-color: var(--color-background);
+}
+
+.TshirtSummaryItem .MuiTypography-h6 {
+  font-weight: 700;
+}
+
+.TshirtConsensusItem.consensus {
+  border-color: #6ea86b;
+  background-color: rgb(157 212 154 / 20%);
+}
+
+.TshirtConsensusItem.moderate-spread {
+  border-color: #c7a33f;
+  background-color: rgb(244 221 148 / 28%);
+}
+
+.TshirtConsensusItem.critical-spread {
+  border-color: #d66a63;
+  background-color: rgb(243 152 147 / 24%);
+}
+
+.TshirtConsensusDetails {
+  display: block;
+  margin-top: 8px;
+  color: var(--color-text-secondary);
+  overflow-wrap: anywhere;
+}
