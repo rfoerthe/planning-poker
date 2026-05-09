@@ -1,5 +1,6 @@
-import { CssBaseline } from '@mui/material';
+import { CssBaseline, useMediaQuery } from '@mui/material';
 import { StyledEngineProvider, ThemeProvider } from '@mui/material/styles';
+import { useMemo, useState } from 'react';
 import CookieConsent from 'react-cookie-consent';
 import { Route, BrowserRouter as Router, Routes } from 'react-router';
 import { Toolbar } from './components/Toolbar/Toolbar';
@@ -10,16 +11,35 @@ import { GamePage } from './pages/GamePage/GamePage';
 import { GuidePage } from './pages/GuidePage/GuidePage';
 import HomePage from './pages/HomePage/HomePage';
 import JoinPage from './pages/JoinPage/JoinPage';
-import { theme } from './service/theme';
+import {
+  createAppTheme,
+  getStoredThemePreference,
+  resolveThemeMode,
+  storeThemePreference,
+  ThemePreference,
+} from './service/theme';
 
 function App() {
+  const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
+  const [themePreference, setThemePreference] = useState<ThemePreference>(getStoredThemePreference);
+  const resolvedThemeMode = resolveThemeMode(themePreference, prefersDarkMode);
+  const theme = useMemo(() => createAppTheme(resolvedThemeMode), [resolvedThemeMode]);
+
+  const handleThemePreferenceChange = (nextThemePreference: ThemePreference) => {
+    setThemePreference(nextThemePreference);
+    storeThemePreference(nextThemePreference);
+  };
+
   return (
-    <div className='LightTheme'>
+    <div className={resolvedThemeMode === 'dark' ? 'DarkTheme' : 'LightTheme'}>
       <ThemeProvider theme={theme}>
         <StyledEngineProvider injectFirst>
           <CssBaseline />
           <Router>
-            <Toolbar />
+            <Toolbar
+              themePreference={themePreference}
+              onThemePreferenceChange={handleThemePreferenceChange}
+            />
             <Routes>
               <Route path='/game/:id' element={<GamePage />} />
               <Route path='/delete-old-games' element={<DeleteOldGames />} />

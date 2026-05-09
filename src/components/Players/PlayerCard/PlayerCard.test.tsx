@@ -145,4 +145,21 @@ describe('PlayerCard component', () => {
     await userEvent.click(screen.getByTestId('remove-button'));
     expect(playerService.removePlayer).toHaveBeenCalledWith(finishedGame.id, coffeePlayer.id);
   });
+
+  it('should rename current player with inline editing', async () => {
+    vi.spyOn(playerService, 'updatePlayerName').mockResolvedValue(true);
+    render(
+      <PlayerCard game={mockGame} player={mockPlayer} currentPlayerId={mockCurrentPlayerId} />,
+    );
+
+    await userEvent.click(screen.getByTestId('update-button'));
+    const nameInput = screen.getByRole('textbox', { name: 'Player name' });
+
+    expect(nameInput).toHaveValue(mockPlayer.name);
+
+    await userEvent.clear(nameInput);
+    await userEvent.type(nameInput, 'Uli{Enter}');
+
+    expect(playerService.updatePlayerName).toHaveBeenCalledWith(mockGame.id, mockPlayer.id, 'Uli');
+  });
 });

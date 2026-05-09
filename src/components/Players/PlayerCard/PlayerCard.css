@@ -12,40 +12,80 @@
 }
 
 .PlayerCardTitle {
+  align-items: center;
   display: flex;
   text-align: center;
   border-radius: 16px;
   border: 2px solid var(--color-primary);
   background-color:  var(--color-background);
+  color: var(--color-text-primary);
   margin: -20px auto 0;
   width: 88%;
-  padding-top: 16px;
-  padding-right: 0;
-  padding-left: 16px;
-  padding-bottom: 16px;
+  padding: 0 12px 0 18px;
   height: 40px;
 }
 
+.PlayerCardTitle .MuiCardHeader-content {
+  min-width: 0;
+}
+
+.PlayerCardTitle .MuiCardHeader-action {
+  align-self: center;
+  margin: 0;
+}
+
+.PlayerCardName {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  color: inherit;
+  cursor: default;
+  display: block;
+  font: inherit;
+  font-weight: 700;
+  overflow: hidden;
+  padding: 0;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
+}
+
+.PlayerCardNameEditable {
+  cursor: pointer;
+}
+
 .PlayerCardTitleInput {
-  font-size: 0.8rem;
-  flex: 1 1 0;
-  max-width: 130px;
-  outline: none;
+  background: transparent;
   border: none;
-  height: 1.25rem;
+  border-radius: 8px;
+  outline: none;
+  box-sizing: border-box;
+  color: #17202a;
+  font-size: 0.875rem;
+  font-weight: 700;
   font-family: 'Roboto', sans-serif;
+  height: 30px;
+  text-align: center;
+  width: 100%;
+}
+
+.PlayerCardTitleInput:focus {
+  background-color: rgb(255 255 255 / 70%);
+  box-shadow: inset 0 0 0 2px rgb(25 118 210 / 25%);
 }
 
 .PlayerCardTitleActive {
   background-color: #efe1d3 !important;
+  color: #17202a;
 }
 
 .RemoveButton{
-  margin-top: -20px;
+  padding: 4px !important;
 }
 
 .EditButton{
-  margin-top: -20px;
+  padding: 4px !important;
 }
 
 .MuiCardHeader-content {
@@ -61,5 +101,3 @@
   display: flex;
   justify-content: center;
 }
-
-

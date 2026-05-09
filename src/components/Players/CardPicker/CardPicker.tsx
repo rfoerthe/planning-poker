@@ -5,7 +5,7 @@ import { updatePlayerValue } from '../../../service/players';
 import { Game } from '../../../types/game';
 import { Player } from '../../../types/player';
 import { Status } from '../../../types/status';
-import { CardConfig, getCards, getRandomEmoji } from './CardConfigs';
+import { CardConfig, getCards, getCardTextColor, getRandomEmoji } from './CardConfigs';
 import './CardPicker.css';
 
 interface CardPickerProps {
@@ -101,6 +101,7 @@ const getCardStyle = (
 
   const baseStyle = {
     backgroundColor: card.color,
+    color: getCardTextColor(card.color),
   };
 
   const selectedStyle = {
@@ -112,7 +113,7 @@ const getCardStyle = (
 
   const finishedStyle = {
     filter: 'grayscale(100%)',
-    color: '#bbb',
+    color: 'var(--color-text-secondary)',
   };
 
   const player = players.find((player) => player.id === playerId);

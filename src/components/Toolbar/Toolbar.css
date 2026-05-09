@@ -1,6 +1,7 @@
 .AppBar {
   box-shadow: none;
   background-color:  var(--color-background);
+  color: var(--color-text-primary);
   flex-grow: 1;
   white-space: nowrap;
 }
@@ -8,16 +9,23 @@
 .HeaderContainer {
   display: flex;
   justify-content: space-between;
+  gap: 16px;
   width: 100%;
 }
 
 .HeaderLeftContainer {
   display: flex;
+  align-items: center;
   cursor: pointer;
+}
+
+.HeaderActions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
 }
 
 .HeaderIcon {
   color: var(--color-primary);
-  margin-top: 4px;
   margin-right: 5px;
 }

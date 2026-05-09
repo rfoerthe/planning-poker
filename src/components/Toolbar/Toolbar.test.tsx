@@ -73,4 +73,18 @@ describe('Toolbar component', () => {
     await userEvent.click(title);
     expect(window.location.href).toEqual('https://github.com/rfoerthe/planning-poker');
   });
+  it('should call theme preference change when a theme option is selected', async () => {
+    const onThemePreferenceChange = vi.fn();
+    renderWithTheme(
+      <Toolbar
+        themePreference='system'
+        onThemePreferenceChange={onThemePreferenceChange}
+      />,
+    );
+
+    await userEvent.click(screen.getByTestId('toolbar.theme.button'));
+    await userEvent.click(screen.getByTestId('toolbar.theme.dark'));
+
+    expect(onThemePreferenceChange).toBeCalledWith('dark');
+  });
 });

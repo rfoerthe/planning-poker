@@ -5,6 +5,24 @@ export interface CardConfig {
   displayValue: string;
   color: string;
 }
+
+const darkCardTextColor = '#17202a';
+const lightCardTextColor = '#f8fafc';
+
+export const getCardTextColor = (backgroundColor: string): string => {
+  if (!backgroundColor.startsWith('#')) {
+    return 'var(--color-text-primary)';
+  }
+
+  const normalizedColor = backgroundColor.slice(1);
+  const red = parseInt(normalizedColor.slice(0, 2), 16);
+  const green = parseInt(normalizedColor.slice(2, 4), 16);
+  const blue = parseInt(normalizedColor.slice(4, 6), 16);
+  const luminance = (0.2126 * red + 0.7152 * green + 0.0722 * blue) / 255;
+
+  return luminance > 0.52 ? darkCardTextColor : lightCardTextColor;
+};
+
 export const fibonacciCards: CardConfig[] = [
   { value: 0, displayValue: '0', color: 'var(--color-background-secondary)' },
   { value: 1, displayValue: '1', color: '#9EC8FE' },

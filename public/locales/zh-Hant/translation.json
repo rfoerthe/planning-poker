@@ -7,6 +7,12 @@
       "newSession": "建立房間",
       "joinSession": "加入房間",
       "legalNotice": "法律聲明"
+    },
+    "theme": {
+      "label": "主題",
+      "light": "淺色",
+      "dark": "深色",
+      "system": "系統"
     }
   },
   "HomePage": {

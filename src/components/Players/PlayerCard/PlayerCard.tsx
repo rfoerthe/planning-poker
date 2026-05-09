@@ -1,16 +1,14 @@
 import DeleteForeverIcon from '@mui/icons-material/DeleteForeverTwoTone';
 import EditIcon from '@mui/icons-material/Edit';
-import HighlightOffIcon from '@mui/icons-material/HighlightOff';
-import SaveIcon from '@mui/icons-material/Save';
 import { Card, CardContent, CardHeader, IconButton, Typography } from '@mui/material';
 import { blue, red } from '@mui/material/colors';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { removePlayer, updatePlayerName } from '../../../service/players';
 import { Game } from '../../../types/game';
 import { Player } from '../../../types/player';
 import { Status } from '../../../types/status';
 import { isModerator } from '../../../utils/isModerator';
-import { getCards } from '../CardPicker/CardConfigs';
+import { getCards, getCardTextColor } from '../CardPicker/CardConfigs';
 import './PlayerCard.css';
 
 interface PlayerCardProps {
@@ -28,27 +26,43 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({ game, player, currentPla
   };
   const updateUserName = (gameId: string, playerId: string, name: string) => {
     updatePlayerName(gameId, playerId, name);
-    setIsEditing(false); // Edit-Modus verlassen nach dem Save
+    setIsEditing(false);
   };
 
-  // Beim Klick auf Edit-Button
-  const handleEditClick = () => {
+  useEffect(() => {
+    if (!isEditing) {
+      setEditName(player.name);
+    }
+  }, [isEditing, player.name]);
+
+  const startEditing = () => {
     setEditName(player.name);
     setIsEditing(true);
   };
 
-  // Beim Klick auf Speichern
   const handleSave = () => {
-    if (editName.trim()) {
-      updateUserName(game.id, player.id, editName.trim());
+    const nextName = editName.trim();
+
+    if (!nextName) {
+      setEditName(player.name);
+      setIsEditing(false);
+      return;
     }
+
+    if (nextName !== player.name) {
+      updateUserName(game.id, player.id, nextName);
+      return;
+    }
+
+    setIsEditing(false);
   };
 
-  // Beim Abbrechen
   const handleCancel = () => {
     setIsEditing(false);
     setEditName(player.name);
   };
+
+  const canEditCurrentPlayer = player.id === currentPlayerId;
 
   return (
     <Card
@@ -56,39 +70,46 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({ game, player, currentPla
       className='PlayerCard'
       style={{
         backgroundColor: getCardColor(game, player.value),
+        color: getCardTextColor(getCardColor(game, player.value)),
       }}
     >
       <CardHeader
         className={player.id !== currentPlayerId ? 'PlayerCardTitle' : 'PlayerCardTitle PlayerCardTitleActive'}
         title={
-          isEditing && player.id === currentPlayerId ? (
-            <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-              <input
-                className={'PlayerCardTitleInput'}
-                type="text"
-                value={editName}
-                autoFocus
-                maxLength={30}
-                onChange={(e) => setEditName(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') handleSave();
-                  if (e.key === 'Escape') handleCancel();
-                }}
-              />
-              <IconButton title="Save" onClick={handleSave} size="small" color="primary"
-                          style={{padding: '0'}}>
-                <SaveIcon fontSize='small' style={{ color: blue[800] }} />
-              </IconButton>
-              <IconButton title="Cancel" onClick={handleCancel} size="small" color="secondary"
-                          style={{padding: '0'}}>
-                <HighlightOffIcon fontSize='small' style={{ color: red[300] }} />
-              </IconButton>
-            </div>
+          isEditing && canEditCurrentPlayer ? (
+            <input
+              aria-label='Player name'
+              className='PlayerCardTitleInput'
+              type='text'
+              value={editName}
+              autoFocus
+              maxLength={30}
+              onBlur={handleSave}
+              onChange={(e) => setEditName(e.target.value)}
+              onFocus={(e) => e.target.select()}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  handleSave();
+                }
+                if (e.key === 'Escape') {
+                  e.preventDefault();
+                  handleCancel();
+                }
+              }}
+            />
           ) : (
-            player.name
+            <button
+              className={canEditCurrentPlayer ? 'PlayerCardName PlayerCardNameEditable' : 'PlayerCardName'}
+              aria-label={canEditCurrentPlayer ? 'Rename player' : undefined}
+              onClick={canEditCurrentPlayer ? startEditing : undefined}
+              type='button'
+            >
+              {player.name}
+            </button>
           )
         }
-        slotProps={{ title: { variant: 'subtitle2', noWrap: true, title: player.name } }}
+        slotProps={{ title: { variant: 'subtitle2', noWrap: true } }}
         action={
           (isModerator(game.createdById, currentPlayerId, game.isAllowMembersToManageSession) &&
           player.id !== currentPlayerId && (
@@ -107,7 +128,7 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({ game, player, currentPla
             <IconButton
               title='Edit'
               className='EditButton'
-              onClick={handleEditClick}
+              onClick={startEditing}
               data-testid='update-button'
               color='primary'
             >

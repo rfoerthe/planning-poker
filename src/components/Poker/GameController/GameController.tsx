@@ -82,7 +82,12 @@ export const GameController: React.FC<GameControllerProps> = ({ game, currentPla
                           orientation='vertical'
                           flexItem
                         />
-                        <Typography variant='subtitle1'>Average:</Typography>
+                        <Typography
+                          variant='subtitle1'
+                          className='GameControllerCardHeaderAverageLabel'
+                        >
+                          Average:
+                        </Typography>
                         <Typography
                           variant='subtitle1'
                           className='GameControllerCardHeaderAverageValue'
@@ -93,7 +98,10 @@ export const GameController: React.FC<GameControllerProps> = ({ game, currentPla
                     )}
                   <Divider className='GameControllerDivider' orientation='vertical' flexItem />
                   {game.isLocked ? (
-                    <div onClick={() => setShowGameProtected(true)}>
+                    <div
+                      className='GameControllerDeleteAction'
+                      onClick={() => setShowGameProtected(true)}
+                    >
                       <IconButton
                         style={{ padding: '3px', background: 'white' }}
                         title={'Deleting the game is not allowed'}
@@ -102,19 +110,21 @@ export const GameController: React.FC<GameControllerProps> = ({ game, currentPla
                       </IconButton>
                     </div>
                   ) : (
-                    <AlertDialog
-                      title='Remove this session'
-                      message={`Are you sure? This will delete this session and remove all players.`}
-                      onConfirm={() => handleRemoveGame(game.id)}
-                      data-testid='delete-button-dialog'
-                    >
-                      <IconButton
-                        style={{ padding: '3px', background: 'white' }}
-                        title={'Remove game session'}
+                    <div className='GameControllerDeleteAction'>
+                      <AlertDialog
+                        title='Remove this session'
+                        message={`Are you sure? This will delete this session and remove all players.`}
+                        onConfirm={() => handleRemoveGame(game.id)}
+                        data-testid='delete-button-dialog'
                       >
-                        <Clear fontSize='small' style={{ color: grey[900] }} />
-                      </IconButton>
-                    </AlertDialog>
+                        <IconButton
+                          style={{ padding: '3px', background: 'white' }}
+                          title={'Remove game session'}
+                        >
+                          <Clear fontSize='small' style={{ color: grey[900] }} />
+                        </IconButton>
+                      </AlertDialog>
+                    </div>
                   )}
                 </div>
               }

@@ -7,6 +7,12 @@
       "newSession": "Nova sessão",
       "joinSession": "Entrar na sessão",
       "legalNotice": "Aviso legal"
+    },
+    "theme": {
+      "label": "Tema",
+      "light": "Claro",
+      "dark": "Escuro",
+      "system": "Sistema"
     }
   },
   "HomePage": {

@@ -5,4 +5,23 @@
     --color-background-secondary: #e7edf3;
     --color-warning:orangered;
     --color-border:grey;
+    --color-text-primary:#1f2933;
+    --color-text-secondary:#52616f;
+    background-color: var(--color-background);
+    color: var(--color-text-primary);
+    min-height: 100vh;
+}
+
+.DarkTheme{
+    --color-primary : #8bb9f3;
+    --color-secondary:#445069;
+    --color-background: #121821;
+    --color-background-secondary: #1e2733;
+    --color-warning:#ff8a50;
+    --color-border:#64748b;
+    --color-text-primary:#f1f5f9;
+    --color-text-secondary:#cbd5e1;
+    background-color: var(--color-background);
+    color: var(--color-text-primary);
+    min-height: 100vh;
 }
