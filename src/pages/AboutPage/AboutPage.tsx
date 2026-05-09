@@ -13,7 +13,7 @@ import { LazyLoadImage } from 'react-lazy-load-image-component';
 export const AboutPage = () => {
   return (
     <>
-      <Grid container direction='column' sx={{ justifyContent: 'center', alignItems: 'center' }}>
+      <Grid container sx={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
         <AboutPlanningPokerContent />
       </Grid>
     </>

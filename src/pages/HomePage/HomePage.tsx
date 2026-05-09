@@ -19,7 +19,7 @@ export const HomePage = () => {
 
   return (
     <>
-      <Grid container direction='column' sx={{ justifyContent: 'center', alignItems: 'center' }}>
+      <Grid container sx={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
         <Grid container size={{ xs: 12, sm: 12, lg: 11 }} sx={{ justifyContent: 'center', alignItems: 'center' }}>
           <Grid size={{ xs: 12, sm: 12, lg: 6 }}>
             <Slide direction='down' in={true} timeout={1000}>

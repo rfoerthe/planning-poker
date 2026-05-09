@@ -7,7 +7,7 @@ import '../HomePage/HomePage.css';
 export const GuidePage = () => {
   return (
     <>
-      <Grid container direction='column' sx={{ justifyContent: 'center', alignItems: 'center' }}>
+      <Grid container sx={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
         <GuideContent />
       </Grid>
     </>
