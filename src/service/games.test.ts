@@ -202,6 +202,28 @@ describe('games service', () => {
 
       expect(res).toEqual(mockPlayers[0].value);
     });
+
+    it('should include zero-value votes', () => {
+      const players = [
+        { name: 'Zero', id: 'zero', status: Status.Finished, value: 0 },
+        { name: 'Five', id: 'five', status: Status.Finished, value: 5 },
+      ];
+
+      const res = getAverage(players);
+
+      expect(res).toEqual(3);
+    });
+
+    it('should return zero when there are no finished votes', () => {
+      const players = [
+        { name: 'One', id: 'one', status: Status.NotStarted },
+        { name: 'Two', id: 'two', status: Status.Started, value: 8 },
+      ];
+
+      const res = getAverage(players);
+
+      expect(res).toEqual(0);
+    });
   });
 
   describe('get the game status', () => {

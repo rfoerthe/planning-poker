@@ -1,5 +1,4 @@
-import { Card, CardContent, Grow, Slide, Typography } from '@mui/material';
-import Grid from '@mui/material/Grid';
+import { Card, CardContent, Grow, Typography } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { updatePlayerValue } from '../../../service/players';
 import { Game } from '../../../types/game';
@@ -17,7 +16,7 @@ export const CardPicker: React.FC<CardPickerProps> = ({ game, players, currentPl
   const [randomEmoji, setRandomEmoji] = useState(getRandomEmoji);
   const playPlayer = (gameId: string, playerId: string, card: CardConfig) => {
     if (game.gameStatus !== Status.Finished) {
-      updatePlayerValue(gameId, playerId, card.value, randomEmoji);
+      void updatePlayerValue(gameId, playerId, card.value, randomEmoji);
     }
   };
 
@@ -38,54 +37,52 @@ export const CardPicker: React.FC<CardPickerProps> = ({ game, players, currentPl
             : 'Session not ready for Voting! Wait for moderator to press "Restart" button to start voting.'}
         </Typography>
         <div className='CardPickerContainer'>
-          <Grid container spacing={4} justifyContent='center'>
-            {cards.map((card: CardConfig, index) => (
-              <Grid key={card.value} size="auto">
-                <Slide in={true} direction={'right'} timeout={(200 * index) / 2}>
-                  <Card
-                    id={`card-${card.displayValue}`}
-                    className='CardPicker'
-                    variant='outlined'
-                    onClick={() => playPlayer(game.id, currentPlayerId, card)}
-                    style={{
-                      ...getCardStyle(players, currentPlayerId, card, game.gameStatus),
-                      pointerEvents: getPointerEvent(game),
-                    }}
-                  >
-                    <CardContent className='CardContent'>
-                      {card.value >= 0 && (
-                        <>
-                          <Typography className='CardContentTop' variant='caption'>
-                            {card.displayValue}
-                          </Typography>
+          <div className='CardPickerGrid'>
+            {cards.map((card: CardConfig) => (
+              <div key={card.value} className='CardPickerGridItem'>
+                <Card
+                  id={`card-${card.displayValue}`}
+                  className='CardPicker'
+                  variant='outlined'
+                  component='button'
+                  type='button'
+                  disabled={game.gameStatus === Status.Finished}
+                  onClick={() => playPlayer(game.id, currentPlayerId, card)}
+                  style={getCardStyle(players, currentPlayerId, card, game.gameStatus)}
+                >
+                  <CardContent className='CardContent'>
+                    {card.value >= 0 && (
+                      <>
+                        <Typography className='CardContentTop' variant='caption'>
+                          {card.displayValue}
+                        </Typography>
 
-                          <Typography
-                            className='CardContentMiddle'
-                            variant={card.displayValue.length < 2 ? 'h4' : 'h5'}
-                          >
-                            {card.displayValue}
-                          </Typography>
-                          <Typography className='CardContentBottom' variant='caption'>
-                            {card.displayValue}
-                          </Typography>
-                        </>
-                      )}
-                      {card.value === -1 && (
-                        <Typography className='CardContentMiddle' variant='h3'>
-                          {randomEmoji}
+                        <Typography
+                          className='CardContentMiddle'
+                          variant={card.displayValue.length < 2 ? 'h4' : 'h5'}
+                        >
+                          {card.displayValue}
                         </Typography>
-                      )}
-                      {card.value === -2 && (
-                        <Typography className='CardContentMiddle' variant='h3'>
-                          ❓
+                        <Typography className='CardContentBottom' variant='caption'>
+                          {card.displayValue}
                         </Typography>
-                      )}
-                    </CardContent>
-                  </Card>
-                </Slide>
-              </Grid>
+                      </>
+                    )}
+                    {card.value === -1 && (
+                      <Typography className='CardContentMiddle' variant='h3'>
+                        {randomEmoji}
+                      </Typography>
+                    )}
+                    {card.value === -2 && (
+                      <Typography className='CardContentMiddle' variant='h3'>
+                        ❓
+                      </Typography>
+                    )}
+                  </CardContent>
+                </Card>
+              </div>
             ))}
-          </Grid>
+          </div>
         </div>
       </div>
     </Grow>
@@ -132,11 +129,4 @@ const getCardStyle = (
     ...baseStyle,
     ...(isFinished && finishedStyle),
   };
-};
-
-const getPointerEvent = (game: Game) => {
-  if (game.gameStatus === Status.Finished) {
-    return 'none';
-  }
-  return 'inherit';
 };

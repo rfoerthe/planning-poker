@@ -19,8 +19,8 @@ export const HomePage = () => {
 
   return (
     <>
-      <Grid container direction='column' justifyContent='center' alignItems='center'>
-        <Grid container size={{ xs: 12, sm: 12, lg: 11 }} justifyContent='center' alignItems='center'>
+      <Grid container direction='column' sx={{ justifyContent: 'center', alignItems: 'center' }}>
+        <Grid container size={{ xs: 12, sm: 12, lg: 11 }} sx={{ justifyContent: 'center', alignItems: 'center' }}>
           <Grid size={{ xs: 12, sm: 12, lg: 6 }}>
             <Slide direction='down' in={true} timeout={1000}>
               <div className='HomePageContainer'>
@@ -41,14 +41,14 @@ export const HomePage = () => {
             <div className='HomePageContainer'>{isJoin ? <JoinGame /> : <CreateGame />}</div>
           </Grid>
         </Grid>
-        <Grid container size={{ xs: 12, sm: 12, lg: 9 }} justifyContent='center' alignItems='center'>
+        <Grid container size={{ xs: 12, sm: 12, lg: 9 }} sx={{ justifyContent: 'center', alignItems: 'center' }}>
           <Grid size={{ xs: 12, sm: 12, lg: 6 }}>
             <Slide in={true} direction='up' timeout={1000}>
               <Divider variant='middle'></Divider>
             </Slide>
           </Grid>
         </Grid>
-        <Grid container size={{ xs: 12, sm: 12, lg: 9 }} justifyContent='center' alignItems='center'>
+        <Grid container size={{ xs: 12, sm: 12, lg: 9 }} sx={{ justifyContent: 'center', alignItems: 'center' }}>
           <Grid size={{ xs: 12, sm: 12, lg: 6 }}>
             <Slide in={true} direction='up' timeout={1000}>
               <div className='HomePageContainer'>
@@ -68,14 +68,14 @@ export const HomePage = () => {
             </Slide>
           </Grid>
         </Grid>
-        <Grid container size={{ xs: 12, sm: 12, lg: 9 }} justifyContent='center' alignItems='center'>
+        <Grid container size={{ xs: 12, sm: 12, lg: 9 }} sx={{ justifyContent: 'center', alignItems: 'center' }}>
           <Grid size={{ xs: 12, sm: 12, lg: 6 }}>
             <Slide in={true} direction='up' timeout={1500}>
               <Divider variant='middle'></Divider>
             </Slide>
           </Grid>
         </Grid>
-        <Grid container size={{ xs: 12, sm: 12, lg: 9 }} justifyContent='center' alignItems='center'>
+        <Grid container size={{ xs: 12, sm: 12, lg: 9 }} sx={{ justifyContent: 'center', alignItems: 'center' }}>
           <Grid size={{ xs: 12, sm: 12, lg: 6 }}>
             <Slide in={true} direction='up' timeout={1500}>
               <div className='HomePageContainer'>

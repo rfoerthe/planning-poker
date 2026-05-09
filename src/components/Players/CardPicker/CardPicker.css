@@ -6,10 +6,18 @@
 .CardPickerContainer {
   bottom: 0;
   padding: 20px 50px 10px 50px;
-  display: flex;
-  flex-direction: row;
   width: 100%;
+}
+
+.CardPickerGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 32px;
   justify-content: center;
+}
+
+.CardPickerGridItem {
+  flex: 0 0 auto;
 }
 
 .CardPicker {
@@ -18,12 +26,22 @@
   max-height: 140px;
   min-height: 140px;
   margin-top: 10px;
+  appearance: none;
   cursor: pointer;
   background-color: var(--color-background-secondary);
+  font: inherit;
+  padding: 0;
+  text-align: inherit;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
-.CardPicker:hover {
+.CardPicker:not(:disabled):hover {
   box-shadow: 0 0 12px 0 lightgrey;
+}
+
+.CardPicker:disabled {
+  cursor: default;
 }
 
 .CardContent {

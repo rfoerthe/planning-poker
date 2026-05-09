@@ -66,7 +66,7 @@ export const resetGame = async (gameId: string) => {
       average: 0,
       gameStatus: Status.Started,
     };
-    updateGame(gameId, updatedGame);
+    await updateGame(gameId, updatedGame);
     await resetPlayers(gameId);
   }
 };
@@ -80,7 +80,7 @@ export const finishGame = async (gameId: string) => {
       average: getAverage(players),
       gameStatus: Status.Finished,
     };
-    updateGame(gameId, updatedGame);
+    await updateGame(gameId, updatedGame);
   }
 };
 
@@ -88,11 +88,14 @@ export const getAverage = (players: Player[]): number => {
   let values = 0;
   let numberOfPlayersPlayed = 0;
   players.forEach((player) => {
-    if (player.status === Status.Finished && player.value && player.value >= 0) {
+    if (player.status === Status.Finished && player.value !== undefined && player.value >= 0) {
       values = values + player.value;
       numberOfPlayersPlayed++;
     }
   });
+  if (numberOfPlayersPlayed === 0) {
+    return 0;
+  }
   return Math.round(values / numberOfPlayersPlayed);
 };
 

@@ -159,11 +159,7 @@ describe('CardPicker component', () => {
       />,
     );
     const cardValueElement = screen.queryAllByText(1);
-    // Element has pointer-events: none when game is finished, which is expected
-    // We verify it cannot be interacted with and spy was not called
-    await expect(async () => {
-      await userEvent.click(cardValueElement[0]);
-    }).rejects.toThrow('pointer-events: none');
+    await userEvent.click(cardValueElement[0]);
     expect(updatePlayerValueSpy).toHaveBeenCalledTimes(0);
   });
   it('should use the same disabled card background when game is finished', () => {
