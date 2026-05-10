@@ -16,6 +16,7 @@ export const Poker = () => {
   const [players, setPlayers] = useState<Player[] | undefined>(undefined);
   const [loading, setIsLoading] = useState(true);
   const [currentPlayerId, setCurrentPlayerId] = useState<string | undefined>(undefined);
+  const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
 
   // TODO: Re-implement blocker in React Router v6 using useBlocker hook
   // useEffect(() => {
@@ -45,43 +46,60 @@ export const Poker = () => {
       }
 
       setCurrentPlayerId(currentPlayerId);
+      setErrorMessage(undefined);
       setIsLoading(true);
     }
 
-    const unsubscribeGame = onSnapshot(streamGame(id), (snapshot) => {
+    const handleSnapshotError = (error: Error) => {
+      console.error('Failed to receive Firebase updates', error);
       if (effectCleanup) {
-        if (snapshot.exists()) {
-          const data = snapshot.data();
-          if (data) {
-            setGame(data as Game);
-            setIsLoading(false);
-            return;
-          }
-        }
+        setErrorMessage('Unable to receive game updates. Please try again later.');
         setIsLoading(false);
       }
-    });
+    };
 
-    const unsubscribePlayers = onSnapshot(streamPlayers(id), (snapshot) => {
-      if (effectCleanup) {
-        const players: Player[] = [];
-        snapshot.forEach((snapshot) => {
-          players.push(snapshot.data() as Player);
-        });
-        const currentPlayerId = getCurrentPlayerId(id);
-        setPlayers(players);
-        if (!players.find((player) => player.id === currentPlayerId)) {
-          navigate(`/join/${id}`);
+    const unsubscribeGame = onSnapshot(
+      streamGame(id),
+      (snapshot) => {
+        if (effectCleanup) {
+          if (snapshot.exists()) {
+            const data = snapshot.data();
+            if (data) {
+              setGame(data as Game);
+              setIsLoading(false);
+              return;
+            }
+          }
+          setIsLoading(false);
         }
-      }
-    });
+      },
+      handleSnapshotError,
+    );
+
+    const unsubscribePlayers = onSnapshot(
+      streamPlayers(id),
+      (snapshot) => {
+        if (effectCleanup) {
+          const players: Player[] = [];
+          snapshot.forEach((snapshot) => {
+            players.push(snapshot.data() as Player);
+          });
+          const currentPlayerId = getCurrentPlayerId(id);
+          setPlayers(players);
+          if (!players.find((player) => player.id === currentPlayerId)) {
+            navigate(`/join/${id}`);
+          }
+        }
+      },
+      handleSnapshotError,
+    );
 
     return () => {
       effectCleanup = false;
       unsubscribeGame();
       unsubscribePlayers();
     };
-  }, [id, history]);
+  }, [id, navigate]);
 
   if (loading) {
     return (
@@ -93,7 +111,9 @@ export const Poker = () => {
 
   return (
     <>
-      {game && players && currentPlayerId ? (
+      {errorMessage ? (
+        <Typography>{errorMessage}</Typography>
+      ) : game && players && currentPlayerId ? (
         <GameArea game={game} players={players} currentPlayerId={currentPlayerId} />
       ) : (
         <Typography>Game not found</Typography>

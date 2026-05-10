@@ -6,6 +6,7 @@ import { Players } from '../../Players/Players';
 import { GameController } from '../GameController/GameController';
 import './GameArea.css';
 import { TshirtLegend } from '../TshirtLegend/TshirtLegend';
+import { TshirtSummary } from '../TshirtSummary/TshirtSummary';
 
 interface GameAreaProps {
   game: Game;
@@ -18,6 +19,7 @@ export const GameArea: React.FC<GameAreaProps> = ({ game, players, currentPlayer
       <div className='ContentArea'>
         <Players game={game} players={players} currentPlayerId={currentPlayerId} />
         <GameController game={game} currentPlayerId={currentPlayerId} />
+        <TshirtSummary game={game} players={players} />
       </div>
       <div className='Footer'>
         <CardPicker game={game} players={players} currentPlayerId={currentPlayerId} />

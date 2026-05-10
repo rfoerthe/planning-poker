@@ -7,7 +7,7 @@ import '../HomePage/HomePage.css';
 export const GuidePage = () => {
   return (
     <>
-      <Grid container direction='column' justifyContent='center' alignItems='center'>
+      <Grid container sx={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
         <GuideContent />
       </Grid>
     </>
@@ -17,7 +17,7 @@ export const GuidePage = () => {
 export const GuideContent = () => {
   return (
     <>
-      <Grid container size={{ xs: 12, sm: 12, lg: 9 }} justifyContent='center' alignItems='center'>
+      <Grid container size={{ xs: 12, sm: 12, lg: 9 }} sx={{ justifyContent: 'center', alignItems: 'center' }}>
         <Slide in={true} direction='up' timeout={1000}>
           <div className='HomePageContainer'>
             <Typography variant='h5'>Guidelines on estimating user stories in Agile</Typography>

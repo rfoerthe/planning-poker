@@ -13,7 +13,7 @@ import { LazyLoadImage } from 'react-lazy-load-image-component';
 export const AboutPage = () => {
   return (
     <>
-      <Grid container direction='column' justifyContent='center' alignItems='center'>
+      <Grid container sx={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
         <AboutPlanningPokerContent />
       </Grid>
     </>
@@ -23,7 +23,7 @@ export const AboutPage = () => {
 export const AboutPlanningPokerContent = () => {
   return (
     <>
-      <Grid container size={{ xs: 12, sm: 12, lg: 9 }} justifyContent='center' alignItems='center'>
+      <Grid container size={{ xs: 12, sm: 12, lg: 9 }} sx={{ justifyContent: 'center', alignItems: 'center' }}>
         <Grid size={{ xs: 12, sm: 12, lg: 6 }}>
           <Slide in={true} direction='up' timeout={1000}>
             <div className='HomePageContainer'>
@@ -58,7 +58,7 @@ export const AboutPlanningPokerContent = () => {
       </Grid>
       <br></br>
       <br></br>
-      <Grid container size={{ xs: 12, sm: 12, lg: 9 }} justifyContent='center' alignItems='center'>
+      <Grid container size={{ xs: 12, sm: 12, lg: 9 }} sx={{ justifyContent: 'center', alignItems: 'center' }}>
         <Grid size={{ xs: 12, sm: 12, lg: 6 }}>
           <Slide in={true} direction='up' timeout={1000}>
             <div className='HomePageContainer'>
@@ -105,7 +105,7 @@ export const AboutPlanningPokerContent = () => {
       </Grid>
       <br />
       <br />
-      <Grid container size={{ xs: 12, sm: 12, lg: 9 }} justifyContent='center' alignItems='center'>
+      <Grid container size={{ xs: 12, sm: 12, lg: 9 }} sx={{ justifyContent: 'center', alignItems: 'center' }}>
         <Grid size={{ xs: 12, sm: 12, lg: 6 }}>
           <Slide in={true} direction='up' timeout={1000}>
             <div className='HomePageContainer'>
@@ -147,7 +147,7 @@ export const AboutPlanningPokerContent = () => {
       </Grid>
       <br />
       <br />
-      <Grid container size={{ xs: 12, sm: 12, lg: 9 }} justifyContent='center' alignItems='center'>
+      <Grid container size={{ xs: 12, sm: 12, lg: 9 }} sx={{ justifyContent: 'center', alignItems: 'center' }}>
         <Grid size={{ xs: 12, sm: 12, lg: 6 }}>
           <Slide in={true} direction='up' timeout={1000}>
             <div className='HomePageContainer'>

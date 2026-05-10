@@ -16,14 +16,14 @@ import { isModerator } from '../utils/isModerator';
 export const addPlayer = async (gameId: string, player: Player) => {
   const game = await getGameFromStore(gameId);
   if (game) {
-    addPlayerToGameInStore(gameId, player);
+    await addPlayerToGameInStore(gameId, player);
   }
 };
 
 export const removePlayer = async (gameId: string, playerId: string) => {
   const game = await getGameFromStore(gameId);
   if (game) {
-    removePlayerFromGameInStore(gameId, playerId);
+    await removePlayerFromGameInStore(gameId, playerId);
   }
 };
 export const updatePlayerValue = async (gameId: string, playerId: string, value: number, randomEmoji: string) => {
@@ -142,12 +142,12 @@ export const addPlayerToGame = async (gameId: string, playerName: string): Promi
 export const resetPlayers = async (gameId: string) => {
   const players = await getPlayersFromStore(gameId);
 
-  players.forEach(async (player) => {
+  await Promise.all(players.map((player) => {
     const updatedPlayer: Player = {
       ...player,
       status: Status.NotStarted,
       value: -3,
     };
-    await updatePlayerInStore(gameId, updatedPlayer);
-  });
+    return updatePlayerInStore(gameId, updatedPlayer);
+  }));
 };

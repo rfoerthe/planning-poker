@@ -159,12 +159,30 @@ describe('CardPicker component', () => {
       />,
     );
     const cardValueElement = screen.queryAllByText(1);
-    // Element has pointer-events: none when game is finished, which is expected
-    // We verify it cannot be interacted with and spy was not called
-    await expect(async () => {
-      await userEvent.click(cardValueElement[0]);
-    }).rejects.toThrow('pointer-events: none');
+    await userEvent.click(cardValueElement[0]);
     expect(updatePlayerValueSpy).toHaveBeenCalledTimes(0);
+  });
+  it('should use the same disabled card background when game is finished', () => {
+    const finishedGameMock = {
+      ...mockGame,
+      gameStatus: Status.Finished,
+      cards: getCards(GameType.TShirt),
+      gameType: GameType.TShirt,
+    };
+    const view = render(
+      <CardPicker
+        game={finishedGameMock}
+        players={mockPlayers}
+        currentPlayerId={currentPlayerId}
+      />,
+    );
+
+    getCards(GameType.TShirt).forEach((card) => {
+      const cardElement = view.container.querySelector(`#card-${card.displayValue}`);
+      expect(cardElement).toHaveStyle({
+        backgroundColor: 'var(--color-background-secondary)',
+      });
+    });
   });
   it('should display Click on the card to vote when game is not finished', () => {
     const currentPlayerId = mockPlayers[0].id;

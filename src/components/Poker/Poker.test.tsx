@@ -150,4 +150,24 @@ describe('Poker component', () => {
 
     await screen.findByText(mockGame.name);
   });
+
+  it('should display a message when Firebase updates fail', async () => {
+    onSnapshot
+      .mockImplementationOnce((ref: any, cb: (snap: any) => void, errorCb: (error: Error) => void) => {
+        errorCb(new Error('permission denied'));
+        return vi.fn();
+      })
+      .mockImplementationOnce((ref: any, cb: (snap: any) => void) => {
+        cb({ forEach: (_: any) => {} });
+        return vi.fn();
+      });
+
+    vi.spyOn(gamesService, 'streamGame').mockReturnValue({} as any);
+    vi.spyOn(gamesService, 'streamPlayers').mockReturnValue({} as any);
+    vi.spyOn(playersService, 'getCurrentPlayerId').mockReturnValue('xx');
+
+    render(<Poker />);
+
+    await screen.findByText('Unable to receive game updates. Please try again later.');
+  });
 });

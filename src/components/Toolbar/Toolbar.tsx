@@ -14,7 +14,7 @@ import AppToolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import GamesIcon from '@mui/icons-material/Games';
 import GithubIcon from '@mui/icons-material/GitHub';
-import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutlineOutlined';
 import CheckIcon from '@mui/icons-material/Check';
 import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined';
 import LightModeOutlinedIcon from '@mui/icons-material/LightModeOutlined';

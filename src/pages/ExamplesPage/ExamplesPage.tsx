@@ -7,7 +7,7 @@ import '../HomePage/HomePage.css';
 export const ExamplesPage = () => {
   return (
     <>
-      <Grid container direction='column' justifyContent='center' alignItems='center'>
+      <Grid container sx={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
         <ExamplesContent />
       </Grid>
     </>
@@ -16,7 +16,7 @@ export const ExamplesPage = () => {
 
 export const ExamplesContent = () => {
   return (
-    <Grid container size={{ xs: 12, sm: 12, lg: 9 }} justifyContent='center' alignItems='center'>
+    <Grid container size={{ xs: 12, sm: 12, lg: 9 }} sx={{ justifyContent: 'center', alignItems: 'center' }}>
       <Slide in={true} direction='up' timeout={1000}>
         <div className='HomePageContainer'>
           <Typography variant='h5'>Examples of User Story Estimation</Typography>
