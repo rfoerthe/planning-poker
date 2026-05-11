@@ -104,25 +104,57 @@ describe('Players service', () => {
       const spyPlayer = vi.spyOn(fb, 'updatePlayerInStore');
       const spyGame = vi.spyOn(games, 'updateGameStatus');
       const emoji = 'emeowticon';
+      vi.spyOn(fb, 'getGameFromStore').mockResolvedValueOnce(mockGame);
       vi.spyOn(fb, 'getPlayerFromStore').mockResolvedValueOnce(mockPlayer);
 
       await updatePlayerValue(mockGame.id, mockPlayer.id, 3, emoji);
 
       expect(spyPlayer).toHaveBeenCalledWith(
         mockGame.id,
-        expect.objectContaining({ value: 3, emoji }),
+        expect.objectContaining({ value: 3, emoji, roundId: 0 }),
       );
-      expect(spyGame).toHaveBeenCalledWith(mockGame.id);
+      expect(spyGame).toHaveBeenCalledWith(mockGame.id, 0);
     });
 
     // NOTE: Shouldn't there be a case that the player doesn't get updated if the game doesn't exist? Fn doesn't have that logix
     it('should not update the player if the player does not exist', async () => {
       const spyPlayer = vi.spyOn(fb, 'updatePlayerInStore');
       const spyGame = vi.spyOn(games, 'updateGameStatus');
+      vi.spyOn(fb, 'getGameFromStore').mockResolvedValueOnce(mockGame);
       vi.spyOn(fb, 'getPlayerFromStore').mockResolvedValueOnce(undefined);
 
       await updatePlayerValue(mockGame.id, mockPlayer.id, 3, '');
 
+      expect(spyPlayer).toHaveBeenCalledTimes(0);
+      expect(spyGame).toHaveBeenCalledTimes(0);
+    });
+
+    it('should not update the player if the game is already finished', async () => {
+      const spyPlayer = vi.spyOn(fb, 'updatePlayerInStore');
+      const spyGame = vi.spyOn(games, 'updateGameStatus');
+      vi.spyOn(fb, 'getGameFromStore').mockResolvedValueOnce({
+        ...mockGame,
+        gameStatus: Status.Finished,
+      });
+
+      const result = await updatePlayerValue(mockGame.id, mockPlayer.id, 3, '');
+
+      expect(result).toBe(false);
+      expect(spyPlayer).toHaveBeenCalledTimes(0);
+      expect(spyGame).toHaveBeenCalledTimes(0);
+    });
+
+    it('should not update the player if the vote belongs to an old round', async () => {
+      const spyPlayer = vi.spyOn(fb, 'updatePlayerInStore');
+      const spyGame = vi.spyOn(games, 'updateGameStatus');
+      vi.spyOn(fb, 'getGameFromStore').mockResolvedValueOnce({
+        ...mockGame,
+        roundId: 2,
+      });
+
+      const result = await updatePlayerValue(mockGame.id, mockPlayer.id, 3, '', 1);
+
+      expect(result).toBe(false);
       expect(spyPlayer).toHaveBeenCalledTimes(0);
       expect(spyGame).toHaveBeenCalledTimes(0);
     });
@@ -440,15 +472,15 @@ describe('Players service', () => {
         { id: 'three', name: 'carrot', status: Status.Started, value: 3 },
       ];
       const expectedPlayers = [
-        { id: 'one', name: 'potato', status: Status.NotStarted, value: -3 },
-        { id: 'two', name: 'pea', status: Status.NotStarted, value: -3 },
-        { id: 'three', name: 'carrot', status: Status.NotStarted, value: -3 },
+        { id: 'one', name: 'potato', status: Status.NotStarted, value: -3, roundId: 4 },
+        { id: 'two', name: 'pea', status: Status.NotStarted, value: -3, roundId: 4 },
+        { id: 'three', name: 'carrot', status: Status.NotStarted, value: -3, roundId: 4 },
       ];
       const gId = 'soup';
       vi.spyOn(fb, 'getPlayersFromStore').mockResolvedValueOnce(fakePlayers);
       const spy = vi.spyOn(fb, 'updatePlayerInStore');
 
-      await resetPlayers(gId);
+      await resetPlayers(gId, 4);
 
       expect(spy).toHaveBeenNthCalledWith(1, gId, expectedPlayers[0]);
       expect(spy).toHaveBeenNthCalledWith(2, gId, expectedPlayers[1]);

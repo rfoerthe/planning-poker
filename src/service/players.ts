@@ -26,7 +26,21 @@ export const removePlayer = async (gameId: string, playerId: string) => {
     await removePlayerFromGameInStore(gameId, playerId);
   }
 };
-export const updatePlayerValue = async (gameId: string, playerId: string, value: number, randomEmoji: string) => {
+export const updatePlayerValue = async (
+  gameId: string,
+  playerId: string,
+  value: number,
+  randomEmoji: string,
+  expectedRoundId = 0,
+) => {
+  const game = await getGameFromStore(gameId);
+  if (!game || (game.roundId ?? 0) !== expectedRoundId) {
+    return false;
+  }
+  if (game.gameStatus !== Status.Started && game.gameStatus !== Status.InProgress) {
+    return false;
+  }
+
   const player = await getPlayerFromStore(gameId, playerId);
 
   if (player) {
@@ -35,9 +49,10 @@ export const updatePlayerValue = async (gameId: string, playerId: string, value:
       value: value,
       emoji: randomEmoji,
       status: Status.Finished,
+      roundId: expectedRoundId,
     };
     await updatePlayerInStore(gameId, updatedPlayer);
-    await updateGameStatus(gameId);
+    await updateGameStatus(gameId, expectedRoundId);
     return true;
   }
   return false;
@@ -131,7 +146,12 @@ export const addPlayerToGame = async (gameId: string, playerName: string): Promi
     console.log('Game not found');
     return false;
   }
-  const newPlayer = { name: playerName, id: ulid(), status: Status.NotStarted };
+  const newPlayer = {
+    name: playerName,
+    id: ulid(),
+    status: Status.NotStarted,
+    roundId: joiningGame.roundId ?? 0,
+  };
 
   updatePlayerGames(joiningGame.id, joiningGame.name, joiningGame.createdBy, joiningGame.createdById, newPlayer.id);
   await addPlayerToGameInStore(gameId, newPlayer);
@@ -139,7 +159,7 @@ export const addPlayerToGame = async (gameId: string, playerName: string): Promi
   return true;
 };
 
-export const resetPlayers = async (gameId: string) => {
+export const resetPlayers = async (gameId: string, roundId = 0) => {
   const players = await getPlayersFromStore(gameId);
 
   await Promise.all(players.map((player) => {
@@ -147,6 +167,7 @@ export const resetPlayers = async (gameId: string) => {
       ...player,
       status: Status.NotStarted,
       value: -3,
+      roundId,
     };
     return updatePlayerInStore(gameId, updatedPlayer);
   }));

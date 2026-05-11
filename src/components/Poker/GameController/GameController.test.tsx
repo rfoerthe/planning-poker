@@ -1,13 +1,11 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { vi } from 'vitest';
-import * as gamesService from '../../../service/games';
 import { Game, GameType } from '../../../types/game';
 import { Status } from '../../../types/status';
 import { GameController } from './GameController';
 
 const mockNavigate = vi.fn();
-vi.mock('../../../service/games');
 vi.mock('react-router', async () => {
   const actual = await vi.importActual('react-router');
   return {
@@ -34,6 +32,7 @@ describe('GameController component', () => {
   const mockCurrentPlayerId = 'abc';
 
   beforeEach(() => {
+    vi.clearAllMocks();
     Object.assign(navigator, {
       clipboard: {
         writeText: vi.fn().mockResolvedValue(undefined),
@@ -137,14 +136,28 @@ describe('GameController component', () => {
       expect(screen.getByText('Restart')).toBeInTheDocument();
     });
     it('should reveal cards when player click on Reveal button', async () => {
-      render(<GameController game={mockGame} currentPlayerId={mockCurrentPlayerId} />);
+      const onReveal = vi.fn();
+      render(
+        <GameController
+          game={mockGame}
+          currentPlayerId={mockCurrentPlayerId}
+          onReveal={onReveal}
+        />,
+      );
       await userEvent.click(screen.getByTestId('reveal-button'));
-      expect(gamesService.finishGame).toHaveBeenCalled();
+      expect(onReveal).toHaveBeenCalled();
     });
     it('should restart game when player click on Restart button', async () => {
-      render(<GameController game={mockGame} currentPlayerId={mockCurrentPlayerId} />);
+      const onRestart = vi.fn();
+      render(
+        <GameController
+          game={mockGame}
+          currentPlayerId={mockCurrentPlayerId}
+          onRestart={onRestart}
+        />,
+      );
       await userEvent.click(screen.getByTestId('restart-button'));
-      expect(gamesService.resetGame).toHaveBeenCalled();
+      expect(onRestart).toHaveBeenCalled();
     });
   });
 });

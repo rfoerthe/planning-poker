@@ -1,15 +1,12 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { vi } from 'vitest';
-import * as playersService from '../../../service/players';
 import { Game, GameType } from '../../../types/game';
 import { Player } from '../../../types/player';
 import { Status } from '../../../types/status';
-import * as cardConfigs from './CardConfigs';
 import { getCards } from './CardConfigs';
 import { CardPicker } from './CardPicker';
 
-vi.mock('../../../service/players');
 describe('CardPicker component', () => {
   const mockGame: Game = {
     id: 'xyz',
@@ -133,20 +130,54 @@ describe('CardPicker component', () => {
         expect(cardValueElement.length).toBeGreaterThan(0);
       });
   });
-  it('should update player value when player clicks on a card', async () => {
+  it('should report a selected card when player clicks on a card', async () => {
     const currentPlayerId = mockPlayers[0].id;
-    const updatePlayerValueSpy = jest.spyOn(playersService, 'updatePlayerValue');
-    jest.spyOn(cardConfigs, 'getRandomEmoji').mockReturnValue('something');
-    render(<CardPicker game={mockGame} players={mockPlayers} currentPlayerId={currentPlayerId} />);
+    const onCardPick = vi.fn();
+    render(
+      <CardPicker
+        game={mockGame}
+        players={mockPlayers}
+        currentPlayerId={currentPlayerId}
+        onCardPick={onCardPick}
+      />,
+    );
     const cardValueElement = screen.queryAllByText(1);
-    await userEvent.click(cardValueElement[0]);
-    expect(updatePlayerValueSpy).toHaveBeenCalled();
-    expect(updatePlayerValueSpy).toHaveBeenCalledWith(mockGame.id, currentPlayerId, 1, 'something');
+    const cardButton = cardValueElement[0].closest('button');
+    expect(cardButton).toBeInTheDocument();
+    await userEvent.click(cardButton as HTMLButtonElement);
+    expect(onCardPick).toHaveBeenCalledWith(expect.objectContaining({ value: 1 }));
+  });
+
+  it('should report every selected card while cards are changed quickly', async () => {
+    const currentPlayerId = mockPlayers[0].id;
+    const onCardPick = vi.fn();
+    render(
+      <CardPicker
+        game={mockGame}
+        players={mockPlayers}
+        currentPlayerId={currentPlayerId}
+        onCardPick={onCardPick}
+      />,
+    );
+    const oneButton = screen.queryAllByText(1)[0].closest('button');
+    const twoButton = screen.queryAllByText(2)[0].closest('button');
+    const threeButton = screen.queryAllByText('xl')[0].closest('button');
+
+    expect(oneButton).toBeInTheDocument();
+    expect(twoButton).toBeInTheDocument();
+    expect(threeButton).toBeInTheDocument();
+
+    await userEvent.click(oneButton as HTMLButtonElement);
+    await userEvent.click(twoButton as HTMLButtonElement);
+    await userEvent.click(threeButton as HTMLButtonElement);
+
+    expect(onCardPick).toHaveBeenCalledTimes(3);
+    expect(onCardPick).toHaveBeenLastCalledWith(expect.objectContaining({ value: 3 }));
   });
 
   it('should not update player value when player clicks on a card and game is finished', async () => {
     const currentPlayerId = mockPlayers[0].id;
-    const updatePlayerValueSpy = jest.spyOn(playersService, 'updatePlayerValue');
+    const onCardPick = vi.fn();
     const finishedGameMock = {
       ...mockGame,
       gameStatus: Status.Finished,
@@ -156,11 +187,14 @@ describe('CardPicker component', () => {
         game={finishedGameMock}
         players={mockPlayers}
         currentPlayerId={currentPlayerId}
+        onCardPick={onCardPick}
       />,
     );
     const cardValueElement = screen.queryAllByText(1);
-    await userEvent.click(cardValueElement[0]);
-    expect(updatePlayerValueSpy).toHaveBeenCalledTimes(0);
+    const cardButton = cardValueElement[0].closest('button');
+    expect(cardButton).toBeInTheDocument();
+    await userEvent.click(cardButton as HTMLButtonElement);
+    expect(onCardPick).toHaveBeenCalledTimes(0);
   });
   it('should use the same disabled card background when game is finished', () => {
     const finishedGameMock = {

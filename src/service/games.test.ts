@@ -77,6 +77,7 @@ describe('games service', () => {
       name: fakeGame.createdBy,
       id: mockUlid,
       status: Status.NotStarted,
+      roundId: 0,
     };
     const resGame = {
       ...fakeGame,
@@ -85,6 +86,7 @@ describe('games service', () => {
       createdById: mockUlid,
       gameStatus: Status.Started,
       isLocked: false,
+      roundId: 0,
     };
     const gameSpy = vi.spyOn(fb, 'addGameToStore');
     const playerSpy = vi.spyOn(fb, 'addPlayerToGameInStore');
@@ -138,15 +140,23 @@ describe('games service', () => {
 
   describe('reset the game', () => {
     it('should update the game and reset the players', async () => {
-      const expectGame = { average: 0, gameStatus: Status.Started };
-      vi.spyOn(fb, 'getGameFromStore').mockResolvedValueOnce(mockGame);
+      const expectResettingGame = { average: 0, gameStatus: Status.NotStarted, roundId: 1 };
+      const expectStartedGame = { average: 0, gameStatus: Status.Started, roundId: 1 };
+      vi.spyOn(fb, 'getGameFromStore').mockResolvedValueOnce({ ...mockGame, roundId: 0 });
       const updateSpy = vi.spyOn(fb, 'updateGameDataInStore');
       const playerSpy = vi.spyOn(players, 'resetPlayers');
 
       await resetGame(mockId);
 
-      expect(updateSpy).toHaveBeenCalledWith(mockId, expectGame);
-      expect(playerSpy).toHaveBeenCalledWith(mockId);
+      expect(updateSpy).toHaveBeenNthCalledWith(1, mockId, expectResettingGame);
+      expect(playerSpy).toHaveBeenCalledWith(mockId, 1);
+      expect(updateSpy).toHaveBeenNthCalledWith(2, mockId, expectStartedGame);
+      expect(updateSpy.mock.invocationCallOrder[0]).toBeLessThan(
+        playerSpy.mock.invocationCallOrder[0],
+      );
+      expect(playerSpy.mock.invocationCallOrder[0]).toBeLessThan(
+        updateSpy.mock.invocationCallOrder[1],
+      );
     });
 
     it("should not touch the DB if the game doesn't exist", async () => {
@@ -159,11 +169,29 @@ describe('games service', () => {
       expect(updateSpy).toHaveBeenCalledTimes(0);
       expect(playerSpy).toHaveBeenCalledTimes(0);
     });
+
+    it('should not reset the game if the action belongs to an old round', async () => {
+      vi.spyOn(fb, 'getGameFromStore').mockResolvedValueOnce({
+        ...mockGame,
+        roundId: 2,
+      });
+      const updateSpy = vi.spyOn(fb, 'updateGameDataInStore');
+      const playerSpy = vi.spyOn(players, 'resetPlayers');
+
+      const result = await resetGame(mockId, 1);
+
+      expect(result).toBe(false);
+      expect(updateSpy).toHaveBeenCalledTimes(0);
+      expect(playerSpy).toHaveBeenCalledTimes(0);
+    });
   });
 
   describe('finish the game', () => {
     it('update the game with the average and finished status', async () => {
-      vi.spyOn(fb, 'getGameFromStore').mockResolvedValueOnce(mockGame);
+      vi.spyOn(fb, 'getGameFromStore').mockResolvedValueOnce({
+        ...mockGame,
+        gameStatus: Status.InProgress,
+      });
       vi.spyOn(fb, 'getPlayersFromStore').mockResolvedValueOnce(mockPlayers);
       const spy = vi.spyOn(fb, 'updateGameDataInStore');
 
@@ -171,8 +199,39 @@ describe('games service', () => {
 
       expect(spy).toHaveBeenCalledWith(
         mockId,
-        expect.objectContaining({ gameStatus: Status.Finished }),
+        expect.objectContaining({ gameStatus: Status.Finished, roundId: 0 }),
       );
+    });
+
+    it('should not finish the game if the action belongs to an old round', async () => {
+      vi.spyOn(fb, 'getGameFromStore').mockResolvedValueOnce({
+        ...mockGame,
+        gameStatus: Status.InProgress,
+        roundId: 2,
+      });
+      const playerSpy = vi.spyOn(fb, 'getPlayersFromStore');
+      const updateSpy = vi.spyOn(fb, 'updateGameDataInStore');
+
+      const result = await finishGame(mockId, 1);
+
+      expect(result).toBe(false);
+      expect(playerSpy).toHaveBeenCalledTimes(0);
+      expect(updateSpy).toHaveBeenCalledTimes(0);
+    });
+
+    it('should not finish the game if voting is not in progress', async () => {
+      vi.spyOn(fb, 'getGameFromStore').mockResolvedValueOnce({
+        ...mockGame,
+        gameStatus: Status.Started,
+      });
+      const playerSpy = vi.spyOn(fb, 'getPlayersFromStore');
+      const updateSpy = vi.spyOn(fb, 'updateGameDataInStore');
+
+      const result = await finishGame(mockId, 0);
+
+      expect(result).toBe(false);
+      expect(playerSpy).toHaveBeenCalledTimes(0);
+      expect(updateSpy).toHaveBeenCalledTimes(0);
     });
 
     it("should not touch the DB if the game doesn't exist", async () => {
@@ -270,6 +329,33 @@ describe('games service', () => {
 
       expect(spy).toHaveBeenCalledWith(mockId, { gameStatus: Status.InProgress });
       expect(res).toBe(true);
+    });
+
+    it('should ignore status updates from an old round', async () => {
+      vi.spyOn(fb, 'getGameFromStore').mockResolvedValueOnce({ ...mockGame, roundId: 2 });
+      const playerSpy = vi.spyOn(fb, 'getPlayersFromStore');
+      const updateSpy = vi.spyOn(fb, 'updateGameDataInStore');
+
+      const res = await updateGameStatus(mockId, 1);
+
+      expect(res).toBe(false);
+      expect(playerSpy).toHaveBeenCalledTimes(0);
+      expect(updateSpy).toHaveBeenCalledTimes(0);
+    });
+
+    it('should not move a finished game back to in progress', async () => {
+      vi.spyOn(fb, 'getGameFromStore').mockResolvedValueOnce({
+        ...mockGame,
+        gameStatus: Status.Finished,
+      });
+      const playerSpy = vi.spyOn(fb, 'getPlayersFromStore');
+      const updateSpy = vi.spyOn(fb, 'updateGameDataInStore');
+
+      const res = await updateGameStatus(mockId);
+
+      expect(res).toBe(true);
+      expect(playerSpy).toHaveBeenCalledTimes(0);
+      expect(updateSpy).toHaveBeenCalledTimes(0);
     });
   });
 });

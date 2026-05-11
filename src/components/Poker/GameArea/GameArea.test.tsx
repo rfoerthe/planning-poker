@@ -1,11 +1,18 @@
 import { render, screen, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import React from 'react';
 import { BrowserRouter } from 'react-router';
+import { vi } from 'vitest';
+import * as gamesService from '../../../service/games';
+import * as playersService from '../../../service/players';
 import { Game, GameType } from '../../../types/game';
 import { Player } from '../../../types/player';
 import { Status } from '../../../types/status';
 import { getCards } from '../../Players/CardPicker/CardConfigs';
 import { GameArea } from './GameArea';
+
+vi.mock('../../../service/games');
+vi.mock('../../../service/players');
 
 const renderWithRouter = (component: React.ReactElement) => {
   return render(<BrowserRouter>{component}</BrowserRouter>);
@@ -31,6 +38,11 @@ describe('GameArea component', () => {
     { id: 'a2', name: 'IronMan', status: Status.Finished, value: 3 },
   ];
   const mockCurrentPlayerId = mockPlayers[0].id;
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
   it('should display players', () => {
     renderWithRouter(
       <GameArea game={mockGame} players={mockPlayers} currentPlayerId={mockCurrentPlayerId} />,
@@ -53,6 +65,36 @@ describe('GameArea component', () => {
     );
 
     expect(screen.queryAllByText('1')).toHaveLength(3);
+  });
+
+  it('should submit the latest pending vote before revealing cards', async () => {
+    vi.spyOn(playersService, 'updatePlayerValue').mockResolvedValue(true);
+    vi.spyOn(gamesService, 'finishGame').mockResolvedValue(true);
+    renderWithRouter(
+      <GameArea
+        game={{ ...mockGame, roundId: 4 }}
+        players={mockPlayers}
+        currentPlayerId={mockGame.createdById}
+      />,
+    );
+    const oneButton = screen.queryAllByText('1')[0].closest('button');
+    const twoButton = screen.queryAllByText('2')[0].closest('button');
+
+    await userEvent.click(oneButton as HTMLButtonElement);
+    await userEvent.click(twoButton as HTMLButtonElement);
+    await userEvent.click(screen.getByTestId('reveal-button'));
+
+    expect(playersService.updatePlayerValue).toHaveBeenCalledWith(
+      mockGame.id,
+      mockGame.createdById,
+      2,
+      expect.any(String),
+      4,
+    );
+    expect(gamesService.finishGame).toHaveBeenCalledWith(mockGame.id, 4);
+    expect(vi.mocked(playersService.updatePlayerValue).mock.invocationCallOrder[0]).toBeLessThan(
+      vi.mocked(gamesService.finishGame).mock.invocationCallOrder[0],
+    );
   });
 
   it('should display T-Shirt median summary when the game is finished', () => {

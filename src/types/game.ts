@@ -14,6 +14,7 @@ export interface Game {
   createdAt: Date;
   updatedAt?: Date;
   isLocked?: boolean;
+  roundId?: number;
 }
 
 export interface NewGame {

@@ -20,6 +20,7 @@ export const addNewGame = async (newGame: NewGame): Promise<string> => {
     name: newGame.createdBy,
     id: ulid(),
     status: Status.NotStarted,
+    roundId: 0,
   };
   const gameData = {
     ...newGame,
@@ -28,6 +29,7 @@ export const addNewGame = async (newGame: NewGame): Promise<string> => {
     createdById: player.id,
     gameStatus: Status.Started,
     isLocked: false,
+    roundId: 0,
   };
   await addGameToStore(gameData.id, gameData);
   await addPlayerToGameInStore(gameData.id, player);
@@ -59,29 +61,55 @@ export const updateGame = async (gameId: string, updatedGame: any): Promise<bool
   return true;
 };
 
-export const resetGame = async (gameId: string) => {
+export const resetGame = async (gameId: string, expectedRoundId?: number) => {
   const game = await getGameFromStore(gameId);
   if (game) {
+    if (expectedRoundId !== undefined && (game.roundId ?? 0) !== expectedRoundId) {
+      return false;
+    }
+    const nextRoundId = (game.roundId ?? 0) + 1;
+    await updateGame(gameId, {
+      average: 0,
+      gameStatus: Status.NotStarted,
+      roundId: nextRoundId,
+    });
+    await resetPlayers(gameId, nextRoundId);
     const updatedGame = {
       average: 0,
       gameStatus: Status.Started,
+      roundId: nextRoundId,
     };
     await updateGame(gameId, updatedGame);
-    await resetPlayers(gameId);
+    return true;
   }
+  return false;
 };
 
-export const finishGame = async (gameId: string) => {
+export const finishGame = async (gameId: string, expectedRoundId?: number) => {
   const game = await getGameFromStore(gameId);
-  const players = await getPlayersFromStore(gameId);
 
-  if (game && players) {
+  if (game) {
+    if (expectedRoundId !== undefined && (game.roundId ?? 0) !== expectedRoundId) {
+      return false;
+    }
+    if (game.gameStatus !== Status.InProgress) {
+      return false;
+    }
+    const roundId = game.roundId ?? 0;
+    const players = await getPlayersFromStore(gameId);
+    if (!players) {
+      return false;
+    }
+    const currentRoundPlayers = players.filter((player) => (player.roundId ?? 0) === roundId);
     const updatedGame = {
-      average: getAverage(players),
+      average: getAverage(currentRoundPlayers),
       gameStatus: Status.Finished,
+      roundId,
     };
     await updateGame(gameId, updatedGame);
+    return true;
   }
+  return false;
 };
 
 export const getAverage = (players: Player[]): number => {
@@ -112,15 +140,25 @@ export const getGameStatus = (players: Player[]): Status => {
   return Status.InProgress;
 };
 
-export const updateGameStatus = async (gameId: string): Promise<boolean> => {
+export const updateGameStatus = async (gameId: string, expectedRoundId?: number): Promise<boolean> => {
   const game = await getGame(gameId);
   if (!game) {
     console.log('Game not found');
     return false;
   }
+  if (expectedRoundId !== undefined && (game.roundId ?? 0) !== expectedRoundId) {
+    return false;
+  }
+  if (game.gameStatus === Status.Finished) {
+    return true;
+  }
   const players = await getPlayersFromStore(gameId);
   if (players) {
-    const status = getGameStatus(players);
+    const currentRoundPlayers =
+      expectedRoundId === undefined
+        ? players
+        : players.filter((player) => (player.roundId ?? 0) === expectedRoundId);
+    const status = getGameStatus(currentRoundPlayers);
     const dataToUpdate = {
       gameStatus: status,
     };

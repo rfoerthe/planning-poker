@@ -1,30 +1,33 @@
 import { Card, CardContent, Grow, Typography } from '@mui/material';
-import React, { useEffect, useState } from 'react';
-import { updatePlayerValue } from '../../../service/players';
+import React from 'react';
 import { Game } from '../../../types/game';
 import { Player } from '../../../types/player';
 import { Status } from '../../../types/status';
-import { CardConfig, getCards, getCardTextColor, getRandomEmoji } from './CardConfigs';
+import { CardConfig, getCards, getCardTextColor } from './CardConfigs';
 import './CardPicker.css';
 
 interface CardPickerProps {
   game: Game;
   players: Player[];
   currentPlayerId: string;
+  randomEmoji?: string;
+  selectedCardValue?: number;
+  onCardPick?: (card: CardConfig) => void;
 }
-export const CardPicker: React.FC<CardPickerProps> = ({ game, players, currentPlayerId }) => {
-  const [randomEmoji, setRandomEmoji] = useState(getRandomEmoji);
-  const playPlayer = (gameId: string, playerId: string, card: CardConfig) => {
-    if (game.gameStatus !== Status.Finished) {
-      void updatePlayerValue(gameId, playerId, card.value, randomEmoji);
+
+export const CardPicker: React.FC<CardPickerProps> = ({
+  game,
+  players,
+  currentPlayerId,
+  randomEmoji = '',
+  selectedCardValue,
+  onCardPick = () => {},
+}) => {
+  const playPlayer = (card: CardConfig) => {
+    if (game.gameStatus === Status.Started || game.gameStatus === Status.InProgress) {
+      onCardPick(card);
     }
   };
-
-  useEffect(() => {
-    if (game.gameStatus === Status.Started) {
-      setRandomEmoji(getRandomEmoji);
-    }
-  }, [game.gameStatus]);
 
   const cards = game.cards?.length ? game.cards : getCards(game.gameType);
 
@@ -46,35 +49,44 @@ export const CardPicker: React.FC<CardPickerProps> = ({ game, players, currentPl
                   variant='outlined'
                   component='button'
                   type='button'
-                  disabled={game.gameStatus === Status.Finished}
-                  onClick={() => playPlayer(game.id, currentPlayerId, card)}
-                  style={getCardStyle(players, currentPlayerId, card, game.gameStatus)}
+                  disabled={
+                    game.gameStatus !== Status.Started && game.gameStatus !== Status.InProgress
+                  }
+                  onClick={() => playPlayer(card)}
+                  style={getCardStyle(
+                    players,
+                    currentPlayerId,
+                    card,
+                    game.gameStatus,
+                    selectedCardValue,
+                  )}
                 >
-                  <CardContent className='CardContent'>
+                  <CardContent className='CardContent' component='span'>
                     {card.value >= 0 && (
                       <>
-                        <Typography className='CardContentTop' variant='caption'>
+                        <Typography className='CardContentTop' component='span' variant='caption'>
                           {card.displayValue}
                         </Typography>
 
                         <Typography
                           className='CardContentMiddle'
+                          component='span'
                           variant={card.displayValue.length < 2 ? 'h4' : 'h5'}
                         >
                           {card.displayValue}
                         </Typography>
-                        <Typography className='CardContentBottom' variant='caption'>
+                        <Typography className='CardContentBottom' component='span' variant='caption'>
                           {card.displayValue}
                         </Typography>
                       </>
                     )}
                     {card.value === -1 && (
-                      <Typography className='CardContentMiddle' variant='h3'>
+                      <Typography className='CardContentMiddle' component='span' variant='h3'>
                         {randomEmoji}
                       </Typography>
                     )}
                     {card.value === -2 && (
-                      <Typography className='CardContentMiddle' variant='h3'>
+                      <Typography className='CardContentMiddle' component='span' variant='h3'>
                         ❓
                       </Typography>
                     )}
@@ -94,6 +106,7 @@ const getCardStyle = (
   playerId: string,
   card: CardConfig,
   gameStatus: Status,
+  optimisticCardValue?: number,
 ) => {
 
   const baseStyle = {
@@ -102,10 +115,11 @@ const getCardStyle = (
   };
 
   const selectedStyle = {
-    marginTop: '-15px',
+    transform: 'translateY(-15px)',
     zIndex: 5,
     border: '2px dashed black',
     boxShadow: '0 0px 12px 0 grey',
+    position: 'relative' as const,
   };
 
   const finishedStyle = {
@@ -115,7 +129,8 @@ const getCardStyle = (
   };
 
   const player = players.find((player) => player.id === playerId);
-  const isSelected = player && player.value !== undefined && player.value === card.value;
+  const selectedValue = optimisticCardValue ?? player?.value;
+  const isSelected = selectedValue !== undefined && selectedValue === card.value;
   const isFinished = gameStatus === Status.Finished;
 
   if (isSelected) {

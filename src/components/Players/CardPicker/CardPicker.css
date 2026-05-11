@@ -34,6 +34,10 @@
   text-align: inherit;
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
+  transition: box-shadow 120ms ease, transform 120ms ease;
+  user-select: none;
+  -webkit-user-select: none;
+  will-change: transform;
 }
 
 .CardPicker:not(:disabled):hover {
@@ -49,6 +53,7 @@
   flex-direction: column;
   justify-content: space-around;
   padding-bottom: 20px !important;
+  pointer-events: none;
 }
 
 .CardContentTop {

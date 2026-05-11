@@ -19,8 +19,9 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { AlertDialog } from '../../AlertDialog/AlertDialog';
 import { InfoDialog } from '../../InfoDialog/InfoDialog';
-import { finishGame, removeGame, resetGame } from '../../../service/games';
+import { removeGame } from '../../../service/games';
 import { Game, GameType } from '../../../types/game';
+import { Status } from '../../../types/status';
 import { isModerator } from '../../../utils/isModerator';
 import './GameController.css';
 import { Clear } from '@mui/icons-material';
@@ -28,12 +29,20 @@ import { Clear } from '@mui/icons-material';
 interface GameControllerProps {
   game: Game;
   currentPlayerId: string;
+  onReveal?: () => Promise<void> | void;
+  onRestart?: () => Promise<void> | void;
 }
 
-export const GameController: React.FC<GameControllerProps> = ({ game, currentPlayerId }) => {
+export const GameController: React.FC<GameControllerProps> = ({
+  game,
+  currentPlayerId,
+  onReveal,
+  onRestart,
+}) => {
   const navigate = useNavigate();
   const [showCopiedMessage, setShowCopiedMessage] = useState(false);
   const [showGameProtected, setShowGameProtected] = useState(false);
+  const [gameActionInProgress, setGameActionInProgress] = useState(false);
   const copyInviteLink = async () => {
     const url = `${window.location.origin}/join/${game.id}`;
 
@@ -53,6 +62,24 @@ export const GameController: React.FC<GameControllerProps> = ({ game, currentPla
   const handleRemoveGame = async (recentGameId: string) => {
     await removeGame(recentGameId);
     window.location.href = '/';
+  };
+
+  const handleReveal = async () => {
+    setGameActionInProgress(true);
+    try {
+      await onReveal?.();
+    } finally {
+      setGameActionInProgress(false);
+    }
+  };
+
+  const handleRestart = async () => {
+    setGameActionInProgress(true);
+    try {
+      await onRestart?.();
+    } finally {
+      setGameActionInProgress(false);
+    }
   };
 
   return (
@@ -140,11 +167,15 @@ export const GameController: React.FC<GameControllerProps> = ({ game, currentPla
                   <div className='GameControllerButtonContainer'>
                     <div className='GameControllerButton'>
                       <IconButton
-                        onClick={() => finishGame(game.id)}
+                        onClick={handleReveal}
                         title={'Finish game by revealing cards'}
                         data-testid='reveal-button'
                         color='primary'
-                        disabled={game.gameStatus === 'Finished' || game.gameStatus === 'Started'}
+                        disabled={
+                          gameActionInProgress ||
+                          game.gameStatus === Status.Finished ||
+                          game.gameStatus !== Status.InProgress
+                        }
                       >
                         <VisibilityIcon fontSize='large' style={{ color: green[500] }} />
                       </IconButton>
@@ -156,9 +187,13 @@ export const GameController: React.FC<GameControllerProps> = ({ game, currentPla
                     <div className='GameControllerButton'>
                       <IconButton
                         data-testid='restart-button'
-                        onClick={() => resetGame(game.id)}
+                        onClick={handleRestart}
                         title={'Start a new game'}
-                        disabled={game.gameStatus === 'Started'}
+                        disabled={
+                          gameActionInProgress ||
+                          game.gameStatus === Status.Started ||
+                          game.gameStatus === Status.NotStarted
+                        }
                       >
                         <RefreshIcon fontSize='large' color='error' />
                       </IconButton>
