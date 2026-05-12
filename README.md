@@ -1,91 +1,80 @@
+# Planning Poker
 
-# Planning Poker App
-
-Free / Open source Scrum/Agile Planning Poker Web App to estimate user stories for the Agile/Scrum teams. Create session and invite team members to estimate user stories efficiently. Intuitive UI/UX for voting the story points, showing team members voting status with emojis(👍 - Voting Done, 🤔 - Yet to Vote). Session Moderator has full control on revealing story points and restarting the session.
+Planning Poker is a free, open-source web application for Scrum and Agile teams to estimate user stories collaboratively. A moderator creates a session, invites participants, collects hidden votes, reveals estimates when the team is ready, and resets the session for the next story.
 
 [![Build and Tests](https://github.com/rfoerthe/planning-poker/actions/workflows/build-and-tests.yml/badge.svg)](https://github.com/rfoerthe/planning-poker/actions/workflows/build-and-tests.yml)
-[![Deploy to Firebase](https://github.com/rfoerthe/planning-poker/actions/workflows/firebase-hosting-pull-request.yml/badge.svg)](https://github.com/rfoerthe/planning-poker/actions/workflows/firebase-hosting-pull-request.yml)
 
-## Home Page
+## Screenshots
 
-![Home](docs/HomePage.jpg)
+![Home page](docs/HomePage.jpg)
 
-## Active Session
+![Active session](docs/ActiveSession.jpg)
 
-![Active Session](docs/ActiveSession.jpg)
+## Highlights
 
-## Features
-
-1. Create new Session (Short Fibonacci, Fibonacci, T-Shirt, T-Shirt & Numbers, Custom)
-2. Join Session
-3. Invite Link
-4. Session controller - Moderator (or all members if allowed) can Reveal and restart the session anytime.
-5. Reveal - Reveal the cards for all users
-6. Voting status - Users Cards show voting status using emojis - 👍 - Voting Done, 🤔 - Yet to Vote
-7. Remove user from session
-8. Delete Session - Moderator can delete the session completely
+- Create and join estimation sessions.
+- Use Short Fibonacci, Fibonacci, T-shirt, T-shirt and number, or custom card decks.
+- Share invite links with participants.
+- Show voting progress without revealing estimates early.
+- Reveal votes and calculate numeric averages.
+- Reset sessions for additional rounds.
+- Remove participants and delete completed sessions.
+- Support multiple locales through translation files.
 
 ## Tech Stack
 
-1. React 19 - Frontend
-2. Material-UI 7 - UI Components
-3. Firestore - Database
+- React 19
+- TypeScript
+- Vite
+- Material UI
+- Firebase Firestore
+- i18next
+- Vitest and Testing Library
+- Firebase Hosting and optional Docker/Nginx runtime
 
-## How to run the app locally for development
+## Quick Start
 
-Pre-req
+```bash
+pnpm install
+cp .env.example .env
+pnpm run dev
+```
 
-- Node.js version 22.0 or higher.
-- pnpm
+Then open:
 
-1. Clone the repo
+```text
+http://localhost:5173
+```
 
-    ```bash
-    git clone https://github.com/rfoerthe/planning-poker.git
-    ```
+Update `.env` with Firebase project values before testing real Firestore-backed sessions. See [Setup & Installation](docs/setup-installation.md) for the complete local, Docker, and Firebase setup.
 
-2. Run `pnpm install` command to install the required npm package.
+## Documentation
 
-3. Copy `.env.example` file as `.env` file and update your firebase connection data
-4. Run `pnpm run dev` to start the app.
-5. Access the app at `http://localhost:5173`.
+| Document | Description |
+| --- | --- |
+| [Documentation Index](docs/README.md) | Map of the documentation set and documentation standards. |
+| [Project Overview](docs/project-overview.md) | Product purpose, scope, audiences, goals, and key terms. |
+| [Technical Architecture](docs/technical-architecture.md) | Components, data flow, Firestore structure, and internal service APIs. |
+| [Setup & Installation](docs/setup-installation.md) | Local setup, environment variables, testing, builds, Docker, and Firebase Hosting. |
+| [Standard Operating Procedures](docs/standard-operating-procedures.md) | Contribution, testing, deployment, release, maintenance, and incident workflows. |
+| [User & Admin Manual](docs/user-admin-manual.md) | User, moderator, and admin workflows for Planning Poker sessions. |
 
-## Creating docker container
+## Common Commands
 
-0. pre-req: Docker installed in your machine
+```bash
+pnpm run dev      # Start the Vite development server
+pnpm test         # Run tests
+pnpm lint         # Run ESLint
+pnpm build        # Build production assets
+pnpm preview      # Preview the production build on port 5000
+```
 
-1. Build docker image
+## Contributing
 
-    ```bash
-    docker build --secret id=myenv,src=.env -t planning-poker .
-    ```
+Planning Poker welcomes focused improvements, bug fixes, documentation updates, and feature work aligned with the project scope. Before opening a pull request, run linting, tests, and a production build.
 
-2. Running the container
+For the full workflow, see [Standard Operating Procedures](docs/standard-operating-procedures.md).
 
-   ```bash
-   docker run -d -p 8080:80 --name planning-poker planning-poker
-   ```
+## License
 
-3. Access the app from local container using <http://localhost:8080>
-
-## Development Guidelines
-
-1. Keep it simple as much as possible
-2. Add required unit tests
-3. Use strong type always
-4. Use functional and hooks based approach for components
-5. Avoid adding new colors
-6. Use css until we have scss in place
-7. Don't duplicate code and use service folder to keep non-component/shared codes
-
-## Pending features open to development
-
-1. Add timer
-2. Export options
-3. Preserve history of voting and show it in session
-4. Provide option to enter user story name
-
-## Tech Debts
-
-1. Add Semantic Release to generate changelog and release notes
-2. Add missing unit tests for services
+This project is licensed under the terms in [LICENSE](LICENSE).
