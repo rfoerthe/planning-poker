@@ -50,31 +50,32 @@ export const CardPicker: React.FC<CardPickerProps> = ({ game, players, currentPl
                   onClick={() => playPlayer(game.id, currentPlayerId, card)}
                   style={getCardStyle(players, currentPlayerId, card, game.gameStatus)}
                 >
-                  <CardContent className='CardContent'>
+                  <CardContent className='CardContent' component='span'>
                     {card.value >= 0 && (
                       <>
-                        <Typography className='CardContentTop' variant='caption'>
+                        <Typography component='span' className='CardContentTop' variant='caption'>
                           {card.displayValue}
                         </Typography>
 
                         <Typography
+                          component='span'
                           className='CardContentMiddle'
                           variant={card.displayValue.length < 2 ? 'h4' : 'h5'}
                         >
                           {card.displayValue}
                         </Typography>
-                        <Typography className='CardContentBottom' variant='caption'>
+                        <Typography component='span' className='CardContentBottom' variant='caption'>
                           {card.displayValue}
                         </Typography>
                       </>
                     )}
                     {card.value === -1 && (
-                      <Typography className='CardContentMiddle' variant='h3'>
+                      <Typography component='span' className='CardContentMiddle' variant='h3'>
                         {randomEmoji}
                       </Typography>
                     )}
                     {card.value === -2 && (
-                      <Typography className='CardContentMiddle' variant='h3'>
+                      <Typography component='span' className='CardContentMiddle' variant='h3'>
                         ❓
                       </Typography>
                     )}
