@@ -27,14 +27,7 @@
   "engines": {
     "pnpm": ">=9.0.0"
   },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "@firebase/util",
-      "esbuild",
-      "protobufjs"
-    ]
-  },
-  "packageManager": "pnpm@11.0.9",
+  "packageManager": "pnpm@11.1.1",
   "scripts": {
     "dev": "vite",
     "start": "vite",

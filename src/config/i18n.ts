@@ -11,6 +11,9 @@ i18n
     fallbackLng: 'en',
     fallbackNS: 'US',
     debug: false,
+    backend: {
+      loadPath: `/locales/{{lng}}/{{ns}}.json?v=${import.meta.env.PACKAGE_VERSION}`,
+    },
     react: {
       useSuspense: false,
     },
