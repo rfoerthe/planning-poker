@@ -15,7 +15,6 @@ describe('Players component', () => {
     ],
     createdBy: 'someone',
     createdAt: new Date(),
-    average: 0,
     createdById: 'abc',
     gameStatus: Status.InProgress,
   };

@@ -1,11 +1,26 @@
-import { render, screen, within } from '@testing-library/react';
+import { act, render, screen, within } from '@testing-library/react';
 import React from 'react';
 import { BrowserRouter } from 'react-router';
+import { vi } from 'vitest';
+import { finishGame, stopTimer } from '../../../service/games';
+import { presenceHeartbeatMs, presenceTimeoutMs } from '../../../service/presence';
 import { Game, GameType } from '../../../types/game';
 import { Player } from '../../../types/player';
 import { Status } from '../../../types/status';
 import { getCards } from '../../Players/CardPicker/CardConfigs';
 import { GameArea } from './GameArea';
+
+vi.mock('../../../service/games', () => ({
+  finishGame: vi.fn(),
+  stopTimer: vi.fn(),
+  removeGame: vi.fn(),
+  resetGame: vi.fn(),
+  startTimer: vi.fn(),
+}));
+vi.mock('../../../service/presence', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('../../../service/presence')>();
+  return { ...actual, updatePresence: vi.fn() };
+});
 
 const renderWithRouter = (component: React.ReactElement) => {
   return render(<BrowserRouter>{component}</BrowserRouter>);
@@ -22,7 +37,6 @@ describe('GameArea component', () => {
     ],
     createdBy: 'someone',
     createdAt: new Date(),
-    average: 0,
     createdById: 'abc',
     gameStatus: Status.InProgress,
   };
@@ -108,6 +122,152 @@ describe('GameArea component', () => {
     expect(summary.getByText('CRITICAL SPREAD')).toBeInTheDocument();
     expect(summary.getByText('Discussion required!')).toBeInTheDocument();
     expect(summary.getByText('Spread: 5 | σ: 2.5 | Ratio: 300x')).toBeInTheDocument();
+  });
+
+  describe('presence indicators', () => {
+    beforeEach(() => {
+      vi.useFakeTimers({ shouldAdvanceTime: true });
+    });
+
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    const buildPlayers = (): Player[] => [
+      { id: 'a1', name: 'Anna', status: Status.NotStarted, lastSeenAt: new Date() },
+      { id: 'a2', name: 'Ben', status: Status.NotStarted, lastSeenAt: new Date() },
+      { id: 'a3', name: 'Ghost', status: Status.NotStarted },
+    ];
+
+    it('should mark participants that are refreshing and skip leftovers', () => {
+      renderWithRouter(
+        <GameArea game={mockGame} players={buildPlayers()} currentPlayerId='a1' />,
+      );
+
+      expect(screen.getAllByTestId('presence-indicator')).toHaveLength(2);
+    });
+
+    it('should drop a participant that stopped refreshing, without new data', () => {
+      renderWithRouter(
+        <GameArea game={mockGame} players={buildPlayers()} currentPlayerId='a1' />,
+      );
+
+      act(() => {
+        vi.advanceTimersByTime(presenceTimeoutMs + presenceHeartbeatMs);
+      });
+
+      // Only the own card remains: it counts as active regardless of timestamps.
+      expect(screen.getAllByTestId('presence-indicator')).toHaveLength(1);
+    });
+  });
+
+  describe('expired round timer', () => {
+    const expiredGame = (): Game => ({
+      ...mockGame,
+      gameStatus: Status.InProgress,
+      timerEndsAt: new Date(Date.now() - 1000),
+    });
+
+    beforeEach(() => {
+      vi.useFakeTimers({ shouldAdvanceTime: true });
+    });
+
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    it('should reveal the round even when older participants are gone', () => {
+      // The reported failure: the participant who voted is the only one still
+      // present, while the earlier entries belong to closed browsers.
+      const players: Player[] = [
+        { id: 'a1', name: 'Ghost', status: Status.NotStarted, value: -3 },
+        { id: 'a2', name: 'Ghost Two', status: Status.NotStarted, value: -3 },
+        { id: 'a3', name: 'Anna', status: Status.Finished, value: 3 },
+      ];
+
+      renderWithRouter(<GameArea game={expiredGame()} players={players} currentPlayerId='a3' />);
+
+      act(() => {
+        vi.advanceTimersByTime(50);
+      });
+
+      expect(finishGame).toHaveBeenCalledWith(mockGame.id);
+    });
+
+    it('should let an idle participant take over after its turn', () => {
+      const players: Player[] = [
+        { id: 'a1', name: 'Ghost', status: Status.NotStarted, value: -3 },
+        { id: 'a2', name: 'Still Here', status: Status.NotStarted, value: -3 },
+      ];
+
+      renderWithRouter(<GameArea game={expiredGame()} players={players} currentPlayerId='a2' />);
+
+      act(() => {
+        vi.advanceTimersByTime(500);
+      });
+      expect(finishGame).not.toHaveBeenCalled();
+
+      act(() => {
+        vi.advanceTimersByTime(400);
+      });
+      expect(finishGame).toHaveBeenCalledWith(mockGame.id);
+    });
+
+    it('should not act again once the round is revealed', () => {
+      const players: Player[] = [{ id: 'a1', name: 'Anna', status: Status.Finished, value: 3 }];
+
+      renderWithRouter(
+        <GameArea
+          game={{ ...expiredGame(), gameStatus: Status.Finished }}
+          players={players}
+          currentPlayerId='a1'
+        />,
+      );
+
+      act(() => {
+        vi.advanceTimersByTime(5000);
+      });
+
+      expect(finishGame).not.toHaveBeenCalled();
+    });
+
+    it('should only stop the timer when nobody voted', () => {
+      const players: Player[] = [{ id: 'a1', name: 'Anna', status: Status.NotStarted, value: -3 }];
+
+      renderWithRouter(
+        <GameArea
+          game={{ ...expiredGame(), gameStatus: Status.Started }}
+          players={players}
+          currentPlayerId='a1'
+        />,
+      );
+
+      act(() => {
+        vi.advanceTimersByTime(50);
+      });
+
+      expect(stopTimer).toHaveBeenCalledWith(mockGame.id);
+      expect(finishGame).not.toHaveBeenCalled();
+    });
+
+    it('should not act while the timer is still running', () => {
+      const players: Player[] = [{ id: 'a1', name: 'Anna', status: Status.Finished, value: 3 }];
+
+      renderWithRouter(
+        <GameArea
+          game={{ ...mockGame, timerEndsAt: new Date(Date.now() + 30000) }}
+          players={players}
+          currentPlayerId='a1'
+        />,
+      );
+
+      act(() => {
+        vi.advanceTimersByTime(5000);
+      });
+
+      expect(finishGame).not.toHaveBeenCalled();
+      expect(stopTimer).not.toHaveBeenCalled();
+    });
   });
 
   it('should not display T-Shirt median summary before the game is finished', () => {

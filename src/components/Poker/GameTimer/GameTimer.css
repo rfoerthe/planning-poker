@@ -1,0 +1,19 @@
+.GameTimerIndicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+}
+
+.GameTimerValue {
+  font-variant-numeric: tabular-nums;
+}
+
+.GameTimerValueRunning {
+  font-weight: 700;
+}
+
+.GameTimerMenuLabel {
+  font-variant-numeric: tabular-nums;
+  margin-right: 12px;
+}

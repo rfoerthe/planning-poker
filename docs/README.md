@@ -11,6 +11,7 @@ This folder contains the working documentation set for Planning Poker, a free an
 | [Setup & Installation](./setup-installation.md) | Provides local setup, environment configuration, build, test, and Docker instructions. | Developers, QA, release engineers |
 | [Standard Operating Procedures](./standard-operating-procedures.md) | Defines repeatable workflows for testing, contribution, deployment, releases, and maintenance. | Developers, maintainers, project managers |
 | [User & Admin Manual](./user-admin-manual.md) | Explains how end users and moderators create, join, manage, and delete sessions. | Users, moderators, support teams |
+| [Changelog](../CHANGELOG.md) | Lists released versions and their user-facing changes. | All audiences |
 
 ## Project Snapshot
 

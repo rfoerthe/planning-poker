@@ -53,19 +53,19 @@ describe('Toolbar component', () => {
     renderWithTheme(<Toolbar />);
     const newSession = screen.getByTestId('toolbar.menu.newSession');
     await userEvent.click(newSession);
-    expect(mockNavigate).toBeCalledWith('/');
+    expect(mockNavigate).toHaveBeenCalledWith('/');
   });
   it('should navigate to Join session page when Join Session button is clicked', async () => {
     renderWithTheme(<Toolbar />);
     const newSession = screen.getByTestId('toolbar.menu.joinSession');
     await userEvent.click(newSession);
-    expect(mockNavigate).toBeCalledWith('/join');
+    expect(mockNavigate).toHaveBeenCalledWith('/join');
   });
   it('should navigate to home page when Title is clicked clicked', async () => {
     renderWithTheme(<Toolbar />);
     const title = screen.getByText('Planning Poker');
     await userEvent.click(title);
-    expect(mockNavigate).toBeCalledWith('/');
+    expect(mockNavigate).toHaveBeenCalledWith('/');
   });
   it('should navigate to github page when Github icon is clicked clicked', async () => {
     const view = renderWithTheme(<Toolbar />);
@@ -85,6 +85,6 @@ describe('Toolbar component', () => {
     await userEvent.click(screen.getByTestId('toolbar.theme.button'));
     await userEvent.click(screen.getByTestId('toolbar.theme.dark'));
 
-    expect(onThemePreferenceChange).toBeCalledWith('dark');
+    expect(onThemePreferenceChange).toHaveBeenCalledWith('dark');
   });
 });

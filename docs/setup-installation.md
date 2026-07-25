@@ -83,6 +83,14 @@ pnpm lint
 
 Run linting before opening a pull request.
 
+## Run Type Checking
+
+```bash
+pnpm typecheck
+```
+
+`pnpm build` does not type check, so run this separately. CI runs it on every push and pull request.
+
 ## Build For Production
 
 ```bash

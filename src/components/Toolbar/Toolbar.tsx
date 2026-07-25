@@ -166,8 +166,10 @@ export const Toolbar = ({
                 anchorEl={themeMenuAnchorEl}
                 open={isThemeMenuOpen}
                 onClose={handleThemeMenuClose}
-                MenuListProps={{
-                  'aria-labelledby': 'theme-button',
+                slotProps={{
+                  list: {
+                    'aria-labelledby': 'theme-button',
+                  },
                 }}
               >
                 {themeOptions.map(({ value, labelKey, Icon }) => (

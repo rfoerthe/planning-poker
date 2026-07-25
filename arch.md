@@ -17,7 +17,7 @@ This project is a free, open-source Scrum/Agile Planning Poker web application d
 - **App Entry (`src/index.tsx`, `src/App.tsx`):** Bootstraps the React app, sets up theming, routing, and global providers.
 - **Pages:** Each major view (Home, Game, Join, About, Guide, Examples, DeleteOldGames) is a separate page component under `src/pages/`.
 - **Components:** Reusable UI elements (Toolbar, Players, Poker, Dialogs, etc.) are organized under `src/components/`.
-- **Services:** Business logic for games, players, and theming is encapsulated in `src/service/`.
+- **Services:** Business logic for games, players, theming, and vote statistics is encapsulated in `src/service/`.
 - **Repository Layer:** All Firestore and local storage interactions are abstracted in `src/repository/`.
 - **Types:** Shared TypeScript types for games, players, and status are defined in `src/types/`.
 

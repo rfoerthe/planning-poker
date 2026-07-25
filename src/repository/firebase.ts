@@ -101,6 +101,12 @@ export const updatePlayerInStore = async (gameId: string, player: Player) => {
   return true;
 };
 
+export const updatePlayerPresenceInStore = async (gameId: string, playerId: string) => {
+  const docRef = doc(db, gamesCollectionName, gameId, playersCollectionName, playerId);
+  await updateDoc(docRef, { lastSeenAt: new Date() });
+  return true;
+};
+
 export const removeGameFromStore = async (gameId: string) => {
   await deleteDoc(doc(db, gamesCollectionName, gameId));
 

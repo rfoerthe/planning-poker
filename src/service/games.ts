@@ -24,7 +24,6 @@ export const addNewGame = async (newGame: NewGame): Promise<string> => {
   const gameData = {
     ...newGame,
     id: ulid(),
-    average: 0,
     createdById: player.id,
     gameStatus: Status.Started,
     isLocked: false,
@@ -63,8 +62,8 @@ export const resetGame = async (gameId: string) => {
   const game = await getGameFromStore(gameId);
   if (game) {
     const updatedGame = {
-      average: 0,
       gameStatus: Status.Started,
+      timerEndsAt: null,
     };
     await updateGame(gameId, updatedGame);
     await resetPlayers(gameId);
@@ -73,30 +72,29 @@ export const resetGame = async (gameId: string) => {
 
 export const finishGame = async (gameId: string) => {
   const game = await getGameFromStore(gameId);
-  const players = await getPlayersFromStore(gameId);
 
-  if (game && players) {
+  if (game) {
     const updatedGame = {
-      average: getAverage(players),
       gameStatus: Status.Finished,
+      timerEndsAt: null,
     };
     await updateGame(gameId, updatedGame);
   }
 };
 
-export const getAverage = (players: Player[]): number => {
-  let values = 0;
-  let numberOfPlayersPlayed = 0;
-  players.forEach((player) => {
-    if (player.status === Status.Finished && player.value !== undefined && player.value >= 0) {
-      values = values + player.value;
-      numberOfPlayersPlayed++;
-    }
+/**
+ * Starts an optional round timer. The end time is shared through Firestore so
+ * every participant counts down towards the same moment.
+ */
+export const startTimer = async (gameId: string, durationSeconds: number) => {
+  await updateGameDataInStore(gameId, {
+    timerDurationSeconds: durationSeconds,
+    timerEndsAt: new Date(Date.now() + durationSeconds * 1000),
   });
-  if (numberOfPlayersPlayed === 0) {
-    return 0;
-  }
-  return Math.round(values / numberOfPlayersPlayed);
+};
+
+export const stopTimer = async (gameId: string) => {
+  await updateGameDataInStore(gameId, { timerEndsAt: null });
 };
 
 export const getGameStatus = (players: Player[]): Status => {

@@ -126,7 +126,7 @@ export const getTshirtSummary = (
       const range = label ? tshirtEffortRanges[label] : undefined;
       const rank = label ? tshirtRankMap[label] : undefined;
 
-      return range && card && rank ? [{ value: card.value, label, range, rank }] : [];
+      return label && range && card && rank ? [{ value: card.value, label, range, rank }] : [];
     })
     .sort((a, b) => a.value - b.value);
 

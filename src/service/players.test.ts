@@ -43,7 +43,6 @@ describe('Players service', () => {
   const mockGame = {
     id: 'game-123',
     name: 'Mock Game',
-    average: 3,
     gameStatus: Status.Started,
     cards: [
       { value: 1, displayValue: '1', color: 'red' },

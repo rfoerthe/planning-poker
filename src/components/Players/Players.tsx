@@ -9,13 +9,28 @@ interface PlayersProps {
   game: Game;
   players: Player[];
   currentPlayerId: string;
+  outlierPlayerIds?: Set<string>;
+  activePlayerIds?: Set<string>;
 }
-export const Players: React.FC<PlayersProps> = ({ game, players, currentPlayerId }) => {
+export const Players: React.FC<PlayersProps> = ({
+  game,
+  players,
+  currentPlayerId,
+  outlierPlayerIds,
+  activePlayerIds,
+}) => {
   return (
     <Grow in={true} timeout={800}>
       <div className='PlayersContainer'>
         {players.map((player: Player) => (
-          <PlayerCard key={player.id} game={game} player={player} currentPlayerId={currentPlayerId} />
+          <PlayerCard
+            key={player.id}
+            game={game}
+            player={player}
+            currentPlayerId={currentPlayerId}
+            isOutlier={outlierPlayerIds?.has(player.id)}
+            isActive={activePlayerIds?.has(player.id)}
+          />
         ))}
       </div>
     </Grow>

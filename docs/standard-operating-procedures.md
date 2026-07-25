@@ -22,10 +22,11 @@ This document defines repeatable operational workflows for Planning Poker. Use i
 4. Make the smallest coherent change.
 5. Add or update tests for behavior changes.
 6. Run `pnpm lint`.
-7. Run `pnpm test`.
-8. Run `pnpm build`.
-9. Update documentation when behavior, setup, or operations change.
-10. Open a pull request with a summary, screenshots for UI changes, and test evidence.
+7. Run `pnpm typecheck`.
+8. Run `pnpm test`.
+9. Run `pnpm build`.
+10. Update documentation when behavior, setup, or operations change.
+11. Open a pull request with a summary, screenshots for UI changes, and test evidence.
 
 ### Pull Request Checklist
 
@@ -37,6 +38,7 @@ This document defines repeatable operational workflows for Planning Poker. Use i
 - [ ] New UI follows existing Material UI and CSS conventions.
 - [ ] Tests cover new or changed logic.
 - [ ] `pnpm lint` passes.
+- [ ] `pnpm typecheck` passes.
 - [ ] `pnpm test` passes.
 - [ ] `pnpm build` passes.
 - [ ] Documentation is updated, or no documentation change is needed.
@@ -57,19 +59,25 @@ This document defines repeatable operational workflows for Planning Poker. Use i
    pnpm lint
    ```
 
-3. Run tests:
+3. Run type checking:
+
+   ```bash
+   pnpm typecheck
+   ```
+
+4. Run tests:
 
    ```bash
    pnpm test
    ```
 
-4. Build the app:
+5. Build the app:
 
    ```bash
    pnpm build
    ```
 
-5. For UI changes, manually verify:
+6. For UI changes, manually verify:
 
    - Home page loads.
    - A game can be created.
@@ -92,9 +100,10 @@ The workflow:
 4. Restores pnpm cache.
 5. Runs `pnpm install --frozen-lockfile`.
 6. Runs `pnpm lint`.
-7. Runs `pnpm test`.
-8. Runs `pnpm build`.
-9. Uploads `dist` as a build artifact.
+7. Runs `pnpm typecheck`.
+8. Runs `pnpm test`.
+9. Runs `pnpm build`.
+10. Uploads `dist` as a build artifact.
 
 `[Placeholder: Add status badge ownership and required check policy.]`
 
@@ -104,6 +113,8 @@ The workflow:
 
 - The pull request is approved.
 - CI checks are passing.
+- The `version` field in `package.json` is raised according to semantic versioning.
+- [CHANGELOG.md](../CHANGELOG.md) has an entry for the new version.
 - Firebase project access is confirmed.
 - Production environment variables are available.
 - Firestore security rules are reviewed for the release.

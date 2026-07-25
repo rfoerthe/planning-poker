@@ -15,9 +15,17 @@ interface PlayerCardProps {
   game: Game;
   player: Player;
   currentPlayerId: string;
+  isOutlier?: boolean;
+  isActive?: boolean;
 }
 
-export const PlayerCard: React.FC<PlayerCardProps> = ({ game, player, currentPlayerId }) => {
+export const PlayerCard: React.FC<PlayerCardProps> = ({
+  game,
+  player,
+  currentPlayerId,
+  isOutlier,
+  isActive,
+}) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editName, setEditName] = useState(player.name);
 
@@ -67,7 +75,9 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({ game, player, currentPla
   return (
     <Card
       variant='outlined'
-      className='PlayerCard'
+      className={isOutlier ? 'PlayerCard PlayerCardOutlier' : 'PlayerCard'}
+      title={isOutlier ? 'Outlier: far away from the team median' : undefined}
+      data-testid={isOutlier ? 'outlier-player-card' : undefined}
       style={{
         backgroundColor: getCardColor(game, player.value),
         color: getCardTextColor(getCardColor(game, player.value)),
@@ -145,6 +155,15 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({ game, player, currentPla
           {getCardValue(player, game)}
         </Typography>
       </CardContent>
+      {isActive && (
+        <span
+          className='PlayerCardPresence'
+          role='img'
+          aria-label='Active in this session'
+          title='Active in this session'
+          data-testid='presence-indicator'
+        />
+      )}
     </Card>
   );
 };

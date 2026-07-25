@@ -27,7 +27,6 @@ describe('GameController component', () => {
     ],
     createdBy: 'someone',
     createdAt: new Date(),
-    average: 0,
     createdById: 'abc',
     gameStatus: Status.InProgress,
   };
@@ -54,50 +53,19 @@ describe('GameController component', () => {
 
     expect(screen.getByText(`${mockGame.gameStatus} ⏱️`)).toBeInTheDocument();
   });
-  it('should display game average value', () => {
-    render(<GameController game={mockGame} currentPlayerId={mockCurrentPlayerId} />);
+  it('should not display a game average, whatever the deck', () => {
+    // The estimate summary derives the average from the current votes and is
+    // the only place that shows it.
+    [GameType.ShortFibonacci, GameType.TShirt, GameType.TShirtAndNumber, GameType.Custom].forEach(
+      (gameType) => {
+        const { unmount } = render(
+          <GameController game={{ ...mockGame, gameType }} currentPlayerId={mockCurrentPlayerId} />,
+        );
 
-    expect(screen.getByText(mockGame.average)).toBeInTheDocument();
-  });
-  it('should display game average for non TShirtGameType', () => {
-    render(
-      <GameController
-        game={{ ...mockGame, gameType: GameType.ShortFibonacci }}
-        currentPlayerId={mockCurrentPlayerId}
-      />,
+        expect(screen.queryByText('Average:')).not.toBeInTheDocument();
+        unmount();
+      },
     );
-
-    expect(screen.getByText('Average:')).toBeInTheDocument();
-  });
-  it('should not display game average for TShirt GameType', () => {
-    render(
-      <GameController
-        game={{ ...mockGame, gameType: GameType.TShirt }}
-        currentPlayerId={mockCurrentPlayerId}
-      />,
-    );
-
-    expect(screen.queryByText('Average:')).not.toBeInTheDocument();
-  });
-  it('should not display game average for TShirt & Numbers GameType', () => {
-    render(
-      <GameController
-        game={{ ...mockGame, gameType: GameType.TShirtAndNumber }}
-        currentPlayerId={mockCurrentPlayerId}
-      />,
-    );
-
-    expect(screen.queryByText('Average:')).not.toBeInTheDocument();
-  });
-  it('should not display game average for Custom GameType', () => {
-    render(
-      <GameController
-        game={{ ...mockGame, gameType: GameType.Custom }}
-        currentPlayerId={mockCurrentPlayerId}
-      />,
-    );
-
-    expect(screen.queryByText('Average:')).not.toBeInTheDocument();
   });
   it('should display exit option', () => {
     render(<GameController game={mockGame} currentPlayerId={mockCurrentPlayerId} />);
