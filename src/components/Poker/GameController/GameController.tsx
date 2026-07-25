@@ -20,17 +20,23 @@ import { useNavigate } from 'react-router';
 import { AlertDialog } from '../../AlertDialog/AlertDialog';
 import { InfoDialog } from '../../InfoDialog/InfoDialog';
 import { finishGame, removeGame, resetGame } from '../../../service/games';
-import { Game, GameType } from '../../../types/game';
+import { Game } from '../../../types/game';
 import { isModerator } from '../../../utils/isModerator';
+import { GameTimer } from '../GameTimer/GameTimer';
 import './GameController.css';
 import { Clear } from '@mui/icons-material';
 
 interface GameControllerProps {
   game: Game;
   currentPlayerId: string;
+  remainingMs?: number;
 }
 
-export const GameController: React.FC<GameControllerProps> = ({ game, currentPlayerId }) => {
+export const GameController: React.FC<GameControllerProps> = ({
+  game,
+  currentPlayerId,
+  remainingMs,
+}) => {
   const navigate = useNavigate();
   const [showCopiedMessage, setShowCopiedMessage] = useState(false);
   const [showGameProtected, setShowGameProtected] = useState(false);
@@ -73,29 +79,6 @@ export const GameController: React.FC<GameControllerProps> = ({ game, currentPla
                   <Typography variant='subtitle1'>
                     {game.gameStatus} {getGameStatusIcon(game.gameStatus)}
                   </Typography>
-                  {game.gameType !== GameType.TShirt &&
-                    game.gameType !== GameType.TShirtAndNumber &&
-                    game.gameType !== GameType.Custom && (
-                      <>
-                        <Divider
-                          className='GameControllerDivider'
-                          orientation='vertical'
-                          flexItem
-                        />
-                        <Typography
-                          variant='subtitle1'
-                          className='GameControllerCardHeaderAverageLabel'
-                        >
-                          Average:
-                        </Typography>
-                        <Typography
-                          variant='subtitle1'
-                          className='GameControllerCardHeaderAverageValue'
-                        >
-                          {game.average || 0}
-                        </Typography>
-                      </>
-                    )}
                   <Divider className='GameControllerDivider' orientation='vertical' flexItem />
                   {game.isLocked ? (
                     <div
@@ -167,6 +150,15 @@ export const GameController: React.FC<GameControllerProps> = ({ game, currentPla
                   </div>
                 </>
               )}
+              <GameTimer
+                game={game}
+                remainingMs={remainingMs}
+                canManageTimer={isModerator(
+                  game.createdById,
+                  currentPlayerId,
+                  game.isAllowMembersToManageSession,
+                )}
+              />
               <div className='GameControllerButtonContainer'>
                 <div className='GameControllerButton'>
                   <IconButton

@@ -22,7 +22,6 @@ describe('CardPicker component', () => {
       { value: 3, displayValue: 'xl', color: 'green' },
     ],
     gameType: GameType.Fibonacci,
-    average: 0,
     createdById: 'abc',
     gameStatus: Status.InProgress,
   };

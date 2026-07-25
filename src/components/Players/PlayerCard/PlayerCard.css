@@ -9,6 +9,22 @@
   margin-top: 40px;
   transition: 0.3s;
   border-radius: 4px;
+  position: relative;
+}
+
+.PlayerCardPresence {
+  position: absolute;
+  right: 10px;
+  bottom: 8px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  /* Dark enough to stay readable on the pastel green of a revealed card. */
+  background-color: #1e8e3e;
+}
+
+.PlayerCardOutlier {
+  box-shadow: 0 0 0 2px #d66a63;
 }
 
 .PlayerCardTitle {

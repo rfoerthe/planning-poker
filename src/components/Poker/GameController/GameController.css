@@ -111,16 +111,6 @@
   padding: 0 22px;
 }
 
-.GameControllerCardHeaderAverageLabel {
-  padding-right: 6px !important;
-}
-
-.GameControllerCardHeaderAverageValue {
-  color: inherit;
-  font-weight: bold;
-  padding-left: 0 !important;
-}
-
 .GameControllerDeleteAction {
   align-items: center;
   align-self: stretch;

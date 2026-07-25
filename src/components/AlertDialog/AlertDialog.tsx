@@ -51,7 +51,7 @@ export const AlertDialog: React.FC<AlertDialogProps> = ({ children, title, messa
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button data-testid="alert-dialog-cancel" onClick={handleClose} color="default">
+          <Button data-testid="alert-dialog-cancel" onClick={handleClose} color="inherit">
             Cancel
           </Button>
           <Button data-testid="alert-dialog-confirm" onClick={handleConfirm} color="primary" autoFocus>

@@ -55,13 +55,66 @@ Common status indicators:
 - Voting done
 - Yet to vote
 
+### Presence Indicator
+
+A small green dot in the lower right corner of a participant card means that this participant currently has the session open.
+
+- The dot appears within moments of somebody joining.
+- It disappears about two minutes after a participant closes the session.
+- Your own card always shows the dot.
+- A card without a dot is an entry whose browser is gone. Moderators can remove such entries.
+
+The two-minute delay is deliberate. Browsers slow down background tabs, and a participant reading the story in another window is still taking part.
+
+### Round Timer
+
+The round timer is optional. Sessions that do not want time pressure simply never start it, and everything works as before.
+
+1. The moderator selects the timer control in the session controls.
+2. The moderator picks a duration: 0:30, 1:00, 1:30, 2:00, 3:00, or 5:00. The last used duration is marked in the menu.
+3. All participants see the remaining time counting down.
+4. During the last ten seconds a large countdown appears across the screen. It does not block anything; participants can still pick or change a card while it counts.
+5. When the timer expires, the votes are revealed automatically.
+
+Notes:
+
+- The moderator can stop the timer at any time by selecting the timer control again. Stopping does not reveal the votes.
+- Revealing or restarting the round also ends a running timer.
+- If nobody voted when the timer expires, the round is not revealed; the timer simply stops. This matches the Reveal button, which is unavailable for a round without votes.
+- Participants who are still listed but whose browser is closed do not hold up the reveal. Any participant who is still connected performs it, within about four seconds of the timer expiring.
+- The remaining time may differ by a few seconds between participants when their device clocks differ. The reveal itself happens once, for everybody at the same time.
+
 ### Reveal
 
 When the moderator reveals the session:
 
 - Submitted cards become visible.
-- Numeric estimates are used to calculate the session average.
+- Numeric decks get a result card with average, median, and spread.
 - The team can discuss differences and decide on a final estimate.
+
+### Estimate Result
+
+For numeric decks (Short Fibonacci, Fibonacci), a result card appears below the moderator controls after the reveal. It answers the three questions a team usually asks next.
+
+| Value | Meaning | How to use it |
+| --- | --- | --- |
+| Average | Mean of all submitted estimates, with one decimal. | Read together with the nearest card; the raw mean is often not a card of the deck. |
+| Nearest card | The deck card closest to the average. Ties go to the higher card. | Use it as the proposal for the final estimate. |
+| Median | Middle estimate of the round. | More robust than the average when single votes are extreme. |
+| Range | Lowest and highest submitted card. | Shows how far apart the team is. |
+| Consensus status | Rating of the spread across card positions. | See the table below. |
+| Distribution | How often each card was chosen, plus participants who voted without an estimate. | Shows whether the team splits into camps or has one clear favourite. |
+| Outliers | Participants whose card is at least two positions away from the median card. | Ask these participants first; they usually know something the others do not. |
+
+Outlier cards are also framed in red in the participant list.
+
+| Consensus status | Meaning | Recommended action |
+| --- | --- | --- |
+| CONSENSUS | The team agrees, or is one card apart. | Accept the nearest card and move on. |
+| MODERATE SPREAD | The estimates are two card positions apart. | Ask for a short clarification, then decide. |
+| CRITICAL SPREAD | The estimates are three or more card positions apart, or scatter widely. | Discuss the story, then revote. |
+
+The result card is calculated in the browser after each reveal and is not stored. T-shirt sessions keep their own T-shirt result card; the coffee and question cards count as "without estimate" and never influence the numbers.
 
 ### Reset
 
@@ -76,6 +129,7 @@ When the moderator resets the session:
 | Control | Purpose | Recommended Use |
 | --- | --- | --- |
 | Reveal | Shows all votes and completes the round. | Use after all or most participants have voted. |
+| Timer | Starts or stops an optional round timer that reveals the votes when it expires. | Use to timebox discussion-heavy rounds; leave it unused otherwise. |
 | Reset | Clears votes for another round. | Use after discussion or before estimating the next story. |
 | Remove player | Removes a participant from the session. | Use for duplicate, inactive, or incorrect entries. |
 | Delete session | Removes the session. | Use when the session is complete and no longer needed. |
@@ -159,6 +213,10 @@ After deployment, an admin should verify:
 | Recent session is missing | Browser storage may have been cleared; use the invite link again. |
 | Cards are not visible | Refresh the page and confirm the session is active. |
 | Moderator controls are missing | Confirm you are the session creator or that member management is enabled. |
+| The timer shows a different time than on another screen | Device clocks differ. The automatic reveal is still triggered once for the whole session. |
+| The timer expired but nothing was revealed | Nobody had voted. Start the round again or reveal manually after the first vote. |
+| Stale participants clutter the session | Cards without a green dot are entries whose browser is gone. Remove them as a moderator. They do not block the automatic reveal. |
+| A participant is present but has no green dot | Ask them to reload the session. The dot returns within moments. |
 
 ## Accessibility And Usability Notes
 

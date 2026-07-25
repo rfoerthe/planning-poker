@@ -6,6 +6,8 @@ export interface Player {
   status: Status;
   value?: number;
   emoji?: string;
+  /** Refreshed by the participant's own browser while the session is open. */
+  lastSeenAt?: Date | null;
 }
 
 export interface PlayerGame {

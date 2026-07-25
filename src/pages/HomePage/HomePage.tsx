@@ -25,7 +25,7 @@ export const HomePage = () => {
             <Slide direction='down' in={true} timeout={1000}>
               <div className='HomePageContainer'>
                 <Typography variant='h5'>{t('HomePage.heroSection.title')}</Typography>
-                <Box padding={2}>
+                <Box sx={{ p: 2 }}>
                   <LazyLoadImage
                     loading='lazy'
                     alt={t('HomePage.heroSection.title')}
@@ -93,7 +93,7 @@ export const HomePage = () => {
           <Grid size={{ xs: 12, sm: 12, lg: 6 }}>
             <Slide in={true} direction='up' timeout={1500}>
               <div className='HomePageContainer'>
-                <Box padding={2}>
+                <Box sx={{ p: 2 }}>
                   <img
                     className='SessionImage'
                     alt='Session controller'

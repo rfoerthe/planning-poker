@@ -1,6 +1,6 @@
 {
   "name": "planning-poker",
-  "version": "2.0.5",
+  "version": "2.2.0",
   "type": "module",
   "private": true,
   "dependencies": {
@@ -36,7 +36,8 @@
     "preview": "vite preview --port 5000",
     "clean": "rimraf dist",
     "test": "vitest run",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit"
   },
   "husky": {
     "hooks": {

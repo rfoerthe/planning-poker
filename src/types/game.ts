@@ -4,7 +4,6 @@ import { Status } from './status';
 export interface Game {
   id: string;
   name: string;
-  average: number;
   gameStatus: Status;
   gameType?: GameType | GameType.Fibonacci;
   isAllowMembersToManageSession?: boolean;
@@ -14,6 +13,10 @@ export interface Game {
   createdAt: Date;
   updatedAt?: Date;
   isLocked?: boolean;
+  /** Last duration a moderator picked, kept as the default for the next round. */
+  timerDurationSeconds?: number;
+  /** Set while a round timer runs, cleared on reveal, restart, and stop. */
+  timerEndsAt?: Date | null;
 }
 
 export interface NewGame {

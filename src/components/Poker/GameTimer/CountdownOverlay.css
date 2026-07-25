@@ -1,0 +1,48 @@
+.CountdownOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Voting must stay possible while the countdown runs. */
+  pointer-events: none;
+}
+
+.CountdownOverlayValue {
+  color: #d64545;
+  font-size: min(40vh, 40vw);
+  font-variant-numeric: tabular-nums;
+  font-weight: 800;
+  line-height: 1;
+  opacity: 0.85;
+  text-shadow: 0 0 24px rgb(0 0 0 / 25%);
+  animation: CountdownPulse 1s ease-out;
+}
+
+.DarkTheme .CountdownOverlayValue {
+  color: #ff6b6b;
+}
+
+@keyframes CountdownPulse {
+  0% {
+    opacity: 0.95;
+    transform: scale(1.35);
+  }
+
+  35% {
+    opacity: 0.85;
+    transform: scale(1);
+  }
+
+  100% {
+    opacity: 0.6;
+    transform: scale(0.95);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .CountdownOverlayValue {
+    animation: none;
+  }
+}

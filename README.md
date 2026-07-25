@@ -16,7 +16,10 @@ Planning Poker is a free, open-source web application for Scrum and Agile teams 
 - Use Short Fibonacci, Fibonacci, T-shirt, T-shirt and number, or custom card decks.
 - Share invite links with participants.
 - Show voting progress without revealing estimates early.
-- Reveal votes and calculate numeric averages.
+- Reveal votes and read the result off a single summary card.
+- Analyse revealed numeric rounds with median, range, vote distribution, the nearest matching card, a consensus rating, and highlighted outliers.
+- Run an optional round timer (0:30 to 5:00) that reveals the votes automatically and shows a full-screen countdown for the last ten seconds.
+- See who is currently taking part through a presence indicator on each participant card.
 - Reset sessions for additional rounds.
 - Remove participants and delete completed sessions.
 - Support multiple locales through translation files.
@@ -52,6 +55,7 @@ Update `.env` with Firebase project values before testing real Firestore-backed 
 
 | Document | Description |
 | --- | --- |
+| [Changelog](CHANGELOG.md) | Released versions and their user-facing changes. |
 | [Documentation Index](docs/README.md) | Map of the documentation set and documentation standards. |
 | [Project Overview](docs/project-overview.md) | Product purpose, scope, audiences, goals, and key terms. |
 | [Technical Architecture](docs/technical-architecture.md) | Components, data flow, Firestore structure, and internal service APIs. |
@@ -65,6 +69,7 @@ Update `.env` with Firebase project values before testing real Firestore-backed 
 pnpm run dev      # Start the Vite development server
 pnpm test         # Run tests
 pnpm lint         # Run ESLint
+pnpm typecheck    # Run the TypeScript compiler without emitting output
 pnpm build        # Build production assets
 pnpm preview      # Preview the production build on port 5000
 ```

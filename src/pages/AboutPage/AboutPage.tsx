@@ -49,7 +49,7 @@ export const AboutPlanningPokerContent = () => {
         <Grid size={{ xs: 12, sm: 12, lg: 6 }}>
           <Slide in={true} direction='up' timeout={1000}>
             <div className='HomePageContainer'>
-              <Box padding={2}>
+              <Box sx={{ p: 2 }}>
                 <LazyLoadImage alt='What' src={What}></LazyLoadImage>
               </Box>
             </div>
@@ -62,7 +62,7 @@ export const AboutPlanningPokerContent = () => {
         <Grid size={{ xs: 12, sm: 12, lg: 6 }}>
           <Slide in={true} direction='up' timeout={1000}>
             <div className='HomePageContainer'>
-              <Box padding={2}>
+              <Box sx={{ p: 2 }}>
                 <LazyLoadImage alt='How' src={How}></LazyLoadImage>
               </Box>
             </div>
@@ -138,7 +138,7 @@ export const AboutPlanningPokerContent = () => {
         <Grid size={{ xs: 12, sm: 12, lg: 6 }}>
           <Slide in={true} direction='up' timeout={1000}>
             <div className='HomePageContainer'>
-              <Box padding={2}>
+              <Box sx={{ p: 2 }}>
                 <LazyLoadImage alt='Benefits' src={Benefits}></LazyLoadImage>
               </Box>
             </div>
@@ -151,7 +151,7 @@ export const AboutPlanningPokerContent = () => {
         <Grid size={{ xs: 12, sm: 12, lg: 6 }}>
           <Slide in={true} direction='up' timeout={1000}>
             <div className='HomePageContainer'>
-              <Box padding={2}>
+              <Box sx={{ p: 2 }}>
                 <LazyLoadImage alt='BestPractices' src={BestPractices}></LazyLoadImage>
               </Box>
             </div>

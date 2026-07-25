@@ -26,6 +26,9 @@ Planning Poker allows users to:
 - Vote on an estimate.
 - See who has voted before results are revealed.
 - Reveal all submitted estimates.
+- Review a revealed numeric round through average, nearest card, median, range, vote distribution, consensus rating, and highlighted outliers.
+- Run an optional round timer that reveals the votes when it expires.
+- Tell present participants apart from entries whose browser is gone.
 - Reset a session for the next story.
 - Remove participants from a session.
 - Delete sessions when they are no longer needed.
@@ -53,7 +56,6 @@ Planning Poker allows users to:
 
 ### Future Enhancements
 
-- Timer support for estimation rounds.
 - Export options for voting results.
 - Voting history across rounds.
 - User story title or description entry.
@@ -95,8 +97,12 @@ Project sponsors, open-source users, and evaluators who need to understand the p
 | Player | A participant stored under a game's `players` subcollection. |
 | Moderator | The user who created the session, or another participant if member management is enabled. |
 | Card deck | The configured set of estimation values available in a game. |
-| Reveal | The moderator action that exposes all submitted votes and computes an average when applicable. |
+| Reveal | The moderator action that exposes all submitted votes. |
 | Reset | The moderator action that clears player votes for the next estimation round. |
+| Consensus status | A rating of how far apart the submitted cards of a revealed round are. |
+| Round timer | An optional countdown started by a moderator that reveals the round when it expires. |
+| Presence | Whether a participant currently has the session open, shown as a green dot on the participant card. |
+| Outlier | A vote at least two card positions away from the median card of the round. |
 
 ## Open Questions
 

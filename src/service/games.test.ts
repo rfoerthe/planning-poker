@@ -7,9 +7,10 @@ import {
   updateGame,
   resetGame,
   finishGame,
-  getAverage,
   getGameStatus,
   updateGameStatus,
+  startTimer,
+  stopTimer,
 } from './games';
 import * as fb from '../repository/firebase';
 import * as players from './players';
@@ -37,7 +38,6 @@ describe('games service', () => {
   const mockGame = {
     id: 'fee-fii-foo-fum',
     name: 'Cadburys',
-    average: 2,
     gameStatus: Status.NotStarted,
     gameType: GameType.Fibonacci,
     cards: [
@@ -81,7 +81,6 @@ describe('games service', () => {
     const resGame = {
       ...fakeGame,
       id: mockUlid,
-      average: 0,
       createdById: mockUlid,
       gameStatus: Status.Started,
       isLocked: false,
@@ -138,7 +137,7 @@ describe('games service', () => {
 
   describe('reset the game', () => {
     it('should update the game and reset the players', async () => {
-      const expectGame = { average: 0, gameStatus: Status.Started };
+      const expectGame = { gameStatus: Status.Started, timerEndsAt: null };
       vi.spyOn(fb, 'getGameFromStore').mockResolvedValueOnce(mockGame);
       const updateSpy = vi.spyOn(fb, 'updateGameDataInStore');
       const playerSpy = vi.spyOn(players, 'resetPlayers');
@@ -162,7 +161,7 @@ describe('games service', () => {
   });
 
   describe('finish the game', () => {
-    it('update the game with the average and finished status', async () => {
+    it('should update the game with the finished status', async () => {
       vi.spyOn(fb, 'getGameFromStore').mockResolvedValueOnce(mockGame);
       vi.spyOn(fb, 'getPlayersFromStore').mockResolvedValueOnce(mockPlayers);
       const spy = vi.spyOn(fb, 'updateGameDataInStore');
@@ -173,6 +172,16 @@ describe('games service', () => {
         mockId,
         expect.objectContaining({ gameStatus: Status.Finished }),
       );
+    });
+
+    it('should clear a running round timer', async () => {
+      vi.spyOn(fb, 'getGameFromStore').mockResolvedValueOnce(mockGame);
+      vi.spyOn(fb, 'getPlayersFromStore').mockResolvedValueOnce(mockPlayers);
+      const spy = vi.spyOn(fb, 'updateGameDataInStore');
+
+      await finishGame(mockId);
+
+      expect(spy).toHaveBeenCalledWith(mockId, expect.objectContaining({ timerEndsAt: null }));
     });
 
     it("should not touch the DB if the game doesn't exist", async () => {
@@ -186,43 +195,28 @@ describe('games service', () => {
     });
   });
 
-  describe('get the average vote', () => {
-    it("should provide the average of players' votes", () => {
-      const expected = Math.round(
-        (finishedPlayers[0].value + finishedPlayers[1].value + finishedPlayers[2].value) / 3,
-      );
 
-      const res = getAverage(finishedPlayers);
+  describe('round timer', () => {
+    it('should store the end time and the chosen duration', async () => {
+      vi.useFakeTimers();
+      vi.setSystemTime(new Date('2026-07-25T10:00:00.000Z'));
+      const spy = vi.spyOn(fb, 'updateGameDataInStore');
 
-      expect(res).toEqual(expected);
+      await startTimer(mockId, 90);
+
+      expect(spy).toHaveBeenCalledWith(mockId, {
+        timerDurationSeconds: 90,
+        timerEndsAt: new Date('2026-07-25T10:01:30.000Z'),
+      });
+      vi.useRealTimers();
     });
 
-    it('should not calculate players who have not finished', () => {
-      const res = getAverage(mockPlayers);
+    it('should clear the end time when the timer is stopped', async () => {
+      const spy = vi.spyOn(fb, 'updateGameDataInStore');
 
-      expect(res).toEqual(mockPlayers[0].value);
-    });
+      await stopTimer(mockId);
 
-    it('should include zero-value votes', () => {
-      const players = [
-        { name: 'Zero', id: 'zero', status: Status.Finished, value: 0 },
-        { name: 'Five', id: 'five', status: Status.Finished, value: 5 },
-      ];
-
-      const res = getAverage(players);
-
-      expect(res).toEqual(3);
-    });
-
-    it('should return zero when there are no finished votes', () => {
-      const players = [
-        { name: 'One', id: 'one', status: Status.NotStarted },
-        { name: 'Two', id: 'two', status: Status.Started, value: 8 },
-      ];
-
-      const res = getAverage(players);
-
-      expect(res).toEqual(0);
+      expect(spy).toHaveBeenCalledWith(mockId, { timerEndsAt: null });
     });
   });
 

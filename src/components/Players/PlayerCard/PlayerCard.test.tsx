@@ -17,7 +17,6 @@ describe('PlayerCard component', () => {
     ],
     createdBy: 'someone',
     createdAt: new Date(),
-    average: 0,
     createdById: 'abc',
     gameStatus: Status.InProgress,
   };
@@ -144,6 +143,28 @@ describe('PlayerCard component', () => {
 
     await userEvent.click(screen.getByTestId('remove-button'));
     expect(playerService.removePlayer).toHaveBeenCalledWith(finishedGame.id, coffeePlayer.id);
+  });
+
+  it('should mark an active participant with the presence indicator', () => {
+    render(
+      <PlayerCard
+        game={mockGame}
+        player={mockPlayer}
+        currentPlayerId={mockCurrentPlayerId}
+        isActive={true}
+      />,
+    );
+
+    expect(screen.getByTestId('presence-indicator')).toBeInTheDocument();
+    expect(screen.getByRole('img', { name: 'Active in this session' })).toBeInTheDocument();
+  });
+
+  it('should not mark a participant that is no longer present', () => {
+    render(
+      <PlayerCard game={mockGame} player={mockPlayer} currentPlayerId={mockCurrentPlayerId} />,
+    );
+
+    expect(screen.queryByTestId('presence-indicator')).not.toBeInTheDocument();
   });
 
   it('should rename current player with inline editing', async () => {

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
 import './LanguageControl.css';
 
 import getUnicodeFlagIcon from 'country-flag-icons/unicode';
@@ -15,9 +15,9 @@ export const LanguageControl: React.FC = () => {
     setLanguage(i18n.language);
   }, [i18n.language]);
 
-  const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-    setLanguage(event.target.value as string);
-    i18n.changeLanguage(event.target.value as string);
+  const handleChange = (event: SelectChangeEvent<string>) => {
+    setLanguage(event.target.value);
+    void i18n.changeLanguage(event.target.value);
   };
 
   return (

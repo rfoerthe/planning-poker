@@ -41,7 +41,7 @@ flowchart LR
 | `src/App.tsx` | Top-level application routing and global composition. |
 | `src/pages/` | Page-level views such as Home, Game, Join, Guide, About, Examples, and Delete Old Games. |
 | `src/components/` | Reusable UI components and Planning Poker feature components. |
-| `src/service/` | Business logic for games, players, and theming. |
+| `src/service/` | Business logic for games, players, theming, and vote statistics. |
 | `src/repository/` | Persistence adapters for Firebase Firestore and browser local storage. |
 | `src/types/` | Shared TypeScript interfaces and enums. |
 | `src/config/i18n.ts` | Localization configuration. |
@@ -70,8 +70,10 @@ flowchart LR
 | `RecentGames` | Displays locally cached recent sessions. |
 | `GameArea` | Coordinates active session UI. |
 | `GameController` | Moderator controls such as reveal, reset, and delete. |
-| `Players` and `PlayerCard` | Displays participants, voting state, and revealed values. |
+| `Players` and `PlayerCard` | Displays participants, voting state, revealed values, presence indicators, and outlier markers. |
 | `CardPicker` | Allows a participant to select an estimate. |
+| `NumericSummary` | Shows statistics of a revealed round for numeric decks. |
+| `GameTimer` and `CountdownOverlay` | Optional round timer control and the full-screen countdown for the last ten seconds. |
 | `TshirtSummary` and `TshirtLegend` | Support T-shirt estimation workflows. |
 | `Toolbar`, `Footer`, `LanguageControl` | Shared application shell controls. |
 
@@ -85,7 +87,6 @@ A game represents one estimation session.
 interface Game {
   id: string;
   name: string;
-  average: number;
   gameStatus: Status;
   gameType?: GameType;
   isAllowMembersToManageSession?: boolean;
@@ -95,8 +96,12 @@ interface Game {
   createdAt: Date;
   updatedAt?: Date;
   isLocked?: boolean;
+  timerDurationSeconds?: number;
+  timerEndsAt?: Date | null;
 }
 ```
+
+`timerEndsAt` is the shared end of a running round timer and is `null` or absent whenever no timer runs. `timerDurationSeconds` keeps the last duration a moderator picked and is only used as the preselected menu entry. Firestore returns both timestamps as `Timestamp` values, so readers must go through `toDate` in the timer service.
 
 ### Player
 
@@ -109,8 +114,11 @@ interface Player {
   status: Status;
   value?: number;
   emoji?: string;
+  lastSeenAt?: Date | null;
 }
 ```
+
+`lastSeenAt` is refreshed by the participant's own browser while the session is open. It is the only evidence that an entry still belongs to somebody, because a player document outlives the browser that created it.
 
 ### PlayerGame
 
@@ -145,7 +153,6 @@ interface PlayerGame {
 games/{gameId}
   id
   name
-  average
   gameStatus
   gameType
   isAllowMembersToManageSession
@@ -155,6 +162,8 @@ games/{gameId}
   createdAt
   updatedAt
   isLocked
+  timerDurationSeconds
+  timerEndsAt
 
 games/{gameId}/players/{playerId}
   id
@@ -162,6 +171,7 @@ games/{gameId}/players/{playerId}
   status
   value
   emoji
+  lastSeenAt
 ```
 
 ## Local Storage Structure
@@ -222,8 +232,26 @@ sequenceDiagram
 3. `updateGameStatus` derives game status from player statuses.
 4. Firestore listeners update connected browsers.
 5. The moderator reveals the game through `finishGame`.
-6. `finishGame` calculates the average from finished players with non-negative values.
-7. Game status changes to `Finished`.
+6. Game status changes to `Finished`.
+7. `GameArea` derives the round statistics through `getNumericSummary` for numeric decks and renders `NumericSummary`.
+
+No result of a round is persisted. Every figure is derived from the player documents on each render, so it cannot drift from the votes it describes. Storing a result would mean writing it at one moment in time; a vote arriving in that same moment would leave a stored value that no longer matches any card on the table.
+
+### Round Timer
+
+The round timer is optional. Nothing counts down until a moderator picks a duration, and stopping the timer or leaving it unused keeps the previous workflow unchanged.
+
+1. A moderator picks a duration in `GameTimer`; `startTimer` stores `timerEndsAt` and `timerDurationSeconds`.
+2. Firestore listeners deliver `timerEndsAt` to every participant, so all browsers count down towards the same moment.
+3. `useCountdown` ticks locally four times per second; `GameArea` passes the remaining time to `GameController` and renders `CountdownOverlay` for the last ten seconds.
+4. On expiry, every browser is a candidate, but they act one after another: `getTimerTakeoverDelayMs` gives each participant a turn, 750 ms apart and capped at 4 s.
+5. The browser whose turn comes first calls `finishGame` when the round has votes (`In Progress`), otherwise `stopTimer`. This matches the rule of the Reveal button, which is disabled for a round without votes.
+6. The resulting status change reaches the other browsers before their own turn and cancels it, so the normal case still produces a single write.
+7. `finishGame`, `resetGame`, and `stopTimer` all clear `timerEndsAt`.
+
+The staggering is what makes the reveal robust. A player document survives the browser that created it, because the app has no presence tracking, so any fixed choice of a single responsible browser can be handed to a participant who is no longer there. Participants who voted in the current round take their turn first: their browser provably still talks to Firestore.
+
+Clock differences between participants shift the visible countdown by the offset between their system clocks. The reveal itself is unaffected, because it is triggered once and distributed through Firestore.
 
 ## Service API Structures
 
@@ -238,8 +266,10 @@ The app does not expose a REST API. The service layer acts as the internal appli
 | `streamPlayers(id)` | Returns Firestore collection reference for real-time player data. | Consumed by UI listeners. |
 | `getGame(id)` | Fetches one game. | Returns `undefined` when missing. |
 | `updateGame(gameId, updatedGame)` | Updates selected game fields. | Delegates to Firestore `updateDoc`. |
-| `resetGame(gameId)` | Resets average, game status, and player statuses. | Used between estimation rounds. |
-| `finishGame(gameId)` | Reveals game and calculates average. | Uses finished player values. |
+| `resetGame(gameId)` | Resets game status and player statuses. | Used between estimation rounds, clears a running timer. |
+| `finishGame(gameId)` | Reveals the round. | Sets the status to `Finished` and clears a running timer. Results are derived, not stored. |
+| `startTimer(gameId, durationSeconds)` | Starts the optional round timer. | Stores the shared end time and the chosen duration. |
+| `stopTimer(gameId)` | Stops a running round timer. | Clears the shared end time without revealing. |
 | `removeGame(gameId)` | Deletes an unlocked game and local cache reference. | Does nothing when `isLocked` is true. |
 | `deleteOldGames()` | Removes games older than the configured threshold. | Current threshold is six months. |
 
@@ -256,6 +286,58 @@ The app does not expose a REST API. The service layer acts as the internal appli
 | `getCurrentPlayerId(gameId)` | Finds current browser's player ID for a game. | Reads local cache. |
 | `isCurrentPlayerInGame(gameId)` | Checks whether cached player still exists. | Removes stale cache entries. |
 | `resetPlayers(gameId)` | Clears player votes for a new round. | Sets `value` to `-3` and status to `Not Started`. |
+
+### Statistics Service
+
+`src/service/statistics.ts` derives read-only round statistics for numeric decks. It has no persistence and no side effects.
+
+| Function | Purpose | Notes |
+| --- | --- | --- |
+| `isNumericGameType(gameType)` | Marks decks whose card values are real estimates. | False for T-shirt, T-shirt and numbers, and custom decks. |
+| `getNumericSummary(game, players)` | Full statistics of a revealed round. | Returns `undefined` unless the game status is `Finished`, so vote details cannot leak before the reveal. |
+| `getNearestCard(numericCards, value)` | Card closest to a value. | Ties resolve to the higher card to avoid systematic under-estimation. |
+| `getMedian(sortedValues)` | Median of an ascending list. | Averages both middle values for even counts. |
+| `formatNumber(value)` | Display helper. | Integers stay plain, other values get one decimal. |
+
+Spread, consensus, and outliers are calculated on **card ranks**, not on raw values, because the distance between two Fibonacci values grows with their size.
+
+| Consensus status | Condition | Meaning |
+| --- | --- | --- |
+| `consensus` | Rank spread of 0 or 1 | Estimate plausible. |
+| `moderate-spread` | Rank spread of 2 | Short clarification recommended. |
+| `critical-spread` | Rank spread of 3 or more, or more than two votes with a rank standard deviation above 1.5 | Discussion required. |
+
+A vote is reported as an outlier when its card is at least two positions away from the median card and at least three participants voted.
+
+### Presence Service
+
+`src/service/presence.ts` decides which participants are currently taking part; `src/utils/usePresenceHeartbeat.ts` keeps the own entry current.
+
+| Function or constant | Purpose | Notes |
+| --- | --- | --- |
+| `presenceHeartbeatMs` | Refresh interval of the own entry. | 30 s. One small write per open session. |
+| `presenceTimeoutMs` | How long an entry stays active without a refresh. | 120 s. Generous, because browsers throttle timers in background tabs. |
+| `isPlayerActive(player, nowMs, currentPlayerId)` | Whether one participant is present. | The own entry always counts as active; this browser is rendering the session. |
+| `getActivePlayerIds(players, nowMs, currentPlayerId)` | Present participants of a session. | Consumed by `PlayerCard` for the presence indicator. |
+| `updatePresence(gameId, playerId)` | Writes `lastSeenAt`. | Failures are swallowed; the next heartbeat corrects them. |
+| `usePresenceHeartbeat(gameId, playerId)` | Runs the heartbeat for the open session. | Beats on mount, on the interval, and when the tab becomes visible again. |
+
+Entries written before presence tracking existed have no `lastSeenAt` and are therefore shown as inactive until their browser refreshes them.
+
+### Timer Service
+
+`src/service/timer.ts` holds the shared timer rules; `src/utils/useCountdown.ts` provides the ticking React hook.
+
+| Function or constant | Purpose | Notes |
+| --- | --- | --- |
+| `timerDurationsInSeconds` | Selectable round durations. | `30, 60, 90, 120, 180, 300`. |
+| `countdownThresholdSeconds` | Start of the prominent countdown. | Ten seconds. |
+| `toDate(value)` | Converts stored points in time. | Accepts `Date`, Firestore `Timestamp`, number, and string. |
+| `getTimerEndsAt(game)` | Reads the running timer end from a game. | `undefined` when no timer runs. |
+| `getRemainingSeconds(remainingMs)` | Whole seconds left. | Rounds up, never below zero. |
+| `formatClock(totalSeconds)` | `m:ss` display format. | Used for the menu and the running timer. |
+| `getTimerTakeoverDelayMs(players, playerId)` | How long this browser waits before acting on an expired timer. | Voters first, then by player ID; 750 ms per turn, capped at 4 s. Unknown players act last. |
+| `useCountdown(endsAt)` | Milliseconds left, ticking four times per second. | Returns `undefined` without a running timer. |
 
 ## Configuration
 
