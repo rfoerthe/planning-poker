@@ -33,6 +33,7 @@
     "start": "vite",
     "build": "vite build",
     "deploy": "rimraf dist && vite build && firebase deploy",
+    "preview-deploy": "rimraf dist && vite build && firebase hosting:channel:deploy preview --expires 14d",
     "preview": "vite preview --port 5000",
     "clean": "rimraf dist",
     "test": "vitest run",
