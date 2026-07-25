@@ -1,22 +1,14 @@
-.PlayersContainer {
-  padding: 20px;
-  display: flex;
-  flex-wrap: wrap;
-  flex-direction: row;
-  overflow: auto;
-  justify-content: center;
-  margin: auto;
+.PlayersGrid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fill, minmax(132px, 1fr));
+  /* Room for the outlier badge that sits above the seat. */
+  padding-top: 9px;
 }
 
-.Player {
-  padding: 20px;
-  border: 1px solid var(--color-border);
-  min-width: 150px;
-  display: flex;
-  flex-direction: column;
-  font-size: medium;
-}
-
-h4 {
-  text-align: center;
+@media (max-width: 480px) {
+  .PlayersGrid {
+    gap: 10px;
+    grid-template-columns: repeat(auto-fill, minmax(106px, 1fr));
+  }
 }

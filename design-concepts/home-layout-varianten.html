@@ -1,0 +1,431 @@
+<!doctype html>
+<html lang="de" data-theme="dark">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Startseite — Layout-Varianten</title>
+<style>
+/* Aurora-Tokens, identisch zu src/styles/styles.css */
+:root {
+  --font-sans: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-num: ui-monospace, 'SF Mono', 'JetBrains Mono', Menlo, monospace;
+  --radius-sm: 8px; --radius-md: 12px; --radius-lg: 16px; --radius-xl: 22px; --radius-full: 999px;
+  --ease: cubic-bezier(.32,.72,0,1);
+}
+html[data-theme="light"] {
+  --app-bg:#fafafa; --surface:#fff; --surface-sunken:#f2f3f5; --surface-hover:#f4f4f6;
+  --border:#e6e6ea; --border-soft:#efeff2;
+  --text:#16161a; --text-muted:#63636e; --text-subtle:#9a9aa5;
+  --accent:#5b5bd6; --accent-soft:#eeeefc; --accent-strong:#4a4ac4; --accent-contrast:#fff;
+  --success:#17876a; --success-soft:#e5f5ef; --warning:#b4690e; --warning-soft:#fdf1e0;
+  --shadow-sm:0 1px 2px rgb(16 16 24/5%);
+  --shadow-md:0 2px 4px rgb(16 16 24/4%),0 8px 24px rgb(16 16 24/6%);
+  --shadow-lg:0 4px 8px rgb(16 16 24/5%),0 24px 48px rgb(16 16 24/10%);
+}
+html[data-theme="dark"] {
+  --app-bg:#0a0a0c; --surface:#141417; --surface-sunken:#0f0f12; --surface-hover:#1c1c21;
+  --border:#26262c; --border-soft:#1d1d22;
+  --text:#f2f2f4; --text-muted:#a0a0ac; --text-subtle:#6b6b78;
+  --accent:#8b8bf5; --accent-soft:#1d1d3a; --accent-strong:#a5a5fa; --accent-contrast:#0a0a0c;
+  --success:#4ecfa6; --success-soft:#102b23; --warning:#e0a052; --warning-soft:#2e2113;
+  --shadow-sm:0 1px 2px rgb(0 0 0/40%);
+  --shadow-md:0 2px 4px rgb(0 0 0/30%),0 8px 24px rgb(0 0 0/35%);
+  --shadow-lg:0 4px 8px rgb(0 0 0/30%),0 24px 48px rgb(0 0 0/50%);
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  background: var(--app-bg); color: var(--text); font-family: var(--font-sans);
+  font-size: 15px; line-height: 1.5; -webkit-font-smoothing: antialiased;
+}
+button { font: inherit; color: inherit; cursor: pointer; }
+
+/* ---------- Gerüst des Prototyps ---------- */
+.Bar {
+  position: sticky; top: 0; z-index: 50;
+  display: flex; align-items: center; gap: 16px;
+  padding: 10px 20px; border-bottom: 1px solid var(--border);
+  background: color-mix(in srgb, var(--app-bg) 88%, transparent);
+  backdrop-filter: blur(18px);
+}
+.Bar h1 { margin: 0; font-size: 14px; font-weight: 620; letter-spacing: -.01em; }
+.Switcher { display: flex; gap: 4px; margin-left: auto; flex-wrap: wrap; }
+.Switcher button {
+  border: 1px solid var(--border); background: var(--surface); color: var(--text-muted);
+  border-radius: var(--radius-full); padding: 6px 13px; font-size: 12.5px; font-weight: 550;
+}
+.Switcher button.on { background: var(--accent); border-color: transparent; color: var(--accent-contrast); }
+
+.Note {
+  max-width: 1320px; margin: 28px auto 0; padding: 0 20px;
+}
+.Note h2 { font-size: 17px; font-weight: 640; letter-spacing: -.02em; margin: 0 0 6px; }
+.Note p { color: var(--text-muted); font-size: 13.5px; margin: 0; max-width: 78ch; line-height: 1.6; }
+.Note .Tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
+.Tag {
+  font-size: 11.5px; font-weight: 560; padding: 3px 9px; border-radius: var(--radius-full);
+  background: var(--surface-sunken); color: var(--text-muted);
+}
+.Tag.good { background: var(--success-soft); color: var(--success); }
+.Tag.warn { background: var(--warning-soft); color: var(--warning); }
+
+.Stage { max-width: 1320px; margin: 0 auto; padding: 20px; }
+.Frame {
+  border: 1px dashed var(--border); border-radius: var(--radius-xl);
+  padding: 32px 24px; position: relative;
+}
+.Frame::before {
+  content: attr(data-label); position: absolute; top: -9px; left: 20px;
+  background: var(--app-bg); padding: 0 8px;
+  font-size: 10.5px; font-weight: 620; letter-spacing: .08em; text-transform: uppercase; color: var(--text-subtle);
+}
+.variant { display: none; }
+.variant.on { display: block; }
+
+/* ---------- Bausteine aus der echten App ---------- */
+.HeroBadge {
+  display: inline-flex; align-items: center; gap: 7px; padding: 4px 12px;
+  border-radius: var(--radius-full); background: var(--accent-soft); color: var(--accent-strong);
+  font-size: .78rem; font-weight: 550; margin-bottom: 22px;
+}
+.HeroBadge i { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.HeroTitle { font-size: clamp(2rem, 3.6vw, 3rem); font-weight: 680; letter-spacing: -.035em; line-height: 1.05; margin: 0 0 16px; }
+.HeroTitle em { font-style: normal; color: var(--text-subtle); }
+.HeroLede { color: var(--text-muted); font-size: 1.02rem; line-height: 1.6; margin: 0 0 30px; max-width: 46ch; }
+.HeroFeatures { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; max-width: 46ch; }
+.HeroFeatures li { display: flex; gap: 11px; font-size: .9rem; color: var(--text-muted); line-height: 1.55; }
+.HeroFeatures b { color: var(--text); font-weight: 570; }
+.tick {
+  flex: 0 0 18px; height: 18px; margin-top: 3px; border-radius: 50%;
+  background: var(--success-soft); color: var(--success);
+  display: grid; place-items: center; font-size: .62rem; font-weight: 700;
+}
+.HeroFeatures.compact { grid-template-columns: 1fr 1fr; gap: 12px 24px; max-width: none; }
+
+.Panel {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-xl); box-shadow: var(--shadow-md);
+}
+.PanelHead { padding: 22px 24px 0; }
+.PanelHead h3 { margin: 0 0 4px; font-size: 1.12rem; font-weight: 620; letter-spacing: -.02em; }
+.PanelHead p { margin: 0; font-size: .85rem; color: var(--text-muted); }
+.PanelBody { padding: 22px 24px 24px; display: grid; gap: 16px; }
+
+.Field { display: grid; gap: 6px; }
+.Label { font-size: .78rem; font-weight: 550; color: var(--text-muted); }
+.Input {
+  height: 42px; border-radius: var(--radius-md); border: 1px solid var(--border);
+  background: var(--app-bg); color: var(--text-subtle); font-size: .92rem;
+  display: flex; align-items: center; padding: 0 12px;
+}
+
+/* Deck: heutige Variante (5 Zeilen) */
+.OptionList { display: grid; gap: 7px; }
+.OptionRow {
+  display: flex; align-items: center; gap: 11px; padding: 11px 13px;
+  border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--app-bg);
+}
+.OptionRow.sel { border-color: var(--accent); background: var(--accent-soft); }
+.dot { flex: 0 0 16px; height: 16px; border-radius: 50%; border: 1.5px solid var(--border); background: var(--surface); display: grid; place-items: center; }
+.OptionRow.sel .dot { border-color: var(--accent); }
+.OptionRow.sel .dot::after { content: ''; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); }
+.OptionName { font-size: .9rem; font-weight: 540; white-space: nowrap; }
+.OptionVals { margin-left: auto; font-family: var(--font-num); font-size: .74rem; color: var(--text-subtle); padding-left: 10px; text-align: right; }
+
+/* Deck: kompakte Variante (Chips) */
+.DeckChips { display: flex; flex-wrap: wrap; gap: 7px; }
+.Chip {
+  border: 1px solid var(--border); background: var(--app-bg); color: var(--text-muted);
+  border-radius: var(--radius-md); padding: 8px 13px; font-size: .84rem; font-weight: 540; white-space: nowrap;
+}
+.Chip.sel { border-color: var(--accent); background: var(--accent-soft); color: var(--accent-strong); font-weight: 570; }
+.DeckHint { font-family: var(--font-num); font-size: .72rem; color: var(--text-subtle); margin: 6px 0 0; }
+
+.SwitchRow { display: flex; align-items: center; gap: 11px; padding: 2px; }
+.Sw { width: 36px; height: 21px; border-radius: var(--radius-full); background: var(--accent); position: relative; flex: 0 0 auto; }
+.Sw::after { content: ''; position: absolute; top: 2px; left: 17px; width: 17px; height: 17px; border-radius: 50%; background: #fff; }
+.SwitchRow span { font-size: .86rem; }
+.SwitchRow small { display: block; color: var(--text-subtle); font-size: .76rem; }
+
+.Btn {
+  height: 42px; border-radius: var(--radius-md); border: 0; background: var(--accent);
+  color: var(--accent-contrast); font-weight: 560; font-size: .9rem; width: 100%;
+}
+.BtnGhost { background: transparent; border: 1px solid var(--border); color: var(--text); }
+
+.SectionLabel { font-size: .72rem; font-weight: 600; letter-spacing: .07em; text-transform: uppercase; color: var(--text-subtle); }
+
+.RecentList { display: grid; gap: 10px; margin: 12px 0 0; padding: 0; list-style: none; }
+.RecentCard {
+  display: flex; align-items: center; gap: 12px; padding: 13px 14px;
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg);
+}
+.RecentCard .sq {
+  flex: 0 0 auto; width: 34px; height: 34px; border-radius: 10px;
+  background: var(--surface-sunken); color: var(--accent); display: grid; place-items: center; font-size: .95rem;
+}
+.RecentCard .t { font-size: .9rem; font-weight: 550; }
+.RecentCard .s { font-size: .78rem; color: var(--text-subtle); }
+.RecentCard .del { margin-left: auto; color: var(--text-subtle); font-size: 14px; }
+
+/* ---------- Variante: heute ---------- */
+.L-heute { display: grid; grid-template-columns: minmax(0,1fr) 380px 280px; gap: 48px; align-items: start; }
+
+/* ---------- Variante A ---------- */
+.L-a { display: grid; grid-template-columns: minmax(0,1fr) 380px; gap: 48px; align-items: start; }
+.L-a .left { display: grid; gap: 36px; }
+
+/* ---------- Variante B ---------- */
+.ResumeBar {
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  padding: 12px 16px; margin-bottom: 36px;
+  border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--surface);
+}
+.ResumeBar .lead { font-size: .8rem; color: var(--text-muted); font-weight: 550; }
+.ResumeChip {
+  display: inline-flex; align-items: center; gap: 9px; padding: 7px 13px;
+  border: 1px solid var(--border); border-radius: var(--radius-full); background: var(--app-bg);
+  font-size: .84rem;
+}
+.ResumeChip b { font-weight: 560; }
+.ResumeChip span { color: var(--text-subtle); font-size: .78rem; }
+.L-b { display: grid; grid-template-columns: minmax(0,1fr) 380px; gap: 48px; align-items: start; }
+
+/* ---------- Variante C ---------- */
+.L-c { max-width: 560px; margin: 0 auto; }
+.L-c .HeroTitle { font-size: 2.2rem; text-align: center; }
+.L-c .HeroLede { text-align: center; margin: 0 auto 28px; }
+.L-c .center { text-align: center; }
+
+@media (max-width: 1100px) {
+  .L-heute, .L-a, .L-b { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<header class="Bar">
+  <h1>Startseite — Layout-Varianten</h1>
+  <div class="Switcher">
+    <button class="on" onclick="show('heute', this)">Heute</button>
+    <button onclick="show('a', this)">A · Liste links</button>
+    <button onclick="show('b', this)">B · Fortsetzen-Leiste</button>
+    <button onclick="show('c', this)">C · Fokus aufs Formular</button>
+    <button onclick="toggleTheme()">◐ Hell/Dunkel</button>
+  </div>
+</header>
+
+<!-- ============ HEUTE ============ -->
+<section class="variant on" id="v-heute">
+  <div class="Note">
+    <h2>Heute: drei Spalten</h2>
+    <p>Gemessen bei 1440 px: Textspalte 531 px, Formular 702 px, „Zuletzt besucht" 100 px.
+       Die dritte Spalte ist zu 86 % leer, und der Boden ist dreifach ausgefranst.</p>
+    <div class="Tags"><span class="Tag warn">602 px Leerraum rechts</span><span class="Tag warn">Deck = 270 px</span></div>
+  </div>
+  <div class="Stage"><div class="Frame" data-label="Ist-Zustand">
+    <div class="L-heute">
+      <div>
+        <span class="HeroBadge"><i></i> Kostenlos &amp; Open Source</span>
+        <h2 class="HeroTitle">Schätzen im Team.<br /><em>Ohne Reibung.</em></h2>
+        <p class="HeroLede">Session anlegen, Link teilen, verdeckt abstimmen, gemeinsam aufdecken. Kein Login, keine Installation — in unter zehn Sekunden startklar.</p>
+        <ul class="HeroFeatures">
+          <li><span class="tick">✓</span><span><b>Fünf Kartendecks</b> Fibonacci, Short Fibonacci, T-Shirt, gemischt oder eigene Werte.</span></li>
+          <li><span class="tick">✓</span><span><b>Runden-Statistik</b> Median, Spannweite, Verteilung, Konsens-Bewertung und markierte Ausreißer.</span></li>
+          <li><span class="tick">✓</span><span><b>Optionaler Timer</b> Von 0:30 bis 5:00 — deckt die Runde automatisch auf.</span></li>
+          <li><span class="tick">✓</span><span><b>Präsenz-Anzeige</b> Du siehst auf jeder Karte, wer gerade wirklich dabei ist.</span></li>
+        </ul>
+      </div>
+      <div class="Panel">
+        <div class="PanelHead"><h3>Neue Session</h3><p>Du wirst automatisch Moderator:in.</p></div>
+        <div class="PanelBody">
+          <div class="Field"><span class="Label">Session-Name</span><div class="Input">z. B. Sprint 42 — Refinement</div></div>
+          <div class="Field"><span class="Label">Dein Name</span><div class="Input">Wie sollen dich die anderen sehen?</div></div>
+          <div class="Field"><span class="Label">Kartendeck</span>
+            <div class="OptionList">
+              <div class="OptionRow sel"><span class="dot"></span><span class="OptionName">Short Fibonacci</span><span class="OptionVals">0 · 1 · 2 · 3 · 5 · 8 · 13 · 21 · 40</span></div>
+              <div class="OptionRow"><span class="dot"></span><span class="OptionName">Fibonacci</span><span class="OptionVals">0 … 89</span></div>
+              <div class="OptionRow"><span class="dot"></span><span class="OptionName">T-Shirt</span><span class="OptionVals">XXS … XXL</span></div>
+              <div class="OptionRow"><span class="dot"></span><span class="OptionName">T-Shirt &amp; Zahlen</span><span class="OptionVals">S … 5</span></div>
+              <div class="OptionRow"><span class="dot"></span><span class="OptionName">Eigene Werte</span><span class="OptionVals">frei wählbar</span></div>
+            </div>
+          </div>
+          <div class="SwitchRow"><span class="Sw"></span><span>Alle dürfen moderieren<small>Aufdecken, neu starten und Timer setzen</small></span></div>
+          <button class="Btn">Session starten</button>
+        </div>
+      </div>
+      <div>
+        <span class="SectionLabel">Zuletzt besucht</span>
+        <ul class="RecentList">
+          <li class="RecentCard"><span class="sq">♠</span><span><span class="t">Ufo</span><br /><span class="s">von Egon</span></span></li>
+        </ul>
+      </div>
+    </div>
+  </div></div>
+</section>
+
+<!-- ============ A ============ -->
+<section class="variant" id="v-a">
+  <div class="Note">
+    <h2>A · „Zuletzt besucht" füllt die Lücke links</h2>
+    <p>Zurück zu zwei Spalten. Die Liste rutscht unter die Feature-Liste — also genau dorthin,
+       wo heute das Loch ist — und steht damit weiterhin neben dem Formular, nur eine Spalte weiter links.
+       Sie bekommt die volle Textbreite, sodass mehrere Sessions nebeneinander passen.
+       Kleinster Eingriff, behebt beide Löcher auf einmal.</p>
+    <div class="Tags"><span class="Tag good">Spalten fast gleich hoch</span><span class="Tag good">kein neues Bauteil</span><span class="Tag">Liste weniger prominent</span></div>
+  </div>
+  <div class="Stage"><div class="Frame" data-label="Variante A">
+    <div class="L-a">
+      <div class="left">
+        <div>
+          <span class="HeroBadge"><i></i> Kostenlos &amp; Open Source</span>
+          <h2 class="HeroTitle">Schätzen im Team.<br /><em>Ohne Reibung.</em></h2>
+          <p class="HeroLede">Session anlegen, Link teilen, verdeckt abstimmen, gemeinsam aufdecken. Kein Login, keine Installation — in unter zehn Sekunden startklar.</p>
+          <ul class="HeroFeatures">
+            <li><span class="tick">✓</span><span><b>Fünf Kartendecks</b> Fibonacci, Short Fibonacci, T-Shirt, gemischt oder eigene Werte.</span></li>
+            <li><span class="tick">✓</span><span><b>Runden-Statistik</b> Median, Spannweite, Verteilung, Konsens-Bewertung und markierte Ausreißer.</span></li>
+            <li><span class="tick">✓</span><span><b>Optionaler Timer</b> Von 0:30 bis 5:00 — deckt die Runde automatisch auf.</span></li>
+            <li><span class="tick">✓</span><span><b>Präsenz-Anzeige</b> Du siehst auf jeder Karte, wer gerade wirklich dabei ist.</span></li>
+          </ul>
+        </div>
+        <div>
+          <span class="SectionLabel">Zuletzt besucht</span>
+          <ul class="RecentList" style="grid-template-columns: repeat(auto-fill, minmax(230px,1fr))">
+            <li class="RecentCard"><span class="sq">♠</span><span><span class="t">Ufo</span><br /><span class="s">von Egon</span></span><span class="del">🗑</span></li>
+            <li class="RecentCard"><span class="sq">♠</span><span><span class="t">Sprint 41</span><br /><span class="s">von Marie</span></span><span class="del">🗑</span></li>
+          </ul>
+        </div>
+      </div>
+      <div class="Panel">
+        <div class="PanelHead"><h3>Neue Session</h3><p>Du wirst automatisch Moderator:in.</p></div>
+        <div class="PanelBody">
+          <div class="Field"><span class="Label">Session-Name</span><div class="Input">z. B. Sprint 42 — Refinement</div></div>
+          <div class="Field"><span class="Label">Dein Name</span><div class="Input">Wie sollen dich die anderen sehen?</div></div>
+          <div class="Field"><span class="Label">Kartendeck</span>
+            <div class="OptionList">
+              <div class="OptionRow sel"><span class="dot"></span><span class="OptionName">Short Fibonacci</span><span class="OptionVals">0 … 40</span></div>
+              <div class="OptionRow"><span class="dot"></span><span class="OptionName">Fibonacci</span><span class="OptionVals">0 … 89</span></div>
+              <div class="OptionRow"><span class="dot"></span><span class="OptionName">T-Shirt</span><span class="OptionVals">XXS … XXL</span></div>
+              <div class="OptionRow"><span class="dot"></span><span class="OptionName">T-Shirt &amp; Zahlen</span><span class="OptionVals">S … 5</span></div>
+              <div class="OptionRow"><span class="dot"></span><span class="OptionName">Eigene Werte</span><span class="OptionVals">frei wählbar</span></div>
+            </div>
+          </div>
+          <div class="SwitchRow"><span class="Sw"></span><span>Alle dürfen moderieren<small>Aufdecken, neu starten und Timer setzen</small></span></div>
+          <button class="Btn">Session starten</button>
+        </div>
+      </div>
+    </div>
+  </div></div>
+</section>
+
+<!-- ============ B ============ -->
+<section class="variant" id="v-b">
+  <div class="Note">
+    <h2>B · Fortsetzen-Leiste über dem Hero</h2>
+    <p>Frühere Sessions wandern als schmale Leiste direkt unter die Navigation — das Erste, was
+       Wiederkehrende sehen, ein Klick zum Weitermachen. Darunter bleiben zwei saubere Spalten.
+       Skaliert gut: bei vielen Sessions scrollt die Leiste horizontal statt in die Höhe zu wachsen.</p>
+    <div class="Tags"><span class="Tag good">bester Weg für Wiederkehrende</span><span class="Tag good">Hero bleibt ruhig</span><span class="Tag">neues Bauteil nötig</span></div>
+  </div>
+  <div class="Stage"><div class="Frame" data-label="Variante B">
+    <div class="ResumeBar">
+      <span class="lead">Weitermachen</span>
+      <span class="ResumeChip">♠ <b>Ufo</b> <span>von Egon</span></span>
+      <span class="ResumeChip">♠ <b>Sprint 41 — Refinement</b> <span>von Marie</span></span>
+      <span class="ResumeChip">♠ <b>Backlog Grooming</b> <span>von Jonas</span></span>
+    </div>
+    <div class="L-b">
+      <div>
+        <span class="HeroBadge"><i></i> Kostenlos &amp; Open Source</span>
+        <h2 class="HeroTitle">Schätzen im Team.<br /><em>Ohne Reibung.</em></h2>
+        <p class="HeroLede">Session anlegen, Link teilen, verdeckt abstimmen, gemeinsam aufdecken. Kein Login, keine Installation — in unter zehn Sekunden startklar.</p>
+        <ul class="HeroFeatures">
+          <li><span class="tick">✓</span><span><b>Fünf Kartendecks</b> Fibonacci, Short Fibonacci, T-Shirt, gemischt oder eigene Werte.</span></li>
+          <li><span class="tick">✓</span><span><b>Runden-Statistik</b> Median, Spannweite, Verteilung, Konsens-Bewertung und markierte Ausreißer.</span></li>
+          <li><span class="tick">✓</span><span><b>Optionaler Timer</b> Von 0:30 bis 5:00 — deckt die Runde automatisch auf.</span></li>
+          <li><span class="tick">✓</span><span><b>Präsenz-Anzeige</b> Du siehst auf jeder Karte, wer gerade wirklich dabei ist.</span></li>
+        </ul>
+      </div>
+      <div class="Panel">
+        <div class="PanelHead"><h3>Neue Session</h3><p>Du wirst automatisch Moderator:in.</p></div>
+        <div class="PanelBody">
+          <div class="Field"><span class="Label">Session-Name</span><div class="Input">z. B. Sprint 42 — Refinement</div></div>
+          <div class="Field"><span class="Label">Dein Name</span><div class="Input">Wie sollen dich die anderen sehen?</div></div>
+          <div class="Field"><span class="Label">Kartendeck</span>
+            <div class="DeckChips">
+              <span class="Chip sel">Short Fibonacci</span>
+              <span class="Chip">Fibonacci</span>
+              <span class="Chip">T-Shirt</span>
+              <span class="Chip">T-Shirt &amp; Zahlen</span>
+              <span class="Chip">Eigene Werte</span>
+            </div>
+            <p class="DeckHint">0 · 1 · 2 · 3 · 5 · 8 · 13 · 21 · 40</p>
+          </div>
+          <div class="SwitchRow"><span class="Sw"></span><span>Alle dürfen moderieren<small>Aufdecken, neu starten und Timer setzen</small></span></div>
+          <button class="Btn">Session starten</button>
+        </div>
+      </div>
+    </div>
+  </div></div>
+</section>
+
+<!-- ============ C ============ -->
+<section class="variant" id="v-c">
+  <div class="Note">
+    <h2>C · Fokus aufs Formular</h2>
+    <p>Die Werbespalte fällt auf der Startseite weg — sie steht ohnehin unter „Was ist Planning Poker?".
+       Übrig bleibt eine mittige Spalte: Überschrift, Formular, darunter die früheren Sessions.
+       Nichts franst aus, egal wie viele Einträge es gibt. Der ehrlichste Zuschnitt für ein Werkzeug,
+       das man mehrmals pro Woche benutzt — aber der Startseite fehlt danach das Schaufenster.</p>
+    <div class="Tags"><span class="Tag good">nie ausgefranst</span><span class="Tag good">schnellster Weg zum Ziel</span><span class="Tag warn">kein Landing-Charakter</span></div>
+  </div>
+  <div class="Stage"><div class="Frame" data-label="Variante C">
+    <div class="L-c">
+      <div class="center"><span class="HeroBadge"><i></i> Kostenlos &amp; Open Source</span></div>
+      <h2 class="HeroTitle">Schätzen im Team.<br /><em>Ohne Reibung.</em></h2>
+      <p class="HeroLede">Session anlegen, Link teilen, verdeckt abstimmen, gemeinsam aufdecken. Kein Login, keine Installation.</p>
+      <div class="Panel">
+        <div class="PanelHead"><h3>Neue Session</h3><p>Du wirst automatisch Moderator:in.</p></div>
+        <div class="PanelBody">
+          <div class="Field"><span class="Label">Session-Name</span><div class="Input">z. B. Sprint 42 — Refinement</div></div>
+          <div class="Field"><span class="Label">Dein Name</span><div class="Input">Wie sollen dich die anderen sehen?</div></div>
+          <div class="Field"><span class="Label">Kartendeck</span>
+            <div class="DeckChips">
+              <span class="Chip sel">Short Fibonacci</span>
+              <span class="Chip">Fibonacci</span>
+              <span class="Chip">T-Shirt</span>
+              <span class="Chip">T-Shirt &amp; Zahlen</span>
+              <span class="Chip">Eigene Werte</span>
+            </div>
+            <p class="DeckHint">0 · 1 · 2 · 3 · 5 · 8 · 13 · 21 · 40</p>
+          </div>
+          <div class="SwitchRow"><span class="Sw"></span><span>Alle dürfen moderieren<small>Aufdecken, neu starten und Timer setzen</small></span></div>
+          <button class="Btn">Session starten</button>
+        </div>
+      </div>
+      <div style="margin-top:32px">
+        <span class="SectionLabel">Zuletzt besucht</span>
+        <ul class="RecentList">
+          <li class="RecentCard"><span class="sq">♠</span><span><span class="t">Ufo</span><br /><span class="s">von Egon</span></span><span class="del">🗑</span></li>
+          <li class="RecentCard"><span class="sq">♠</span><span><span class="t">Sprint 41 — Refinement</span><br /><span class="s">von Marie</span></span><span class="del">🗑</span></li>
+        </ul>
+      </div>
+    </div>
+  </div></div>
+</section>
+
+<script>
+function show(id, btn) {
+  document.querySelectorAll('.variant').forEach(v => v.classList.toggle('on', v.id === 'v-' + id));
+  document.querySelectorAll('.Switcher button').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  window.scrollTo({ top: 0 });
+}
+function toggleTheme() {
+  const h = document.documentElement;
+  h.dataset.theme = h.dataset.theme === 'dark' ? 'light' : 'dark';
+}
+</script>
+</body>
+</html>

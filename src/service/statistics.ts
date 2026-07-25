@@ -9,10 +9,9 @@ export enum ConsensusStatus {
   CriticalSpread = 'critical-spread',
 }
 
+/** Wording for a status lives in the translation bundle, not in the statistics. */
 export interface ConsensusResult {
   status: ConsensusStatus;
-  code: string;
-  message: string;
   rankSpread: number;
   standardDeviation: number;
   spreadRatio?: number;
@@ -57,8 +56,9 @@ export const isNumericGameType = (gameType: GameType | undefined): boolean =>
   gameType !== GameType.TShirtAndNumber &&
   gameType !== GameType.Custom;
 
+/** One decimal at most, with the decimal comma the German UI expects. */
 export const formatNumber = (value: number): string => {
-  return Number.isInteger(value) ? value.toString() : value.toFixed(1);
+  return Number.isInteger(value) ? value.toString() : value.toFixed(1).replace('.', ',');
 };
 
 /**
@@ -180,8 +180,6 @@ const getConsensus = (votes: NumericVote[]): ConsensusResult => {
   if (rankSpread >= 3 || (votes.length > 2 && standardDeviation > 1.5)) {
     return {
       status: ConsensusStatus.CriticalSpread,
-      code: 'CRITICAL SPREAD',
-      message: 'Discussion required!',
       rankSpread,
       standardDeviation,
       spreadRatio,
@@ -191,8 +189,6 @@ const getConsensus = (votes: NumericVote[]): ConsensusResult => {
   if (rankSpread === 2) {
     return {
       status: ConsensusStatus.ModerateSpread,
-      code: 'MODERATE SPREAD',
-      message: 'Short clarification recommended.',
       rankSpread,
       standardDeviation,
       spreadRatio,
@@ -201,8 +197,6 @@ const getConsensus = (votes: NumericVote[]): ConsensusResult => {
 
   return {
     status: ConsensusStatus.Consensus,
-    code: 'CONSENSUS',
-    message: 'Estimate plausible.',
     rankSpread,
     standardDeviation,
     spreadRatio,

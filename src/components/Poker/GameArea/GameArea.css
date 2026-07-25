@@ -1,15 +1,42 @@
-.ContentArea {
-  display: flex;
-  flex-direction: column;
-  min-height: 60%;
-  border: 1px solid  var(--color-background);
-  overflow: auto;
-  padding: 2px;
-  justify-content: center;
+.GameArea {
+  padding-top: 28px;
 }
 
-.Footer {
-  text-align: center;
-  display: flex;
-  justify-content: center;
+.GameAreaGrid {
+  align-items: start;
+  display: grid;
+  gap: 28px;
+  grid-template-columns: minmax(0, 1fr) 320px;
+}
+
+.GameAreaMain {
+  display: grid;
+  gap: 20px;
+  min-width: 0;
+}
+
+.GameAreaSide {
+  display: grid;
+  gap: 14px;
+  min-width: 0;
+  position: sticky;
+  top: calc(var(--appbar-height) + 16px);
+}
+
+@media (max-width: 960px) {
+  .GameAreaGrid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .GameAreaSide {
+    position: static;
+  }
+}
+
+@media (max-width: 760px) {
+  .GameArea {
+    /* Clearance for the fixed action dock is carried by the footer below. */
+    padding-bottom: 28px;
+    padding-top: 18px;
+  }
 }

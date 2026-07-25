@@ -17,11 +17,13 @@ import { usePresenceHeartbeat } from '../../../utils/usePresenceHeartbeat';
 import { CardPicker } from '../../Players/CardPicker/CardPicker';
 import { Players } from '../../Players/Players';
 import { GameController } from '../GameController/GameController';
-import './GameArea.css';
 import { CountdownOverlay } from '../GameTimer/CountdownOverlay';
 import { NumericSummary } from '../NumericSummary/NumericSummary';
+import { RoundStatus } from '../RoundStatus/RoundStatus';
 import { TshirtLegend } from '../TshirtLegend/TshirtLegend';
 import { TshirtSummary } from '../TshirtSummary/TshirtSummary';
+import { VotingProgress } from '../VotingProgress/VotingProgress';
+import './GameArea.css';
 
 interface GameAreaProps {
   game: Game;
@@ -75,30 +77,51 @@ export const GameArea: React.FC<GameAreaProps> = ({ game, players, currentPlayer
     remainingSeconds <= countdownThresholdSeconds &&
     gameStatus !== Status.Finished;
 
+  const isRevealed = gameStatus === Status.Finished;
+  const votedCount = players.filter((player) => player.status === Status.Finished).length;
+  const hasTshirtLegend =
+    game.gameType === GameType.TShirt || game.gameType === GameType.TShirtAndNumber;
+
   return (
-    <>
-      <div className='ContentArea'>
-        <Players
-          game={game}
-          players={players}
-          currentPlayerId={currentPlayerId}
-          outlierPlayerIds={outlierPlayerIds}
-          activePlayerIds={activePlayerIds}
-        />
-        <GameController game={game} currentPlayerId={currentPlayerId} remainingMs={remainingMs} />
-        {numericSummary && <NumericSummary summary={numericSummary} />}
-        <TshirtSummary game={game} players={players} />
-      </div>
-      <div className='Footer'>
-        <CardPicker game={game} players={players} currentPlayerId={currentPlayerId} />
-      </div>
-      { (game.gameType === GameType.TShirt || game.gameType === GameType.TShirtAndNumber) && (
-        <div className='Footer'>
-          <TshirtLegend></TshirtLegend>
+    <div className='PageShell GameArea'>
+      <GameController game={game} currentPlayerId={currentPlayerId} remainingMs={remainingMs} />
+
+      <div className='GameAreaGrid'>
+        <div className='GameAreaMain'>
+          <Players
+            game={game}
+            players={players}
+            currentPlayerId={currentPlayerId}
+            outlierPlayerIds={outlierPlayerIds}
+            activePlayerIds={activePlayerIds}
+          />
+
+          {!isRevealed && <VotingProgress votedCount={votedCount} totalCount={players.length} />}
+
+          <CardPicker game={game} players={players} currentPlayerId={currentPlayerId} />
+
+          {hasTshirtLegend && <TshirtLegend />}
         </div>
-      )}
+
+        <aside className='GameAreaSide'>
+          {isRevealed ? (
+            <>
+              {numericSummary && <NumericSummary summary={numericSummary} />}
+              <TshirtSummary game={game} players={players} />
+            </>
+          ) : (
+            <RoundStatus
+              game={game}
+              votedCount={votedCount}
+              totalCount={players.length}
+              remainingSeconds={remainingSeconds}
+            />
+          )}
+        </aside>
+      </div>
+
       {showCountdown && <CountdownOverlay secondsLeft={remainingSeconds} />}
-    </>
+    </div>
   );
 };
 

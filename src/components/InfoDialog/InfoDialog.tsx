@@ -5,6 +5,7 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
+import { useTranslation } from 'react-i18next';
 
 interface InfoDialogProps {
   children: React.ReactNode;
@@ -14,9 +15,16 @@ interface InfoDialogProps {
   onOk?: () => void;
 }
 
-export const InfoDialog: React.FC<InfoDialogProps> = ({ children, title, message = (): React.ReactNode => null, onOpen = (): React.ReactNode => null, onOk = () => {} }) => {
+export const InfoDialog: React.FC<InfoDialogProps> = ({
+  children,
+  title,
+  message = (): React.ReactNode => null,
+  onOpen = (): React.ReactNode => null,
+  onOk = () => {},
+}) => {
+  const { t } = useTranslation();
   const [openDialog, setOpenDialog] = React.useState(false);
-  const [dialogMessage, setDialogMessage] = React.useState(message)
+  const [dialogMessage, setDialogMessage] = React.useState(message);
 
   const handleClickOpen = () => {
     const onOpenMessage: React.ReactNode = onOpen();
@@ -33,29 +41,31 @@ export const InfoDialog: React.FC<InfoDialogProps> = ({ children, title, message
 
   return (
     <>
-      <div onClick={handleClickOpen}>
-        {children}
-      </div>
+      <div onClick={handleClickOpen}>{children}</div>
       <Dialog
         open={openDialog}
         onClose={handleClose}
-        maxWidth="md"
-        aria-labelledby="info-dialog-title"
-        aria-describedby="info-dialog-description"
+        maxWidth='sm'
+        fullWidth
+        aria-labelledby='info-dialog-title'
+        aria-describedby='info-dialog-description'
         data-testid='info-dialog'
       >
-        <DialogTitle id="info-dialog-title">{title}</DialogTitle>
+        <DialogTitle id='info-dialog-title'>{title}</DialogTitle>
         <DialogContent>
-          <DialogContentText id="info-dialog-description">
-            {dialogMessage}
-          </DialogContentText>
+          <DialogContentText id='info-dialog-description'>{dialogMessage}</DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button data-testid="info-dialog-ok" onClick={handleClose} color="primary">
-            Ok
+          <Button
+            data-testid='info-dialog-ok'
+            onClick={handleClose}
+            color='primary'
+            variant='contained'
+          >
+            {t('common.ok')}
           </Button>
         </DialogActions>
       </Dialog>
     </>
   );
-}
+};

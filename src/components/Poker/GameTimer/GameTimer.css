@@ -1,19 +1,26 @@
+.GameTimerRunning {
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--border));
+  color: var(--accent-strong);
+}
+
 .GameTimerIndicator {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 8px;
+  cursor: default;
 }
 
 .GameTimerValue {
   font-variant-numeric: tabular-nums;
 }
 
-.GameTimerValueRunning {
-  font-weight: 700;
+.GameTimerRunning .GameTimerValue {
+  font-weight: 650;
 }
 
 .GameTimerMenuLabel {
-  font-variant-numeric: tabular-nums;
   margin-right: 12px;
+}
+
+@media (max-width: 760px) {
+  .GameTimerRunning {
+    border-color: transparent;
+  }
 }

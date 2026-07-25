@@ -1,0 +1,670 @@
+<!doctype html>
+<html lang="de" data-theme="dark">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Concept 2 — Table | Planning Poker</title>
+<style>
+/* ============================================================
+   CONCEPT 2 — "TABLE"
+   Immersiv, dark-first, Tisch-Metapher. Spieler sitzen im Kreis
+   um einen virtuellen Tisch, die Hand liegt gefächert unten.
+   Glas-Panels, Farbverläufe, spürbare Tiefe, Reveal als Moment.
+   ============================================================ */
+
+:root {
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-num: "SF Mono", ui-monospace, "JetBrains Mono", Menlo, monospace;
+  --ease: cubic-bezier(.34,1.2,.42,1);
+  --ease-out: cubic-bezier(.22,1,.36,1);
+}
+
+html[data-theme="dark"] {
+  --bg-0:      #07070d;
+  --bg-1:      #0d0d16;
+  --glass:     rgba(255,255,255,.045);
+  --glass-2:   rgba(255,255,255,.07);
+  --stroke:    rgba(255,255,255,.09);
+  --stroke-2:  rgba(255,255,255,.16);
+  --text:      #f4f4f8;
+  --text-2:    #a3a3b8;
+  --text-3:    #6a6a82;
+  --felt-a:    #123a34;
+  --felt-b:    #0a201e;
+  --neon:      #6ee7ff;
+  --neon-2:    #a78bfa;
+  --hot:       #fb7185;
+  --gold:      #fbbf24;
+  --lime:      #4ade80;
+  --card-face: #16161f;
+  --card-ink:  #f4f4f8;
+}
+html[data-theme="light"] {
+  --bg-0:      #eceef4;
+  --bg-1:      #f7f8fc;
+  --glass:     rgba(255,255,255,.72);
+  --glass-2:   rgba(255,255,255,.9);
+  --stroke:    rgba(20,20,40,.09);
+  --stroke-2:  rgba(20,20,40,.16);
+  --text:      #14141f;
+  --text-2:    #55556a;
+  --text-3:    #8b8ba0;
+  --felt-a:    #d3e9e2;
+  --felt-b:    #bcded4;
+  --neon:      #0891b2;
+  --neon-2:    #7c3aed;
+  --hot:       #e11d48;
+  --gold:      #b45309;
+  --lime:      #15803d;
+  --card-face: #ffffff;
+  --card-ink:  #14141f;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; min-height: 100%; }
+body {
+  font-family: var(--font-sans); color: var(--text); font-size: 15px; line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  background:
+    radial-gradient(1100px 640px at 18% -8%, color-mix(in srgb, var(--neon-2) 22%, transparent), transparent 62%),
+    radial-gradient(900px 560px at 88% 6%, color-mix(in srgb, var(--neon) 16%, transparent), transparent 60%),
+    linear-gradient(180deg, var(--bg-1), var(--bg-0) 55%);
+  background-attachment: fixed;
+  transition: background .3s var(--ease-out), color .3s var(--ease-out);
+}
+button { font: inherit; color: inherit; cursor: pointer; }
+
+/* ---------------- Nav ---------------- */
+.nav {
+  position: sticky; top: 0; z-index: 60;
+  display: flex; align-items: center; gap: 26px; height: 62px; padding: 0 26px;
+  background: color-mix(in srgb, var(--bg-0) 55%, transparent);
+  backdrop-filter: blur(24px) saturate(160%);
+  border-bottom: 1px solid var(--stroke);
+}
+.logo { display: flex; align-items: center; gap: 11px; font-weight: 650; letter-spacing: -.02em; font-size: 16.5px; }
+.logo .chip {
+  width: 30px; height: 30px; border-radius: 10px; display: grid; place-items: center;
+  background: linear-gradient(140deg, var(--neon), var(--neon-2));
+  color: #05050a; font-weight: 800; font-size: 15px;
+  box-shadow: 0 0 22px color-mix(in srgb, var(--neon) 45%, transparent);
+}
+.nav-links { display: flex; gap: 4px; }
+.nav-links a {
+  color: var(--text-2); text-decoration: none; font-size: 13.5px; font-weight: 500;
+  padding: 7px 12px; border-radius: 9px; transition: .18s var(--ease-out);
+}
+.nav-links a:hover, .nav-links a.on { color: var(--text); background: var(--glass); }
+.nav-right { margin-left: auto; display: flex; gap: 8px; align-items: center; }
+.ghost-icon {
+  width: 34px; height: 34px; border-radius: 10px; border: 1px solid var(--stroke);
+  background: var(--glass); display: grid; place-items: center; color: var(--text-2);
+  transition: .18s var(--ease-out);
+}
+.ghost-icon:hover { border-color: var(--stroke-2); color: var(--text); }
+
+/* ---------------- Shell ---------------- */
+.wrap { max-width: 1240px; margin: 0 auto; padding: 46px 24px 130px; }
+.screen { display: none; }
+.screen.on { display: block; animation: fadeUp .45s var(--ease-out); }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } }
+
+.switcher {
+  position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 200;
+  display: flex; gap: 4px; padding: 5px;
+  background: color-mix(in srgb, var(--bg-0) 80%, transparent);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--stroke-2); border-radius: 999px;
+  box-shadow: 0 18px 44px rgba(0,0,0,.5);
+}
+.switcher button {
+  border: 0; background: transparent; padding: 8px 16px; border-radius: 999px;
+  font-size: 12.5px; font-weight: 600; color: var(--text-2);
+}
+.switcher button.on {
+  background: linear-gradient(140deg, var(--neon), var(--neon-2)); color: #05050a;
+}
+
+/* ---------------- Hero ---------------- */
+.hero { display: grid; grid-template-columns: 1.05fr .95fr; gap: 60px; align-items: center; }
+@media (max-width: 940px) { .hero { grid-template-columns: 1fr; } }
+
+.badge-line {
+  display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px 6px 8px;
+  border-radius: 999px; border: 1px solid var(--stroke-2); background: var(--glass);
+  font-size: 12.5px; color: var(--text-2); font-weight: 500; margin-bottom: 26px;
+}
+.badge-line .live {
+  width: 7px; height: 7px; border-radius: 50%; background: var(--lime);
+  box-shadow: 0 0 10px var(--lime); animation: pulse 1.8s infinite;
+}
+@keyframes pulse { 50% { opacity: .35; transform: scale(.8); } }
+
+h1 {
+  margin: 0 0 20px; font-size: clamp(38px, 5.4vw, 66px); line-height: 1.02;
+  letter-spacing: -.045em; font-weight: 720;
+}
+h1 .grad {
+  background: linear-gradient(100deg, var(--neon), var(--neon-2) 55%, var(--hot));
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.sub { font-size: 17.5px; color: var(--text-2); max-width: 48ch; margin: 0 0 34px; line-height: 1.6; }
+
+.cta-row { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 42px; }
+.btn {
+  height: 46px; padding: 0 22px; border-radius: 13px; border: 1px solid transparent;
+  font-size: 15px; font-weight: 600; display: inline-flex; align-items: center; gap: 9px;
+  transition: .2s var(--ease-out);
+}
+.btn-neon {
+  background: linear-gradient(140deg, var(--neon), var(--neon-2)); color: #05050a;
+  box-shadow: 0 10px 30px color-mix(in srgb, var(--neon-2) 35%, transparent);
+}
+.btn-neon:hover { transform: translateY(-2px); box-shadow: 0 16px 40px color-mix(in srgb, var(--neon-2) 45%, transparent); }
+.btn-glass { background: var(--glass); border-color: var(--stroke-2); color: var(--text); }
+.btn-glass:hover { background: var(--glass-2); transform: translateY(-2px); }
+.btn-sm { height: 36px; padding: 0 15px; font-size: 13.5px; border-radius: 10px; }
+
+.stat-strip { display: flex; gap: 34px; flex-wrap: wrap; }
+.stat-strip div .n {
+  font-family: var(--font-num); font-size: 26px; font-weight: 680; letter-spacing: -.04em;
+  background: linear-gradient(140deg, var(--neon), var(--neon-2));
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.stat-strip div .l { font-size: 12.5px; color: var(--text-3); }
+
+/* Glass form */
+.glass-card {
+  background: var(--glass); border: 1px solid var(--stroke);
+  border-radius: 24px; backdrop-filter: blur(28px) saturate(140%);
+  box-shadow: 0 28px 70px rgba(0,0,0,.42), inset 0 1px 0 rgba(255,255,255,.07);
+}
+.gc-head { padding: 26px 26px 0; }
+.gc-head h2 { margin: 0 0 5px; font-size: 19px; letter-spacing: -.02em; font-weight: 640; }
+.gc-head p { margin: 0; font-size: 13.5px; color: var(--text-2); }
+.gc-body { padding: 22px 26px 26px; display: grid; gap: 18px; }
+
+.inp { display: grid; gap: 7px; }
+.inp label { font-size: 12px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--text-3); }
+.inp input {
+  height: 44px; padding: 0 14px; font: inherit; font-size: 15px; color: var(--text);
+  background: color-mix(in srgb, var(--bg-0) 45%, transparent);
+  border: 1px solid var(--stroke); border-radius: 12px; outline: none; transition: .18s var(--ease-out);
+}
+.inp input::placeholder { color: var(--text-3); }
+.inp input:focus { border-color: var(--neon); box-shadow: 0 0 0 4px color-mix(in srgb, var(--neon) 18%, transparent); }
+
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip-opt {
+  padding: 9px 14px; border-radius: 11px; border: 1px solid var(--stroke);
+  background: color-mix(in srgb, var(--bg-0) 40%, transparent);
+  font-size: 13.5px; font-weight: 520; color: var(--text-2); transition: .18s var(--ease-out);
+}
+.chip-opt:hover { border-color: var(--stroke-2); color: var(--text); }
+.chip-opt.on {
+  border-color: transparent; color: #05050a;
+  background: linear-gradient(140deg, var(--neon), var(--neon-2));
+  box-shadow: 0 6px 20px color-mix(in srgb, var(--neon-2) 32%, transparent);
+}
+
+/* ---------------- Table screen ---------------- */
+.session-bar {
+  display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-bottom: 26px;
+  padding: 14px 18px; border-radius: 18px;
+  background: var(--glass); border: 1px solid var(--stroke); backdrop-filter: blur(24px);
+}
+.session-bar h2 { margin: 0; font-size: 18.5px; font-weight: 630; letter-spacing: -.02em; }
+.tag {
+  display: inline-flex; align-items: center; gap: 7px; height: 27px; padding: 0 12px;
+  border-radius: 999px; font-size: 12px; font-weight: 620; letter-spacing: .01em;
+}
+.tag .d { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.tag.live  { color: var(--gold); background: color-mix(in srgb, var(--gold) 15%, transparent); border: 1px solid color-mix(in srgb, var(--gold) 30%, transparent); }
+.tag.live .d { animation: pulse 1.4s infinite; }
+.tag.done  { color: var(--lime); background: color-mix(in srgb, var(--lime) 14%, transparent); border: 1px solid color-mix(in srgb, var(--lime) 28%, transparent); }
+.bar-right { margin-left: auto; display: flex; gap: 9px; align-items: center; }
+
+.clock {
+  display: inline-flex; align-items: center; gap: 10px; height: 36px; padding: 0 14px;
+  border-radius: 11px; border: 1px solid color-mix(in srgb, var(--neon-2) 35%, transparent);
+  background: color-mix(in srgb, var(--neon-2) 12%, transparent);
+  font-family: var(--font-num); font-size: 15px; font-weight: 620; font-variant-numeric: tabular-nums;
+  color: var(--neon-2);
+}
+.clock .ring {
+  width: 18px; height: 18px; border-radius: 50%;
+  background: conic-gradient(var(--neon-2) 0 38%, color-mix(in srgb, var(--neon-2) 22%, transparent) 38% 100%);
+  mask: radial-gradient(circle, transparent 52%, #000 54%);
+  -webkit-mask: radial-gradient(circle, transparent 52%, #000 54%);
+}
+
+/* The felt table */
+.table-stage { position: relative; padding: 8px 0 0; }
+.felt {
+  position: relative; min-height: 400px; border-radius: 220px/150px;
+  background:
+    radial-gradient(ellipse at 50% 42%, color-mix(in srgb, var(--felt-a) 88%, transparent), var(--felt-b) 78%);
+  border: 1px solid var(--stroke-2);
+  box-shadow:
+    inset 0 3px 40px rgba(0,0,0,.45),
+    inset 0 0 0 10px color-mix(in srgb, var(--bg-0) 55%, transparent),
+    0 34px 80px rgba(0,0,0,.45);
+  display: grid; place-items: center; padding: 58px 40px;
+}
+.felt::before {
+  content: ""; position: absolute; inset: 22px; border-radius: inherit;
+  border: 1px dashed color-mix(in srgb, var(--neon) 22%, transparent); pointer-events: none;
+}
+
+.table-center { text-align: center; z-index: 2; }
+.table-center .big {
+  font-family: var(--font-num); font-size: 68px; font-weight: 700; letter-spacing: -.05em;
+  line-height: 1; margin-bottom: 6px;
+  background: linear-gradient(140deg, var(--neon), var(--neon-2));
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.table-center .big.pending { color: var(--text-3); background: none; -webkit-text-fill-color: var(--text-3); font-size: 48px; }
+.table-center .cap { font-size: 13px; color: var(--text-2); letter-spacing: .04em; text-transform: uppercase; font-weight: 600; }
+.table-center .meta { font-size: 13px; color: var(--text-3); margin-top: 8px; }
+
+.progress-ring { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 18px; }
+.progress-ring .pip { width: 9px; height: 9px; border-radius: 50%; background: color-mix(in srgb, var(--text-3) 40%, transparent); }
+.progress-ring .pip.done { background: var(--lime); box-shadow: 0 0 10px color-mix(in srgb, var(--lime) 70%, transparent); }
+
+/* Seats around the table */
+.seat {
+  position: absolute; width: 104px; text-align: center; z-index: 3;
+  transition: transform .3s var(--ease);
+}
+.seat .avatar {
+  width: 46px; height: 46px; margin: 0 auto 7px; border-radius: 16px;
+  display: grid; place-items: center; font-weight: 680; font-size: 16px;
+  background: linear-gradient(150deg, var(--glass-2), var(--glass));
+  border: 1px solid var(--stroke-2); color: var(--text);
+  box-shadow: 0 8px 22px rgba(0,0,0,.35);
+  position: relative;
+}
+.seat.me .avatar { border-color: var(--neon); box-shadow: 0 0 0 3px color-mix(in srgb, var(--neon) 22%, transparent), 0 8px 22px rgba(0,0,0,.35); }
+.seat .avatar .dot {
+  position: absolute; right: -3px; bottom: -3px; width: 12px; height: 12px; border-radius: 50%;
+  background: var(--lime); border: 2.5px solid var(--bg-0);
+}
+.seat .avatar .dot.away { background: var(--text-3); }
+.seat .nm { font-size: 12.5px; font-weight: 560; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.seat .rl { font-size: 10.5px; color: var(--text-3); }
+
+.seat .hand {
+  width: 46px; height: 64px; margin: 0 auto 8px; border-radius: 10px;
+  display: grid; place-items: center; font-family: var(--font-num); font-weight: 680; font-size: 22px;
+  border: 1px solid var(--stroke-2);
+  background: linear-gradient(160deg, #2a2a3d, #191926);
+  color: var(--text-3);
+  box-shadow: 0 10px 24px rgba(0,0,0,.4);
+  transition: transform .5s var(--ease), background .3s, color .3s;
+}
+html[data-theme="light"] .seat .hand { background: linear-gradient(160deg, #dfe3ee, #cfd5e6); }
+.seat .hand.back {
+  background:
+    repeating-linear-gradient(45deg, color-mix(in srgb, var(--neon-2) 26%, #1a1a28) 0 4px, #14141f 4px 8px);
+  color: transparent;
+}
+.seat .hand.empty { background: transparent; border-style: dashed; color: var(--text-3); font-size: 15px; box-shadow: none; }
+.seat .hand.up { color: #06060c; }
+.seat .hand.up[data-t="low"]  { background: linear-gradient(160deg, #7dd3fc, #38bdf8); }
+.seat .hand.up[data-t="mid"]  { background: linear-gradient(160deg, #86efac, #4ade80); }
+.seat .hand.up[data-t="high"] { background: linear-gradient(160deg, #fde68a, #fbbf24); }
+.seat .hand.up[data-t="top"]  { background: linear-gradient(160deg, #fda4af, #fb7185); }
+.seat.outlier .hand.up { box-shadow: 0 0 0 2px var(--hot), 0 10px 26px color-mix(in srgb, var(--hot) 45%, transparent); }
+.seat.outlier .rl { color: var(--hot); font-weight: 620; }
+
+@media (max-width: 900px) {
+  .felt { border-radius: 32px; min-height: auto; padding: 30px 18px; }
+  .seat { position: static !important; width: auto; }
+  .felt-seats { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px,1fr)); gap: 16px; width: 100%; margin-top: 26px; }
+}
+.felt-seats { position: absolute; inset: 0; }
+@media (max-width: 900px) { .felt-seats { position: static; inset: auto; } }
+
+/* Hand / deck fan */
+.hand-area { margin-top: 42px; text-align: center; }
+.hand-title { font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--text-3); font-weight: 650; margin-bottom: 26px; }
+.fan { display: flex; justify-content: center; align-items: flex-end; height: 176px; }
+.fan .pc {
+  width: 78px; height: 112px; border-radius: 13px; margin: 0 -12px;
+  background: linear-gradient(160deg, var(--card-face), color-mix(in srgb, var(--card-face) 80%, #000));
+  border: 1px solid var(--stroke-2); color: var(--card-ink);
+  display: grid; place-items: center; position: relative;
+  font-family: var(--font-num); font-size: 27px; font-weight: 680; letter-spacing: -.04em;
+  box-shadow: 0 14px 32px rgba(0,0,0,.42);
+  transform-origin: bottom center;
+  transition: transform .28s var(--ease), box-shadow .28s var(--ease-out), filter .2s;
+}
+.fan .pc small {
+  position: absolute; top: 8px; left: 9px; font-size: 10.5px; font-weight: 620;
+  opacity: .45; letter-spacing: 0;
+}
+.fan .pc:hover { transform: translateY(-26px) rotate(0deg) scale(1.05); z-index: 30; box-shadow: 0 26px 52px rgba(0,0,0,.55); }
+.fan .pc.picked {
+  transform: translateY(-38px) rotate(0deg) scale(1.06); z-index: 40;
+  border-color: transparent; color: #05050a;
+  background: linear-gradient(150deg, var(--neon), var(--neon-2));
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--neon) 35%, transparent), 0 30px 60px color-mix(in srgb, var(--neon-2) 40%, transparent);
+}
+.fan .pc.picked small { opacity: .6; color: #05050a; }
+
+/* Result panels */
+.result-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px; margin-top: 34px; }
+.rp { padding: 22px; border-radius: 20px; background: var(--glass); border: 1px solid var(--stroke); backdrop-filter: blur(20px); }
+.rp .lbl { font-size: 11.5px; letter-spacing: .09em; text-transform: uppercase; color: var(--text-3); font-weight: 650; margin-bottom: 12px; }
+.rp .huge { font-family: var(--font-num); font-size: 44px; font-weight: 700; letter-spacing: -.05em; line-height: 1; }
+.rp .note { font-size: 13px; color: var(--text-2); margin-top: 8px; }
+.rp .grad { background: linear-gradient(140deg, var(--neon), var(--neon-2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+
+.dist { display: grid; gap: 9px; }
+.dist .row { display: grid; grid-template-columns: 30px 1fr 22px; gap: 10px; align-items: center; }
+.dist .row .k { font-family: var(--font-num); font-size: 13px; color: var(--text-2); text-align: right; }
+.dist .row .t { height: 26px; border-radius: 8px; background: color-mix(in srgb, var(--text-3) 15%, transparent); overflow: hidden; }
+.dist .row .t i { display: block; height: 100%; border-radius: 8px; }
+.dist .row .c { font-family: var(--font-num); font-size: 12px; color: var(--text-3); }
+
+.verdict { display: flex; gap: 13px; align-items: flex-start; }
+.verdict .med {
+  width: 44px; height: 44px; border-radius: 14px; display: grid; place-items: center;
+  font-size: 19px; flex: 0 0 auto;
+}
+.verdict.warn .med { background: color-mix(in srgb, var(--gold) 18%, transparent); border: 1px solid color-mix(in srgb, var(--gold) 40%, transparent); }
+.verdict .h { font-size: 14.5px; font-weight: 620; margin-bottom: 3px; }
+.verdict .p { font-size: 13px; color: var(--text-2); line-height: 1.5; }
+
+.dock {
+  position: fixed; left: 50%; bottom: 74px; transform: translateX(-50%); z-index: 90;
+  display: flex; gap: 8px; padding: 8px;
+  background: color-mix(in srgb, var(--bg-0) 78%, transparent);
+  border: 1px solid var(--stroke-2); border-radius: 18px;
+  backdrop-filter: blur(24px); box-shadow: 0 22px 54px rgba(0,0,0,.5);
+}
+.dock button {
+  display: grid; place-items: center; gap: 3px; width: 68px; padding: 8px 0;
+  border: 0; background: transparent; border-radius: 12px; color: var(--text-2);
+  font-size: 10.5px; font-weight: 600; transition: .18s var(--ease-out);
+}
+.dock button i { font-style: normal; font-size: 18px; }
+.dock button:hover { background: var(--glass-2); color: var(--text); }
+.dock button.accent { color: var(--neon); }
+.dock button.danger { color: var(--hot); }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="logo"><span class="chip">◆</span> Planning Poker</div>
+  <div class="nav-links">
+    <a href="#" class="on">Session</a><a href="#">Beitreten</a><a href="#">Guide</a><a href="#">Beispiele</a>
+  </div>
+  <div class="nav-right">
+    <button class="ghost-icon" onclick="toggleTheme()">◐</button>
+    <button class="ghost-icon">⌘</button>
+  </div>
+</nav>
+
+<div class="wrap">
+
+  <!-- ============ HOME ============ -->
+  <section class="screen on" id="s-home">
+    <div class="hero">
+      <div>
+        <div class="badge-line"><span class="live"></span> Echtzeit · kein Login · Open Source</div>
+        <h1>Der Tisch, an dem<br /><span class="grad">alle gleich viel</span><br />zu sagen haben.</h1>
+        <p class="sub">
+          Verdeckt schätzen, gemeinsam aufdecken, Ausreißer sofort sehen.
+          Planning Poker für verteilte Teams — ohne Meeting-Overhead.
+        </p>
+        <div class="cta-row">
+          <button class="btn btn-neon">Session eröffnen ◆</button>
+          <button class="btn btn-glass">Mit Code beitreten</button>
+        </div>
+        <div class="stat-strip">
+          <div><div class="n">&lt;10s</div><div class="l">bis zur ersten Runde</div></div>
+          <div><div class="n">5</div><div class="l">Kartendecks</div></div>
+          <div><div class="n">0 €</div><div class="l">für immer</div></div>
+        </div>
+      </div>
+
+      <div class="glass-card">
+        <div class="gc-head">
+          <h2>Neue Session</h2>
+          <p>Du moderierst — Karten aufdecken, Runden starten, Timer setzen.</p>
+        </div>
+        <div class="gc-body">
+          <div class="inp"><label>Session</label><input value="Sprint 42 — Refinement" /></div>
+          <div class="inp"><label>Dein Name</label><input placeholder="z. B. Roland" /></div>
+          <div class="inp">
+            <label>Deck</label>
+            <div class="chips">
+              <button class="chip-opt on" onclick="pick(this)">Short Fibonacci</button>
+              <button class="chip-opt" onclick="pick(this)">Fibonacci</button>
+              <button class="chip-opt" onclick="pick(this)">T-Shirt</button>
+              <button class="chip-opt" onclick="pick(this)">T-Shirt &amp; Zahlen</button>
+              <button class="chip-opt" onclick="pick(this)">Eigene</button>
+            </div>
+          </div>
+          <div class="inp">
+            <label>Rechte</label>
+            <div class="chips">
+              <button class="chip-opt on" onclick="pick(this)">Alle dürfen moderieren</button>
+              <button class="chip-opt" onclick="pick(this)">Nur ich</button>
+            </div>
+          </div>
+          <button class="btn btn-neon" style="width:100%;justify-content:center">Los geht's →</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ VOTING ============ -->
+  <section class="screen" id="s-vote">
+    <div class="session-bar">
+      <h2>Sprint 42 — Refinement</h2>
+      <span class="tag live"><span class="d"></span> Runde 3 läuft</span>
+      <div class="bar-right">
+        <div class="clock"><span class="ring"></span> 1:12</div>
+        <button class="btn btn-glass btn-sm">Link kopieren</button>
+        <button class="btn btn-neon btn-sm">Aufdecken</button>
+      </div>
+    </div>
+
+    <div class="table-stage">
+      <div class="felt">
+        <div class="table-center">
+          <div class="big pending">5 / 7</div>
+          <div class="cap">Karten gelegt</div>
+          <div class="meta">Zwei Personen überlegen noch — Aylin und Sofia.</div>
+          <div class="progress-ring">
+            <span class="pip done"></span><span class="pip done"></span><span class="pip done"></span>
+            <span class="pip done"></span><span class="pip done"></span><span class="pip"></span><span class="pip"></span>
+          </div>
+        </div>
+
+        <div class="felt-seats">
+          <div class="seat me"  style="top:-14px; left:calc(50% - 52px)">
+            <div class="hand back">5</div>
+            <div class="avatar">R<span class="dot"></span></div>
+            <div class="nm">Roland</div><div class="rl">Moderator · du</div>
+          </div>
+          <div class="seat" style="top:52px; left:9%">
+            <div class="hand back">3</div><div class="avatar">M<span class="dot"></span></div>
+            <div class="nm">Marie</div><div class="rl">gelegt</div>
+          </div>
+          <div class="seat" style="top:52px; right:9%">
+            <div class="hand back">8</div><div class="avatar">J<span class="dot"></span></div>
+            <div class="nm">Jonas</div><div class="rl">gelegt</div>
+          </div>
+          <div class="seat" style="bottom:44px; left:4%">
+            <div class="hand empty">…</div><div class="avatar">A<span class="dot"></span></div>
+            <div class="nm">Aylin</div><div class="rl">überlegt</div>
+          </div>
+          <div class="seat" style="bottom:44px; right:4%">
+            <div class="hand empty">…</div><div class="avatar">S<span class="dot away"></span></div>
+            <div class="nm">Sofia</div><div class="rl">abwesend</div>
+          </div>
+          <div class="seat" style="bottom:-16px; left:calc(50% - 130px)">
+            <div class="hand back">5</div><div class="avatar">T<span class="dot"></span></div>
+            <div class="nm">Tim</div><div class="rl">gelegt</div>
+          </div>
+          <div class="seat" style="bottom:-16px; left:calc(50% + 26px)">
+            <div class="hand back">5</div><div class="avatar">N<span class="dot"></span></div>
+            <div class="nm">Nils</div><div class="rl">gelegt</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hand-area">
+      <div class="hand-title">Deine Hand</div>
+      <div class="fan" id="fan">
+        <button class="pc" style="transform:rotate(-16deg) translateY(16px)"><small>0</small>0</button>
+        <button class="pc" style="transform:rotate(-12deg) translateY(9px)"><small>1</small>1</button>
+        <button class="pc" style="transform:rotate(-8deg) translateY(4px)"><small>2</small>2</button>
+        <button class="pc" style="transform:rotate(-4deg) translateY(1px)"><small>3</small>3</button>
+        <button class="pc picked"><small>5</small>5</button>
+        <button class="pc" style="transform:rotate(4deg) translateY(1px)"><small>8</small>8</button>
+        <button class="pc" style="transform:rotate(8deg) translateY(4px)"><small>13</small>13</button>
+        <button class="pc" style="transform:rotate(12deg) translateY(9px)"><small>21</small>21</button>
+        <button class="pc" style="transform:rotate(16deg) translateY(16px)"><small>40</small>40</button>
+        <button class="pc" style="transform:rotate(20deg) translateY(26px)"><small>?</small>?</button>
+        <button class="pc" style="transform:rotate(24deg) translateY(38px)"><small></small>☕</button>
+      </div>
+    </div>
+
+    <div class="dock">
+      <button class="accent"><i>👁</i>Aufdecken</button>
+      <button><i>⟳</i>Neu</button>
+      <button><i>⏱</i>Timer</button>
+      <button><i>🔗</i>Einladen</button>
+      <button class="danger"><i>⏻</i>Verlassen</button>
+    </div>
+  </section>
+
+  <!-- ============ RESULT ============ -->
+  <section class="screen" id="s-result">
+    <div class="session-bar">
+      <h2>Sprint 42 — Refinement</h2>
+      <span class="tag done"><span class="d"></span> Runde 3 aufgedeckt</span>
+      <div class="bar-right">
+        <button class="btn btn-glass btn-sm">Link kopieren</button>
+        <button class="btn btn-neon btn-sm">Neue Runde</button>
+      </div>
+    </div>
+
+    <div class="table-stage">
+      <div class="felt">
+        <div class="table-center">
+          <div class="big">5</div>
+          <div class="cap">Median · empfohlene Karte</div>
+          <div class="meta">Ø 7,8 · Spannweite 3 – 21 · 6 Stimmen, 1 Enthaltung</div>
+        </div>
+
+        <div class="felt-seats">
+          <div class="seat me" style="top:-14px; left:calc(50% - 52px)">
+            <div class="hand up" data-t="mid">5</div><div class="avatar">R<span class="dot"></span></div>
+            <div class="nm">Roland</div><div class="rl">Moderator · du</div>
+          </div>
+          <div class="seat" style="top:52px; left:9%">
+            <div class="hand up" data-t="low">3</div><div class="avatar">M<span class="dot"></span></div>
+            <div class="nm">Marie</div><div class="rl">&nbsp;</div>
+          </div>
+          <div class="seat" style="top:52px; right:9%">
+            <div class="hand up" data-t="mid">8</div><div class="avatar">J<span class="dot"></span></div>
+            <div class="nm">Jonas</div><div class="rl">&nbsp;</div>
+          </div>
+          <div class="seat outlier" style="bottom:44px; left:4%">
+            <div class="hand up" data-t="top">21</div><div class="avatar">A<span class="dot"></span></div>
+            <div class="nm">Aylin</div><div class="rl">Ausreißer</div>
+          </div>
+          <div class="seat" style="bottom:44px; right:4%">
+            <div class="hand empty">☕</div><div class="avatar">S<span class="dot away"></span></div>
+            <div class="nm">Sofia</div><div class="rl">enthalten</div>
+          </div>
+          <div class="seat" style="bottom:-16px; left:calc(50% - 130px)">
+            <div class="hand up" data-t="mid">5</div><div class="avatar">T<span class="dot"></span></div>
+            <div class="nm">Tim</div><div class="rl">&nbsp;</div>
+          </div>
+          <div class="seat" style="bottom:-16px; left:calc(50% + 26px)">
+            <div class="hand up" data-t="mid">5</div><div class="avatar">N<span class="dot"></span></div>
+            <div class="nm">Nils</div><div class="rl">&nbsp;</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="result-grid">
+      <div class="rp">
+        <div class="lbl">Kennzahlen</div>
+        <div class="huge grad">5</div>
+        <div class="note">Median · nächstliegende Karte <b>5</b></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:18px">
+          <div><div class="lbl" style="margin-bottom:4px">Ø</div><div style="font-family:var(--font-num);font-size:20px;font-weight:650">7,8</div></div>
+          <div><div class="lbl" style="margin-bottom:4px">σ</div><div style="font-family:var(--font-num);font-size:20px;font-weight:650">6,4</div></div>
+          <div><div class="lbl" style="margin-bottom:4px">Spanne</div><div style="font-family:var(--font-num);font-size:20px;font-weight:650">3–21</div></div>
+          <div><div class="lbl" style="margin-bottom:4px">Stimmen</div><div style="font-family:var(--font-num);font-size:20px;font-weight:650">6</div></div>
+        </div>
+      </div>
+
+      <div class="rp">
+        <div class="lbl">Verteilung</div>
+        <div class="dist">
+          <div class="row"><span class="k">3</span><span class="t"><i style="width:20%;background:linear-gradient(90deg,#7dd3fc,#38bdf8)"></i></span><span class="c">1</span></div>
+          <div class="row"><span class="k">5</span><span class="t"><i style="width:60%;background:linear-gradient(90deg,#86efac,#4ade80)"></i></span><span class="c">3</span></div>
+          <div class="row"><span class="k">8</span><span class="t"><i style="width:20%;background:linear-gradient(90deg,#86efac,#4ade80)"></i></span><span class="c">1</span></div>
+          <div class="row"><span class="k">21</span><span class="t"><i style="width:20%;background:linear-gradient(90deg,#fda4af,#fb7185)"></i></span><span class="c">1</span></div>
+        </div>
+      </div>
+
+      <div class="rp">
+        <div class="lbl">Konsens</div>
+        <div class="verdict warn">
+          <span class="med">⚖️</span>
+          <span>
+            <span class="h" style="color:var(--gold)">Mittel — ein Ausreißer</span>
+            <span class="p"><b>Aylin</b> liegt mit <b>21</b> weit über dem Median. Kurz nachfragen, was sie sieht, bevor ihr die Schätzung festzurrt.</span>
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="dock">
+      <button class="accent"><i>⟳</i>Neue Runde</button>
+      <button><i>📊</i>Verlauf</button>
+      <button><i>🔗</i>Einladen</button>
+      <button class="danger"><i>⏻</i>Verlassen</button>
+    </div>
+  </section>
+</div>
+
+<div class="switcher">
+  <button class="on" onclick="show('s-home',this)">Startseite</button>
+  <button onclick="show('s-vote',this)">Am Tisch</button>
+  <button onclick="show('s-result',this)">Aufgedeckt</button>
+</div>
+
+<script>
+function show(id, btn) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.toggle('on', s.id === id));
+  document.querySelectorAll('.switcher button').forEach(b => b.classList.toggle('on', b === btn));
+  window.scrollTo({ top: 0 });
+}
+function toggleTheme() {
+  const h = document.documentElement;
+  h.dataset.theme = h.dataset.theme === 'dark' ? 'light' : 'dark';
+}
+function pick(el) {
+  el.parentElement.querySelectorAll('.chip-opt').forEach(c => c.classList.remove('on'));
+  el.classList.add('on');
+}
+document.querySelectorAll('#fan .pc').forEach(c => c.addEventListener('click', () => {
+  document.querySelectorAll('#fan .pc').forEach(x => x.classList.remove('picked'));
+  c.classList.add('picked');
+}));
+</script>
+</body>
+</html>

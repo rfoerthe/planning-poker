@@ -26,8 +26,8 @@ describe('JoinGame component', () => {
 
     render(<JoinGame />);
 
-    expect(screen.getByPlaceholderText('xyz...')).toBeInTheDocument();
-    expect(screen.getByPlaceholderText('Enter your name')).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('z. B. 01hq…')).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('Wie sollen dich die anderen sehen?')).toBeInTheDocument();
   });
 
   it('should display join button', () => {
@@ -35,20 +35,20 @@ describe('JoinGame component', () => {
     render(<JoinGame />);
 
     expect(screen.getByRole('button')).toBeInTheDocument();
-    expect(screen.getByRole('button')).toHaveTextContent('Join');
+    expect(screen.getByRole('button')).toHaveTextContent('Beitreten');
   });
   it('should be able to join a session', async () => {
     vi.spyOn(playersService, 'addPlayerToGame').mockResolvedValue(true);
     vi.spyOn(playersService, 'isCurrentPlayerInGame').mockResolvedValue(false);
     render(<JoinGame />);
-    const sessionID = screen.getByPlaceholderText('xyz...');
+    const sessionID = screen.getByPlaceholderText('z. B. 01hq…');
     await userEvent.clear(sessionID);
     await userEvent.type(sessionID, 'gameId');
 
-    const userName = screen.getByPlaceholderText('Enter your name');
+    const userName = screen.getByPlaceholderText('Wie sollen dich die anderen sehen?');
     await userEvent.type(userName, 'Rock');
 
-    const joinButton = screen.getByText('Join');
+    const joinButton = screen.getByText('Beitreten');
 
     await userEvent.click(joinButton);
 

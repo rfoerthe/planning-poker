@@ -187,7 +187,7 @@ describe('CardPicker component', () => {
     const currentPlayerId = mockPlayers[0].id;
 
     render(<CardPicker game={mockGame} players={mockPlayers} currentPlayerId={currentPlayerId} />);
-    const helperText = screen.getByText('Click on the card to vote');
+    const helperText = screen.getByText('Klick zum Wählen — nochmal klicken zum Ändern.');
 
     expect(helperText).toBeInTheDocument();
   });
@@ -204,9 +204,7 @@ describe('CardPicker component', () => {
         currentPlayerId={currentPlayerId}
       />,
     );
-    const helperText = screen.getByText(
-      'Session not ready for Voting! Wait for moderator to press "Restart" button to start voting.',
-    );
+    const helperText = screen.getByText('Warte auf „Neue Runde“, um wieder zu wählen.');
 
     expect(helperText).toBeInTheDocument();
   });

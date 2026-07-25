@@ -156,7 +156,9 @@ describe('PlayerCard component', () => {
     );
 
     expect(screen.getByTestId('presence-indicator')).toBeInTheDocument();
-    expect(screen.getByRole('img', { name: 'Active in this session' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('img', { name: 'Gerade in dieser Session aktiv' }),
+    ).toBeInTheDocument();
   });
 
   it('should not mark a participant that is no longer present', () => {
@@ -167,6 +169,24 @@ describe('PlayerCard component', () => {
     expect(screen.queryByTestId('presence-indicator')).not.toBeInTheDocument();
   });
 
+  it('should mark the creator as moderator when only they may manage the session', () => {
+    const soleModeratorGame = { ...mockGame, isAllowMembersToManageSession: false };
+    const creator = { ...mockPlayer, id: mockGame.createdById };
+    render(
+      <PlayerCard game={soleModeratorGame} player={creator} currentPlayerId='someone-else' />,
+    );
+
+    expect(screen.getByText('Moderation')).toBeInTheDocument();
+  });
+
+  it('should not mark anyone as moderator when every member may manage the session', () => {
+    const sharedGame = { ...mockGame, isAllowMembersToManageSession: true };
+    const creator = { ...mockPlayer, id: mockGame.createdById };
+    render(<PlayerCard game={sharedGame} player={creator} currentPlayerId='someone-else' />);
+
+    expect(screen.queryByText('Moderation')).not.toBeInTheDocument();
+  });
+
   it('should rename current player with inline editing', async () => {
     vi.spyOn(playerService, 'updatePlayerName').mockResolvedValue(true);
     render(
@@ -174,7 +194,7 @@ describe('PlayerCard component', () => {
     );
 
     await userEvent.click(screen.getByTestId('update-button'));
-    const nameInput = screen.getByRole('textbox', { name: 'Player name' });
+    const nameInput = screen.getByRole('textbox', { name: 'Name der teilnehmenden Person' });
 
     expect(nameInput).toHaveValue(mockPlayer.name);
 

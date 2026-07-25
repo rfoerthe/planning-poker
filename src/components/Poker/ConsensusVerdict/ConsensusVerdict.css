@@ -1,0 +1,12 @@
+.VerdictBody {
+  display: grid;
+  gap: 1px;
+  min-width: 0;
+}
+
+.VerdictDetails {
+  color: var(--text-subtle);
+  font-family: var(--font-num);
+  font-size: 0.7rem;
+  margin-top: 2px;
+}

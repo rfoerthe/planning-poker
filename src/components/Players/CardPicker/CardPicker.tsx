@@ -1,5 +1,5 @@
-import { Card, CardContent, Grow, Typography } from '@mui/material';
-import React, { useEffect, useState } from 'react';
+import React, { CSSProperties, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { updatePlayerValue } from '../../../service/players';
 import { Game } from '../../../types/game';
 import { Player } from '../../../types/player';
@@ -12,8 +12,15 @@ interface CardPickerProps {
   players: Player[];
   currentPlayerId: string;
 }
+
+/** Cards that carry no estimate and therefore show a symbol instead of a value. */
+const unsureCardValue = -2;
+const breakCardValue = -1;
+
 export const CardPicker: React.FC<CardPickerProps> = ({ game, players, currentPlayerId }) => {
+  const { t } = useTranslation();
   const [randomEmoji, setRandomEmoji] = useState(getRandomEmoji);
+
   const playPlayer = (gameId: string, playerId: string, card: CardConfig) => {
     if (game.gameStatus !== Status.Finished) {
       void updatePlayerValue(gameId, playerId, card.value, randomEmoji);
@@ -27,107 +34,75 @@ export const CardPicker: React.FC<CardPickerProps> = ({ game, players, currentPl
   }, [game.gameStatus]);
 
   const cards = game.cards?.length ? game.cards : getCards(game.gameType);
+  const isFinished = game.gameStatus === Status.Finished;
+  const currentPlayer = players.find((player) => player.id === currentPlayerId);
 
   return (
-    <Grow in={true} timeout={200}>
-      <div>
-        <Typography variant='h6' className='CardPickerTitle'>
-          {game.gameStatus !== Status.Finished
-            ? 'Click on the card to vote'
-            : 'Session not ready for Voting! Wait for moderator to press "Restart" button to start voting.'}
-        </Typography>
-        <div className='CardPickerContainer'>
-          <div className='CardPickerGrid'>
-            {cards.map((card: CardConfig) => (
-              <div key={card.value} className='CardPickerGridItem'>
-                <Card
-                  id={`card-${card.displayValue}`}
-                  className='CardPicker'
-                  variant='outlined'
-                  component='button'
-                  type='button'
-                  disabled={game.gameStatus === Status.Finished}
-                  onClick={() => playPlayer(game.id, currentPlayerId, card)}
-                  style={getCardStyle(players, currentPlayerId, card, game.gameStatus)}
-                >
-                  <CardContent className='CardContent' component='span'>
-                    {card.value >= 0 && (
-                      <>
-                        <Typography component='span' className='CardContentTop' variant='caption'>
-                          {card.displayValue}
-                        </Typography>
-
-                        <Typography
-                          component='span'
-                          className='CardContentMiddle'
-                          variant={card.displayValue.length < 2 ? 'h4' : 'h5'}
-                        >
-                          {card.displayValue}
-                        </Typography>
-                        <Typography component='span' className='CardContentBottom' variant='caption'>
-                          {card.displayValue}
-                        </Typography>
-                      </>
-                    )}
-                    {card.value === -1 && (
-                      <Typography component='span' className='CardContentMiddle' variant='h3'>
-                        {randomEmoji}
-                      </Typography>
-                    )}
-                    {card.value === -2 && (
-                      <Typography component='span' className='CardContentMiddle' variant='h3'>
-                        ❓
-                      </Typography>
-                    )}
-                  </CardContent>
-                </Card>
-              </div>
-            ))}
-          </div>
-        </div>
+    <section className='CardPickerSection' data-testid='card-picker'>
+      <div className='CardPickerHead'>
+        <h2 className='SectionLabel CardPickerTitle'>
+          {isFinished ? t('cardPicker.lockedTitle') : t('cardPicker.title')}
+        </h2>
+        <p className='CardPickerHint'>
+          {isFinished ? t('cardPicker.lockedHint') : t('cardPicker.hint')}
+        </p>
       </div>
-    </Grow>
+
+      <div className={isFinished ? 'CardPickerDeck CardPickerDeckLocked' : 'CardPickerDeck'}>
+        {cards.map((card: CardConfig) => {
+          const isSelected =
+            currentPlayer?.value !== undefined && currentPlayer.value === card.value;
+
+          return (
+            <button
+              key={card.value}
+              id={`card-${card.displayValue}`}
+              type='button'
+              className={isSelected ? 'PickerCard PickerCardSelected' : 'PickerCard'}
+              disabled={isFinished}
+              aria-pressed={isSelected}
+              aria-label={getCardLabel(card, t)}
+              onClick={() => playPlayer(game.id, currentPlayerId, card)}
+              style={getCardStyle(card, isFinished)}
+            >
+              {card.value >= 0 ? (
+                <>
+                  <span className='PickerCardCorner'>{card.displayValue}</span>
+                  <span className='PickerCardValue'>{card.displayValue}</span>
+                </>
+              ) : (
+                <span className='PickerCardSymbol EmojiGlyph'>
+                  {card.value === breakCardValue ? randomEmoji : '❓'}
+                </span>
+              )}
+            </button>
+          );
+        })}
+      </div>
+    </section>
   );
 };
 
-const getCardStyle = (
-  players: Player[],
-  playerId: string,
-  card: CardConfig,
-  gameStatus: Status,
-) => {
+const getCardLabel = (card: CardConfig, t: (key: string) => string): string => {
+  if (card.value === breakCardValue) {
+    return t('cardPicker.break');
+  }
+  if (card.value === unsureCardValue) {
+    return t('cardPicker.unsure');
+  }
+  return card.displayValue;
+};
 
-  const baseStyle = {
-    backgroundColor: card.color,
-    color: getCardTextColor(card.color),
-  };
-
-  const selectedStyle = {
-    marginTop: '-15px',
-    zIndex: 5,
-    border: '2px dashed black',
-    boxShadow: '0 0px 12px 0 grey',
-  };
-
-  const finishedStyle = {
-    backgroundColor: 'var(--color-background-secondary)',
-    filter: 'grayscale(100%)',
-    color: 'var(--color-text-secondary)',
-  };
-
-  const player = players.find((player) => player.id === playerId);
-  const isSelected = player && player.value !== undefined && player.value === card.value;
-  const isFinished = gameStatus === Status.Finished;
-
-  if (isSelected) {
+const getCardStyle = (card: CardConfig, isFinished: boolean): CSSProperties => {
+  if (isFinished) {
     return {
-      ...baseStyle,
-      ...selectedStyle,
-      ...(isFinished && finishedStyle),
+      backgroundColor: 'var(--color-background-secondary)',
+      color: 'var(--color-text-secondary)',
     };
   }
+
   return {
-    ...baseStyle,
-    ...(isFinished && finishedStyle),
+    backgroundColor: card.color,
+    color: getCardTextColor(card.color),
   };
 };

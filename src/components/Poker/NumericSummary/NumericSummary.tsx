@@ -1,6 +1,7 @@
-import { Card, CardContent, Typography } from '@mui/material';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { formatNumber, NumericSummaryResult } from '../../../service/statistics';
+import { ConsensusVerdict } from '../ConsensusVerdict/ConsensusVerdict';
 import './NumericSummary.css';
 
 interface NumericSummaryProps {
@@ -8,84 +9,100 @@ interface NumericSummaryProps {
 }
 
 export const NumericSummary: React.FC<NumericSummaryProps> = ({ summary }) => {
+  const { t } = useTranslation();
+  const votesLabel = t('common.votes', { count: summary.voteCount });
+
   return (
-    <Card variant='outlined' className='NumericSummaryCard' data-testid='numeric-summary'>
-      <CardContent className='NumericSummaryContent'>
-        <Typography variant='subtitle2' className='NumericSummaryTitle'>
-          Estimate Result
-        </Typography>
-        <div className='NumericSummaryValues'>
-          <div className='NumericSummaryItem' data-testid='summary-average'>
-            <Typography variant='caption'>Average</Typography>
-            <Typography variant='h6'>{formatNumber(summary.average)}</Typography>
-            <Typography variant='body2'>
-              Nearest card: {summary.recommendedCard.displayValue}
-            </Typography>
-          </div>
-          <div className='NumericSummaryItem' data-testid='summary-median'>
-            <Typography variant='caption'>Median</Typography>
-            <Typography variant='h6'>{formatNumber(summary.median)}</Typography>
-            <Typography variant='body2'>
-              Range: {summary.lowest.displayValue} – {summary.highest.displayValue}
-            </Typography>
-          </div>
-          <div
-            className={`NumericSummaryItem NumericConsensusItem ${summary.consensus.status}`}
-            data-testid='summary-consensus'
-          >
-            <Typography variant='caption'>Consensus status</Typography>
-            <Typography variant='h6'>{summary.consensus.code}</Typography>
-            <Typography variant='body2'>{summary.consensus.message}</Typography>
-            <Typography variant='caption' className='NumericConsensusDetails'>
-              Spread: {summary.consensus.rankSpread} | σ:{' '}
-              {formatNumber(summary.consensus.standardDeviation)}
-              {summary.consensus.spreadRatio !== undefined &&
-                ` | Ratio: ${formatNumber(summary.consensus.spreadRatio)}x`}
-            </Typography>
+    <section className='StatPanel' data-testid='numeric-summary'>
+      <div className='StatPanelHead'>
+        <h2 className='StatPanelTitle'>{t('numericSummary.title')}</h2>
+        <span className='StatusPill StatusPillDone'>{votesLabel}</span>
+      </div>
+
+      <div className='StatHero' data-testid='summary-median'>
+        <span className='StatHeroValue'>{formatNumber(summary.median)}</span>
+        <span className='StatHeroUnit'>{t('numericSummary.median')}</span>
+      </div>
+      <p className='StatSubline'>
+        {t('numericSummary.nearestCard', { card: summary.recommendedCard.displayValue })}
+        {' · '}
+        {t('numericSummary.rangeLabel', {
+          lowest: summary.lowest.displayValue,
+          highest: summary.highest.displayValue,
+        })}
+      </p>
+
+      <div className='KpiGrid'>
+        <div className='Kpi' data-testid='summary-average'>
+          <div className='KpiLabel'>{t('numericSummary.average')}</div>
+          <div className='KpiValue'>{formatNumber(summary.average)}</div>
+        </div>
+        <div className='Kpi'>
+          <div className='KpiLabel'>{t('numericSummary.standardDeviation')}</div>
+          <div className='KpiValue'>{formatNumber(summary.consensus.standardDeviation)}</div>
+        </div>
+        <div className='Kpi'>
+          <div className='KpiLabel'>{t('numericSummary.range')}</div>
+          <div className='KpiValue'>
+            {summary.lowest.displayValue}–{summary.highest.displayValue}
           </div>
         </div>
-        <div className='NumericSummaryDistribution'>
-          <Typography variant='caption' className='NumericDistributionTitle'>
-            Distribution: {formatVotes(summary.voteCount)}
-            {summary.abstentionCount > 0 && `, ${summary.abstentionCount} without estimate`}
-          </Typography>
-          {summary.distribution.map((entry) => (
-            <div className='NumericDistributionRow' key={entry.value}>
-              <Typography variant='body2' className='NumericDistributionLabel'>
-                {entry.displayValue}
-              </Typography>
-              <div
-                className='NumericDistributionTrack'
-                title={`${formatVotes(entry.count)} for ${entry.displayValue}`}
-              >
-                <div
-                  className='NumericDistributionBar'
-                  style={{
-                    width: `${Math.round(entry.share * 100)}%`,
-                    backgroundColor: getBarColor(entry.color),
-                  }}
-                />
-              </div>
-              <Typography variant='body2' className='NumericDistributionCount'>
-                {entry.count}
-              </Typography>
-            </div>
-          ))}
+        <div className='Kpi'>
+          <div className='KpiLabel'>{t('numericSummary.abstentions')}</div>
+          <div className='KpiValue'>{summary.abstentionCount}</div>
         </div>
-        {summary.outliers.length > 0 && (
-          <Typography variant='caption' className='NumericSummaryOutliers'>
-            Outliers: {summary.outliers.map(formatOutlier).join(', ')}
-          </Typography>
-        )}
-      </CardContent>
-    </Card>
+      </div>
+
+      <ConsensusVerdict
+        status={summary.consensus.status}
+        rankSpread={summary.consensus.rankSpread}
+        standardDeviation={summary.consensus.standardDeviation}
+        ratio={summary.consensus.spreadRatio}
+        testId='summary-consensus'
+      />
+
+      <div className='SectionLabel NumericDistributionTitle'>
+        {t('numericSummary.distribution')}: {votesLabel}
+        {summary.abstentionCount > 0 &&
+          `, ${t('numericSummary.withoutEstimate', { count: summary.abstentionCount })}`}
+      </div>
+      <div className='MiniBarList'>
+        {summary.distribution.map((entry) => (
+          <div className='MiniBarRow' key={entry.value}>
+            <span className='MiniBarLabel'>{entry.displayValue}</span>
+            <span
+              className='MiniBarTrack'
+              title={t('numericSummary.distributionTooltip', {
+                votes: t('common.votes', { count: entry.count }),
+                card: entry.displayValue,
+              })}
+            >
+              <i
+                className='MiniBarFill'
+                style={{
+                  width: `${Math.round(entry.share * 100)}%`,
+                  backgroundColor: getBarColor(entry.color),
+                }}
+              />
+            </span>
+            <span className='MiniBarCount'>{entry.count}</span>
+          </div>
+        ))}
+      </div>
+
+      {summary.outliers.length > 0 && (
+        <p className='NumericSummaryOutliers'>
+          {t('numericSummary.outliersLabel', {
+            names: summary.outliers.map(formatOutlier).join(', '),
+          })}
+        </p>
+      )}
+    </section>
   );
 };
 
 const formatOutlier = (outlier: { playerName: string; displayValue: string }): string =>
   `${outlier.playerName} (${outlier.displayValue})`;
-
-const formatVotes = (count: number): string => `${count} ${count === 1 ? 'vote' : 'votes'}`;
 
 // Neutral card colors are theme variables and would be invisible as a bar.
 const getBarColor = (cardColor: string): string =>

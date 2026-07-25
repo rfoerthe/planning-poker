@@ -1,57 +1,33 @@
-import {
-  Card,
-  CardContent,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-} from '@mui/material';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import './TshirtLegend.css';
 
+const sizes: { label: string; effort: string }[] = [
+  { label: 'XXS', effort: '1-5' },
+  { label: 'XS', effort: '5-10' },
+  { label: 'S', effort: '11-20' },
+  { label: 'M', effort: '21-50' },
+  { label: 'L', effort: '51-100' },
+  { label: 'XL', effort: '101-300' },
+  { label: 'XXL', effort: '301-10000' },
+];
+
 export const TshirtLegend = () => {
+  const { t } = useTranslation();
+
   return (
-    <Card variant='outlined' className='TshirtLegendCard'>
-      <CardContent className='TshirtLegendCardContent'>
-        <TableContainer className='TshirtLegendTableContainer'>
-          <Table stickyHeader>
-            <TableHead>
-              <TableRow>
-                <TableCell>Size</TableCell>
-                <TableCell>Typical Effort</TableCell>
-                <TableCell>Size</TableCell>
-                <TableCell>Typical Effort</TableCell>
-                <TableCell>Size</TableCell>
-                <TableCell>Typical Effort</TableCell>
-                <TableCell>Size</TableCell>
-                <TableCell>Typical Effort</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              <TableRow>
-                <TableCell className='TShirtSize'>XXS</TableCell>
-                <TableCell align='left'>1-5 PD</TableCell>
-                <TableCell className='TShirtSize'>XS</TableCell>
-                <TableCell align='left'>5-10 PD</TableCell>
-                <TableCell className='TShirtSize'>S</TableCell>
-                <TableCell align='left'>11-20 PD</TableCell>
-                <TableCell className='TShirtSize'>M</TableCell>
-                <TableCell align='left'>21-50 PD</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell className='TShirtSize'>L</TableCell>
-                <TableCell align='left'>51-100 PD</TableCell>
-                <TableCell className='TShirtSize'>XL</TableCell>
-                <TableCell align='left'>101-300 PD</TableCell>
-                <TableCell className='TShirtSize'>XXL</TableCell>
-                <TableCell align='left'>301-10000 PD</TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </CardContent>
-    </Card>
+    <section className='TshirtLegend' data-testid='tshirt-legend'>
+      <h2 className='SectionLabel TshirtLegendTitle'>{t('tshirtLegend.title')}</h2>
+      <ul className='TshirtLegendGrid'>
+        {sizes.map((size) => (
+          <li className='TshirtLegendItem' key={size.label}>
+            <span className='TshirtLegendSize'>{size.label}</span>
+            <span className='TshirtLegendEffort'>
+              {size.effort} {t('tshirtLegend.unit')}
+            </span>
+          </li>
+        ))}
+      </ul>
+    </section>
   );
 };

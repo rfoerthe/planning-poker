@@ -1,9 +1,9 @@
-
-import Grid from '@mui/material/Grid';
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { deleteOldGames } from '../../service/games';
 
 export const DeleteOldGames = () => {
+  const { t } = useTranslation();
   const [isDeleteInProgress, setIsDeleteInProgress] = useState(false);
 
   useEffect(() => {
@@ -16,15 +16,9 @@ export const DeleteOldGames = () => {
   }, [setIsDeleteInProgress]);
 
   return (
-    <>
-      <Grid container sx={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }} spacing={2}>
-        <Grid container size={{ xs: 12, sm: 12, lg: 11 }} sx={{ justifyContent: 'center', alignItems: 'center' }} spacing={3}>
-          <Grid size={{ xs: 12, sm: 12, lg: 6 }}>
-            {isDeleteInProgress ? <div>Deleting old games.....</div> : <div>Delete done!</div>}
-          </Grid>
-        </Grid>
-      </Grid>
-    </>
+    <main className='PageShell'>
+      <p>{isDeleteInProgress ? t('deleteOldGames.inProgress') : t('deleteOldGames.done')}</p>
+    </main>
   );
 };
 

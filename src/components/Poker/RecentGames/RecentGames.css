@@ -1,44 +1,137 @@
-.RecentGamesCard {
-  width: 450px;
-  min-width: 120px;
-  margin: 10px;
-  margin-top: 40px;
-  overflow: initial;
-  background-color: var(--color-background);
-  transition: 0.3s;
-  border-radius: 4px;
-  
+/*
+ * "Weitermachen" — earlier sessions as chips. They fill the row and wrap onto
+ * the next one as soon as the width runs out, down to one per row on a phone.
+ */
+.ResumeBar {
+  /* Top aligned so the label stays with the first row once the chips wrap. */
+  align-items: flex-start;
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  display: flex;
+  gap: 14px;
+  padding: 12px 16px;
 }
-@media (max-width: 480px) {
-  .RecentGamesCard {
-    width: 100%;
+
+.ResumeBarLead {
+  flex: 0 0 auto;
+  margin: 0;
+  /* Centres the label against the first chip row. */
+  padding-top: 9px;
+}
+
+.ResumeBarEmpty {
+  color: var(--text-subtle);
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+.ResumeBarList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  list-style: none;
+  margin: 0;
+  min-width: 0;
+  padding: 0;
+}
+
+.ResumeChip {
+  align-items: center;
+  background-color: var(--app-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  display: flex;
+  /* Keeps its natural width but gives way before it can push out of the bar. */
+  flex: 0 1 auto;
+  max-width: 100%;
+  min-width: 0;
+  padding-right: 6px;
+  transition:
+    border-color var(--duration-fast) var(--ease),
+    background-color var(--duration-fast) var(--ease);
+}
+
+.ResumeChip:hover {
+  background-color: var(--surface-hover);
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--border));
+}
+
+.ResumeChipOpen {
+  align-items: center;
+  appearance: none;
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius-full);
+  color: inherit;
+  cursor: pointer;
+  display: flex;
+  flex: 1 1 auto;
+  font: inherit;
+  gap: 9px;
+  min-width: 0;
+  padding: 7px 6px 7px 13px;
+  white-space: nowrap;
+}
+
+.ResumeChipIcon {
+  color: var(--accent);
+  flex: 0 0 auto;
+  font-size: 0.9rem;
+}
+
+/* The name is the only part that gives way when a chip has to shrink. */
+.ResumeChipName {
+  flex: 0 1 auto;
+  font-size: 0.84rem;
+  font-weight: 560;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ResumeChipMeta {
+  color: var(--text-subtle);
+  display: flex;
+  flex: 0 0 auto;
+  font-size: 0.78rem;
+  gap: 4px;
+}
+
+.ResumeChipAction {
+  flex: 0 0 auto;
+  padding: 3px;
+}
+
+.ResumeChipDeleteIcon {
+  color: var(--danger);
+}
+
+.ResumeChipLockIcon {
+  color: var(--text-subtle);
+}
+
+/* The delete triggers are wrapped in a plain div by the dialog components. */
+.ResumeChip > div {
+  display: flex;
+}
+
+@media (max-width: 700px) {
+  .ResumeBar {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .ResumeBarLead {
+    padding-top: 0;
   }
 }
 
-.RecentGamesCardTitle {
-  display: flex;
-  text-align: center;
-  border-radius: 16px;
-  border: 2px solid var(--color-primary);
-  background-color:  var(--color-background);
-  margin: -20px auto 0;
-  width: 88%;
-  padding: 16px;
-  height: 40px;
-}
-
-.MuiCardHeader-content {
-  width: 100%;
-}
-
-.RecentGamesTableContainer {
-  max-height: 250px;
-}
-
-.RecentGamesTableRow {
-  cursor: pointer;
-}
-
-.RecentGamesCardContent {
-  text-align: center;
+/* One session per row — below this width two of them never read well. */
+@media (max-width: 600px) {
+  .ResumeBarList {
+    flex-direction: column;
+    flex-wrap: nowrap;
+  }
 }

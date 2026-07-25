@@ -62,7 +62,7 @@ describe('statistics service', () => {
 
     it('should format integers without and other values with one decimal', () => {
       expect(formatNumber(8)).toEqual('8');
-      expect(formatNumber(8.66)).toEqual('8.7');
+      expect(formatNumber(8.66)).toEqual('8,7');
     });
   });
 

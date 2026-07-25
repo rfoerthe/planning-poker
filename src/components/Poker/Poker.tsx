@@ -1,6 +1,7 @@
-import { CircularProgress, Typography } from '@mui/material';
+import { CircularProgress } from '@mui/material';
 import { onSnapshot } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router';
 import { streamGame, streamPlayers } from '../../service/games';
 import { getCurrentPlayerId } from '../../service/players';
@@ -12,29 +13,12 @@ import './Poker.css';
 export const Poker = () => {
   let { id } = useParams<{ id: string }>() as { id: string };
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [game, setGame] = useState<Game | undefined>(undefined);
   const [players, setPlayers] = useState<Player[] | undefined>(undefined);
   const [loading, setIsLoading] = useState(true);
   const [currentPlayerId, setCurrentPlayerId] = useState<string | undefined>(undefined);
-  const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
-
-  // TODO: Re-implement blocker in React Router v6 using useBlocker hook
-  // useEffect(() => {
-  //   const unblock = history.block((location, action) => {
-  //     if (action === 'POP') {
-  //       // Detect back navigation
-  //       const confirmLeave = window.confirm('Are you sure you want to go back?');
-  //       if (!confirmLeave) {
-  //         return false; // Prevent navigation
-  //       }
-  //     }
-  //     return; // Allow navigation
-  //   });
-  //
-  //   return () => {
-  //     unblock(); // Cleanup the listener when the component unmounts
-  //   };
-  // }, []);
+  const [hasError, setHasError] = useState(false);
 
   useEffect(() => {
     let effectCleanup = true;
@@ -46,14 +30,14 @@ export const Poker = () => {
       }
 
       setCurrentPlayerId(currentPlayerId);
-      setErrorMessage(undefined);
+      setHasError(false);
       setIsLoading(true);
     }
 
     const handleSnapshotError = (error: Error) => {
       console.error('Failed to receive Firebase updates', error);
       if (effectCleanup) {
-        setErrorMessage('Unable to receive game updates. Please try again later.');
+        setHasError(true);
         setIsLoading(false);
       }
     };
@@ -103,23 +87,30 @@ export const Poker = () => {
 
   if (loading) {
     return (
-      <div className='PokerLoading'>
-        <CircularProgress />
+      <div className='PokerNotice'>
+        <CircularProgress size={26} />
+        <p className='PokerNoticeText'>{t('session.loading')}</p>
       </div>
     );
   }
 
-  return (
-    <>
-      {errorMessage ? (
-        <Typography>{errorMessage}</Typography>
-      ) : game && players && currentPlayerId ? (
-        <GameArea game={game} players={players} currentPlayerId={currentPlayerId} />
-      ) : (
-        <Typography>Game not found</Typography>
-      )}
-    </>
-  );
+  if (hasError) {
+    return (
+      <div className='PokerNotice'>
+        <p className='PokerNoticeText'>{t('session.updateError')}</p>
+      </div>
+    );
+  }
+
+  if (!game || !players || !currentPlayerId) {
+    return (
+      <div className='PokerNotice'>
+        <p className='PokerNoticeText'>{t('session.notFound')}</p>
+      </div>
+    );
+  }
+
+  return <GameArea game={game} players={players} currentPlayerId={currentPlayerId} />;
 };
 
 export default Poker;

@@ -1,4 +1,3 @@
-import { Grow } from '@mui/material';
 import React from 'react';
 import { Game } from '../../types/game';
 import { Player } from '../../types/player';
@@ -20,19 +19,17 @@ export const Players: React.FC<PlayersProps> = ({
   activePlayerIds,
 }) => {
   return (
-    <Grow in={true} timeout={800}>
-      <div className='PlayersContainer'>
-        {players.map((player: Player) => (
-          <PlayerCard
-            key={player.id}
-            game={game}
-            player={player}
-            currentPlayerId={currentPlayerId}
-            isOutlier={outlierPlayerIds?.has(player.id)}
-            isActive={activePlayerIds?.has(player.id)}
-          />
-        ))}
-      </div>
-    </Grow>
+    <div className='PlayersGrid'>
+      {players.map((player: Player) => (
+        <PlayerCard
+          key={player.id}
+          game={game}
+          player={player}
+          currentPlayerId={currentPlayerId}
+          isOutlier={outlierPlayerIds?.has(player.id)}
+          isActive={activePlayerIds?.has(player.id)}
+        />
+      ))}
+    </div>
   );
 };

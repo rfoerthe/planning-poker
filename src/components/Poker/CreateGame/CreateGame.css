@@ -1,39 +1,12 @@
-.CreateGameTextField {
-  padding-bottom: 30px;
+.CustomOptionGrid {
+  display: grid;
+  gap: 6px;
+  grid-template-columns: repeat(auto-fill, minmax(52px, 1fr));
 }
 
-.CreateGameButton {
-  color: var(--color-background);
-  width: 70%;
-  border-radius: 40px;
-}
-
-.CreateGameCard {
-  background: transparent;
-  border: none !important;
-  padding: 50px;
-}
-
-.CreateGameCardHeader {
+.CustomOptionInput {
+  font-family: var(--font-num);
+  height: 38px;
+  padding: 0 6px;
   text-align: center;
-}
-
-.CreateGameCardContent {
-  display: flex;
-  flex-direction: column;
-  text-align: center;
-}
-
-.CreateGameCardAction {
-  justify-content: center;
-}
-
-.CreateGameErrorMessage{
-  color: red;
-  margin-top: 10px;
-}
-
-.CreateGameCustomTextField {
-  width: 40px;
-  margin-left: 10px;
 }

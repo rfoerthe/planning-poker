@@ -1,9 +1,10 @@
-import { Card, CardContent, Typography } from '@mui/material';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Game, GameType } from '../../../types/game';
 import { Player } from '../../../types/player';
 import { Status } from '../../../types/status';
 import { getCards } from '../../Players/CardPicker/CardConfigs';
+import { ConsensusVerdict } from '../ConsensusVerdict/ConsensusVerdict';
 import './TshirtSummary.css';
 
 interface TshirtSummaryProps {
@@ -33,8 +34,6 @@ interface TshirtSummaryResult {
 
 interface TshirtConsensusResult {
   status: TshirtConsensusStatus;
-  code: string;
-  message: string;
   rankSpread: number;
   standardDeviation: number;
   effortRatio: number;
@@ -66,7 +65,11 @@ export enum TshirtConsensusStatus {
   CriticalSpread = 'critical-spread',
 }
 
+/** Person days, the unit the effort ranges are expressed in. */
+const effortUnit = 'PT';
+
 export const TshirtSummary: React.FC<TshirtSummaryProps> = ({ game, players }) => {
+  const { t } = useTranslation();
   const summary = getTshirtSummary(game, players);
 
   if (game.gameStatus !== Status.Finished || game.gameType !== GameType.TShirt) {
@@ -74,39 +77,47 @@ export const TshirtSummary: React.FC<TshirtSummaryProps> = ({ game, players }) =
   }
 
   return (
-    <Card variant='outlined' className='TshirtSummaryCard' data-testid='tshirt-summary'>
-      <CardContent className='TshirtSummaryContent'>
-        <Typography variant='subtitle2' className='TshirtSummaryTitle'>
-          T-Shirt Result
-        </Typography>
-        {summary ? (
-          <div className='TshirtSummaryValues'>
-            <div className='TshirtSummaryItem'>
-              <Typography variant='caption'>Median range</Typography>
-              <Typography variant='h6'>{summary.medianLabel}</Typography>
-              <Typography variant='body2'>{summary.medianRange}</Typography>
+    <section className='StatPanel' data-testid='tshirt-summary'>
+      <div className='StatPanelHead'>
+        <h2 className='StatPanelTitle'>{t('tshirtSummary.title')}</h2>
+        {summary && (
+          <span className='StatusPill StatusPillDone'>
+            {t('common.votes', { count: summary.voteCount })}
+          </span>
+        )}
+      </div>
+
+      {summary ? (
+        <>
+          <div className='StatHero'>
+            <span className='StatHeroValue'>{summary.medianLabel}</span>
+            <span className='StatHeroUnit'>{t('tshirtSummary.medianSize')}</span>
+          </div>
+          <p className='StatSubline'>{summary.medianRange}</p>
+
+          <div className='KpiGrid'>
+            <div className='Kpi'>
+              <div className='KpiLabel'>{t('tshirtSummary.totalMedianValue')}</div>
+              <div className='KpiValue'>{summary.totalMedianValue}</div>
             </div>
-            <div className='TshirtSummaryItem'>
-              <Typography variant='caption'>Total median value</Typography>
-              <Typography variant='h6'>{summary.totalMedianValue}</Typography>
-              <Typography variant='body2'>{summary.voteCount} votes</Typography>
-            </div>
-            <div className={`TshirtSummaryItem TshirtConsensusItem ${summary.consensus.status}`}>
-              <Typography variant='caption'>Consensus status</Typography>
-              <Typography variant='h6'>{summary.consensus.code}</Typography>
-              <Typography variant='body2'>{summary.consensus.message}</Typography>
-              <Typography variant='caption' className='TshirtConsensusDetails'>
-                Spread: {summary.consensus.rankSpread} | σ:{' '}
-                {formatStatistic(summary.consensus.standardDeviation)} | Ratio:{' '}
-                {formatStatistic(summary.consensus.effortRatio)}x
-              </Typography>
+            <div className='Kpi'>
+              <div className='KpiLabel'>{t('numericSummary.standardDeviation')}</div>
+              <div className='KpiValue'>{formatStatistic(summary.consensus.standardDeviation)}</div>
             </div>
           </div>
-        ) : (
-          <Typography variant='body2'>No T-Shirt votes to summarize.</Typography>
-        )}
-      </CardContent>
-    </Card>
+
+          <ConsensusVerdict
+            status={summary.consensus.status}
+            rankSpread={summary.consensus.rankSpread}
+            standardDeviation={summary.consensus.standardDeviation}
+            ratio={summary.consensus.effortRatio}
+            testId='tshirt-consensus'
+          />
+        </>
+      ) : (
+        <p className='TshirtSummaryEmpty'>{t('tshirtSummary.empty')}</p>
+      )}
+    </section>
   );
 };
 
@@ -145,8 +156,8 @@ export const getTshirtSummary = (
       lowerMiddle.label === upperMiddle.label
         ? lowerMiddle.label
         : `${lowerMiddle.label}-${upperMiddle.label}`,
-    medianRange: `${rangeMin}-${rangeMax} PD`,
-    totalMedianValue: `${formatMedianValue(medianValue)} PD`,
+    medianRange: `${rangeMin}-${rangeMax} ${effortUnit}`,
+    totalMedianValue: `${formatStatistic(medianValue)} ${effortUnit}`,
     voteCount: votes.length,
     consensus: getTshirtConsensus(votes),
   };
@@ -154,10 +165,6 @@ export const getTshirtSummary = (
 
 const getRangeMedian = (range: TshirtEffortRange): number => {
   return (range.min + range.max) / 2;
-};
-
-const formatMedianValue = (value: number): string => {
-  return Number.isInteger(value) ? value.toString() : value.toFixed(1);
 };
 
 const getTshirtConsensus = (votes: TshirtVote[]): TshirtConsensusResult => {
@@ -169,8 +176,6 @@ const getTshirtConsensus = (votes: TshirtVote[]): TshirtConsensusResult => {
   if (rankSpread >= 3 || (votes.length > 2 && standardDeviation > 1.5)) {
     return {
       status: TshirtConsensusStatus.CriticalSpread,
-      code: 'CRITICAL SPREAD',
-      message: 'Discussion required!',
       rankSpread,
       standardDeviation,
       effortRatio,
@@ -180,8 +185,6 @@ const getTshirtConsensus = (votes: TshirtVote[]): TshirtConsensusResult => {
   if (rankSpread === 2) {
     return {
       status: TshirtConsensusStatus.ModerateSpread,
-      code: 'MODERATE SPREAD',
-      message: 'Short clarification recommended.',
       rankSpread,
       standardDeviation,
       effortRatio,
@@ -190,8 +193,6 @@ const getTshirtConsensus = (votes: TshirtVote[]): TshirtConsensusResult => {
 
   return {
     status: TshirtConsensusStatus.Consensus,
-    code: 'CONSENSUS',
-    message: 'Estimate plausible.',
     rankSpread,
     standardDeviation,
     effortRatio,
@@ -213,5 +214,5 @@ const getEffortRatio = (votes: TshirtVote[]): number => {
 };
 
 const formatStatistic = (value: number): string => {
-  return Number.isInteger(value) ? value.toString() : value.toFixed(1);
+  return Number.isInteger(value) ? value.toString() : value.toFixed(1).replace('.', ',');
 };

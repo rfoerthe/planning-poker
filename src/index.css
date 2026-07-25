@@ -1,13 +1,36 @@
+/*
+ * Base type size. Every size in the app is expressed in rem, so this single
+ * value scales the whole interface.
+ *
+ * A percentage rather than a pixel value on purpose: it is relative to the
+ * size the reader configured in their browser, so someone who raised their
+ * default still gets a proportionally larger interface. A fixed `px` here
+ * would silently overrule that setting.
+ */
+html {
+  font-size: 110%;
+  -webkit-text-size-adjust: 100%;
+}
+
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  /* Sticky bars and the mobile action dock live outside the page flow. */
+  overscroll-behavior-y: none;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, 'Courier New', monospace;
+}
+
+/* Roboto has no dedicated tabular face, so lock digit width where it matters. */
+.TabularNumbers {
+  font-variant-numeric: tabular-nums;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent, #5b5bd6);
+  outline-offset: 2px;
 }

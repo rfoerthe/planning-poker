@@ -53,7 +53,7 @@ describe('Poker component', () => {
     vi.spyOn(gamesService, 'streamGame').mockReturnValue({} as any);
     vi.spyOn(gamesService, 'streamPlayers').mockReturnValue({} as any);
     render(<Poker />);
-    await screen.findByText('Game not found');
+    await screen.findByText('Diese Session existiert nicht.');
   });
   it('should display game area when game is found', async () => {
     const mockGame: Game = {
@@ -101,7 +101,7 @@ describe('Poker component', () => {
     await screen.findByText(mockGame.name);
 
     expect(screen.getByText(mockGame.name)).toBeInTheDocument();
-    expect(screen.getByText(`${mockGame.gameStatus} 🚀`)).toBeInTheDocument();
+    expect(screen.getByText('Bereit')).toBeInTheDocument();
   });
   it('should display confirmation dialog when user clicks the back button', async () => {
     const mockGame: Game = {
@@ -168,6 +168,8 @@ describe('Poker component', () => {
 
     render(<Poker />);
 
-    await screen.findByText('Unable to receive game updates. Please try again later.');
+    await screen.findByText(
+      'Aktualisierungen können gerade nicht empfangen werden. Bitte später erneut versuchen.',
+    );
   });
 });

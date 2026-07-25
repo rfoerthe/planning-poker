@@ -22,7 +22,7 @@ describe('RecentGames component', () => {
   });
   it('should display no recent session when no games found in user local storage', async () => {
     render(<RecentGames />);
-    expect(screen.getByText('No recent sessions found')).toBeInTheDocument();
+    expect(screen.getByText('Noch keine Sessions vorhanden.')).toBeInTheDocument();
   });
   it('should display recent games when games found in local storage', async () => {
     const mockGames: PlayerGame[] = [

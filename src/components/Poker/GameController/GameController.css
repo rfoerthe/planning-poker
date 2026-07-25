@@ -1,139 +1,166 @@
-.GameController {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 20px;
-  position: sticky;
-  left: 0;
-}
-
-.GameControllerCard {
-  border-radius: 5px;
-  background-color: var(--color-background-secondary);
-}
-
-.GameControllerCardContentArea {
+.SessionBar {
+  align-items: center;
+  border-bottom: 1px solid var(--border-soft);
   display: flex;
   flex-wrap: wrap;
-  gap: 30px;
-  justify-content: space-around;
-  padding: 30px;
+  gap: 14px;
+  margin-bottom: 24px;
+  padding-bottom: 20px;
 }
 
-.GameControllerDivider {
-  border-color: rgb(23 32 42 / 18%);
-  margin: 0;
-}
-
-.GameControllerCardTitle {
-  display: flex;
-  align-items: stretch;
-  justify-content: flex-start;
-  min-height: 42px;
-  padding: 0;
-  border-bottom: 1px solid var(--color-primary);
-  font-weight: bold;
-}
-
-.GameControllerCardTitle .MuiCardHeader-content {
+.SessionBarHeading {
   align-items: center;
-  align-self: stretch;
   display: flex;
-  flex: 0 1 auto;
-  min-width: 120px;
-  padding: 0 22px;
-  width: auto !important;
+  gap: 12px;
+  min-width: 0;
 }
 
-.GameControllerCardTitle .MuiCardHeader-title {
+.SessionBarTitle {
+  font-size: 1.35rem;
+  font-weight: 640;
+  letter-spacing: -0.025em;
+  margin: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.GameControllerCardTitle .MuiCardHeader-action {
-  align-self: stretch;
+.SessionBarActions {
+  align-items: center;
   display: flex;
-  flex: 1 1 auto;
-  margin: 0;
-  padding: 0;
+  gap: 8px;
+  margin-left: auto;
 }
 
-.GameControllerButtonContainer {
+/* AlertDialog and InfoDialog wrap their trigger in a plain div. */
+.SessionBarActions > div {
   display: flex;
-  flex-direction: column;
+}
+
+.SessionAction {
+  align-items: center;
+  appearance: none;
+  background-color: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--text);
+  cursor: pointer;
+  display: inline-flex;
+  font: inherit;
+  font-size: 0.84rem;
+  font-weight: 550;
+  gap: 7px;
+  height: 34px;
   justify-content: center;
-  text-align: center;
+  padding: 0 13px;
+  transition:
+    background-color var(--duration-fast) var(--ease),
+    border-color var(--duration-fast) var(--ease),
+    color var(--duration-fast) var(--ease);
+  white-space: nowrap;
 }
 
-.GameControllerButton {
-  display: flex;
-  border-radius: 50%;
-  background-color: var(--color-background);
+.SessionAction:not(:disabled):hover {
+  background-color: var(--surface-hover);
 }
 
-
-
-.GameControllerButton:hover {
-  box-shadow: rgb(171 207 248) 0 0 0 6px;
-}
-
-
-.GameControllerButton:hover:has(> button:disabled)
- {
-  pointer-events: none;  /* Keine Hover-Effekte/Farbanpassung */
-  box-shadow: none;
-}
-
-
-.GameControllerButton button:disabled {
-  filter: grayscale(100%) opacity(20%);
+.SessionAction:disabled {
+  color: var(--text-subtle);
   cursor: not-allowed;
+  opacity: 0.55;
 }
 
-.GameControllerCardHeaderAverageContainer {
-  align-items: stretch;
-  display: flex;
-  flex-direction: row;
-  flex: 1 1 auto;
-  justify-content: flex-end;
-  margin: 0;
-  padding-left: 0;
+.SessionActionPrimary {
+  background-color: var(--accent);
+  border-color: transparent;
+  color: var(--accent-contrast);
 }
 
-.GameControllerCardHeaderAverageContainer h6:first-child {
-  min-width: 150px;
+.SessionActionPrimary:not(:disabled):hover {
+  background-color: var(--accent);
+  filter: brightness(1.08);
 }
 
-.GameControllerCardHeaderAverageContainer .MuiTypography-root {
-  align-items: center;
-  display: flex;
-  justify-content: center;
-  padding: 0 22px;
+.SessionActionPrimary:disabled {
+  background-color: var(--surface-sunken);
+  border-color: var(--border);
+  color: var(--text-subtle);
 }
 
-.GameControllerDeleteAction {
-  align-items: center;
-  align-self: stretch;
-  display: flex;
-  justify-content: center;
-  padding: 0 10px;
+.SessionDeleteButton {
+  color: var(--text-subtle);
 }
 
-.GameControllerDeleteAction > div {
-  align-items: center;
-  display: flex;
+.SessionDeleteButton:hover {
+  color: var(--danger);
 }
 
-.GameControllerDeleteAction button {
-  margin: 0;
+.SessionInviteLink {
+  overflow-wrap: anywhere;
 }
 
-.InProgress {
-  background-color: #f4dd94;
-  color: #17202a;
-}
+/* ---------------- Mobile: actions become a fixed dock ---------------- */
 
-.Finished {
-  background-color: #9dd49a;
-  color: #17202a;
+@media (max-width: 760px) {
+  .SessionBar {
+    gap: 10px;
+    margin-bottom: 18px;
+    padding-bottom: 14px;
+  }
+
+  .SessionBarHeading {
+    flex: 1 1 100%;
+    flex-wrap: wrap;
+  }
+
+  .SessionBarTitle {
+    font-size: 1.15rem;
+  }
+
+  .SessionBarActions {
+    backdrop-filter: blur(16px);
+    background-color: color-mix(in srgb, var(--surface) 92%, transparent);
+    border-top: 1px solid var(--border);
+    bottom: 0;
+    box-shadow: var(--shadow-lg);
+    gap: 4px;
+    justify-content: space-around;
+    left: 0;
+    margin: 0;
+    overflow-x: auto;
+    padding: 8px 10px calc(8px + env(safe-area-inset-bottom));
+    position: fixed;
+    right: 0;
+    z-index: 40;
+  }
+
+  .SessionAction {
+    border-color: transparent;
+    flex-direction: column;
+    font-size: 0.7rem;
+    gap: 3px;
+    height: auto;
+    /* Content-sized so the labels keep a gap; the dock scrolls if they cannot. */
+    min-width: 0;
+    padding: 6px 7px;
+  }
+
+  .SessionActionPrimary {
+    background-color: transparent;
+    color: var(--accent);
+  }
+
+  .SessionActionPrimary:not(:disabled):hover {
+    background-color: var(--surface-hover);
+    filter: none;
+  }
+
+  .SessionActionPrimary:disabled {
+    background-color: transparent;
+    border-color: transparent;
+  }
+
+  .SessionDeleteButton {
+    align-self: center;
+  }
 }

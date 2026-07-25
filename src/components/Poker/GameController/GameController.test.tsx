@@ -51,7 +51,7 @@ describe('GameController component', () => {
   it('should display game status', () => {
     render(<GameController game={mockGame} currentPlayerId={mockCurrentPlayerId} />);
 
-    expect(screen.getByText(`${mockGame.gameStatus} ⏱️`)).toBeInTheDocument();
+    expect(screen.getByText('Abstimmung läuft')).toBeInTheDocument();
   });
   it('should not display a game average, whatever the deck', () => {
     // The estimate summary derives the average from the current votes and is
@@ -62,7 +62,7 @@ describe('GameController component', () => {
           <GameController game={{ ...mockGame, gameType }} currentPlayerId={mockCurrentPlayerId} />,
         );
 
-        expect(screen.queryByText('Average:')).not.toBeInTheDocument();
+        expect(screen.queryByText(/Durchschnitt/)).not.toBeInTheDocument();
         unmount();
       },
     );
@@ -70,13 +70,13 @@ describe('GameController component', () => {
   it('should display exit option', () => {
     render(<GameController game={mockGame} currentPlayerId={mockCurrentPlayerId} />);
 
-    expect(screen.getByText('Exit')).toBeInTheDocument();
+    expect(screen.getByText('Verlassen')).toBeInTheDocument();
   });
 
   it('should display invite option', () => {
     render(<GameController game={mockGame} currentPlayerId={mockCurrentPlayerId} />);
 
-    expect(screen.getByText('Invite')).toBeInTheDocument();
+    expect(screen.getByText('Einladen')).toBeInTheDocument();
   });
 
   it('should copy invite link to clipboard', async () => {
@@ -97,12 +97,12 @@ describe('GameController component', () => {
     it('should display reveal option', () => {
       render(<GameController game={mockGame} currentPlayerId={mockCurrentPlayerId} />);
 
-      expect(screen.getByText('Reveal')).toBeInTheDocument();
+      expect(screen.getByText('Aufdecken')).toBeInTheDocument();
     });
     it('should display restart option', () => {
       render(<GameController game={mockGame} currentPlayerId={mockCurrentPlayerId} />);
 
-      expect(screen.getByText('Restart')).toBeInTheDocument();
+      expect(screen.getByText('Neue Runde')).toBeInTheDocument();
     });
     it('should reveal cards when player click on Reveal button', async () => {
       render(<GameController game={mockGame} currentPlayerId={mockCurrentPlayerId} />);

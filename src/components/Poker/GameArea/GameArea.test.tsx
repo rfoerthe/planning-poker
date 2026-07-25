@@ -66,7 +66,7 @@ describe('GameArea component', () => {
       <GameArea game={mockGame} players={mockPlayers} currentPlayerId={mockCurrentPlayerId} />,
     );
 
-    expect(screen.queryAllByText('1')).toHaveLength(3);
+    expect(within(screen.getByTestId('card-picker')).queryAllByText('1')).toHaveLength(2);
   });
 
   it('should display T-Shirt median summary when the game is finished', () => {
@@ -88,15 +88,14 @@ describe('GameArea component', () => {
 
     const summary = within(screen.getByTestId('tshirt-summary'));
 
-    expect(summary.getByText('T-Shirt Result')).toBeInTheDocument();
-    expect(summary.getByText('Median range')).toBeInTheDocument();
-    expect(summary.getByText('21-50 PD')).toBeInTheDocument();
-    expect(summary.getByText('Total median value')).toBeInTheDocument();
-    expect(summary.getByText('35.5 PD')).toBeInTheDocument();
-    expect(summary.getByText('Consensus status')).toBeInTheDocument();
-    expect(summary.getByText('MODERATE SPREAD')).toBeInTheDocument();
-    expect(summary.getByText('Short clarification recommended.')).toBeInTheDocument();
-    expect(summary.getByText('Spread: 2 | σ: 0.8 | Ratio: 9.1x')).toBeInTheDocument();
+    expect(summary.getByText('T-Shirt-Ergebnis')).toBeInTheDocument();
+    expect(summary.getByText('Median-Größe')).toBeInTheDocument();
+    expect(summary.getByText('21-50 PT')).toBeInTheDocument();
+    expect(summary.getByText('Median-Aufwand')).toBeInTheDocument();
+    expect(summary.getByText('35,5 PT')).toBeInTheDocument();
+    expect(summary.getByText('Mittlere Streuung')).toBeInTheDocument();
+    expect(summary.getByText('Kurze Klärung empfohlen.')).toBeInTheDocument();
+    expect(summary.getByText('Spanne: 2 · σ: 0,8 · Verhältnis: 9,1×')).toBeInTheDocument();
   });
 
   it('should display a critical T-Shirt consensus status for extreme spreads', () => {
@@ -118,10 +117,10 @@ describe('GameArea component', () => {
     const summary = within(screen.getByTestId('tshirt-summary'));
 
     expect(summary.getByText('XXS-XL')).toBeInTheDocument();
-    expect(summary.getByText('1-300 PD')).toBeInTheDocument();
-    expect(summary.getByText('CRITICAL SPREAD')).toBeInTheDocument();
-    expect(summary.getByText('Discussion required!')).toBeInTheDocument();
-    expect(summary.getByText('Spread: 5 | σ: 2.5 | Ratio: 300x')).toBeInTheDocument();
+    expect(summary.getByText('1-300 PT')).toBeInTheDocument();
+    expect(summary.getByText('Kritische Streuung')).toBeInTheDocument();
+    expect(summary.getByText('Diskussion erforderlich!')).toBeInTheDocument();
+    expect(summary.getByText('Spanne: 5 · σ: 2,5 · Verhältnis: 300×')).toBeInTheDocument();
   });
 
   describe('presence indicators', () => {

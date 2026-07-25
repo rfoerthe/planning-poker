@@ -1,31 +1,140 @@
 .AppBar {
+  background-color: color-mix(in srgb, var(--app-bg) 78%, transparent);
+  backdrop-filter: saturate(180%) blur(20px);
+  border-bottom: 1px solid var(--border-soft);
   box-shadow: none;
-  background-color:  var(--color-background);
-  color: var(--color-text-primary);
-  flex-grow: 1;
-  white-space: nowrap;
+  color: var(--text);
 }
 
-.HeaderContainer {
+.AppToolbar {
+  align-items: center;
   display: flex;
-  justify-content: space-between;
   gap: 16px;
+  margin: 0 auto;
+  max-width: var(--page-max);
+  min-height: var(--appbar-height);
+  padding: 0 20px;
   width: 100%;
 }
 
-.HeaderLeftContainer {
-  display: flex;
+.BrandButton {
   align-items: center;
+  appearance: none;
+  background: transparent;
+  border: 0;
+  color: inherit;
   cursor: pointer;
-}
-
-.HeaderActions {
   display: flex;
-  align-items: center;
-  justify-content: flex-end;
+  flex: 0 0 auto;
+  font: inherit;
+  gap: 9px;
+  padding: 0;
 }
 
-.HeaderIcon {
-  color: var(--color-primary);
-  margin-right: 5px;
+.BrandMark {
+  align-items: center;
+  background: linear-gradient(145deg, var(--accent), color-mix(in srgb, var(--accent) 55%, #22d3ee));
+  border-radius: 8px;
+  box-shadow: var(--shadow-sm);
+  color: #fff;
+  display: flex;
+  font-size: 0.82rem;
+  font-weight: 700;
+  height: 26px;
+  justify-content: center;
+  width: 26px;
+}
+
+.BrandName {
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+
+.NavLinks {
+  display: flex;
+  flex: 1 1 auto;
+  gap: 2px;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.NavLink {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.845rem;
+  font-weight: 500;
+  padding: 6px 11px;
+  transition:
+    background-color var(--duration-fast) var(--ease),
+    color var(--duration-fast) var(--ease);
+  white-space: nowrap;
+}
+
+.NavLink:hover {
+  background-color: var(--surface-hover);
+  color: var(--text);
+}
+
+.AppBarActions {
+  align-items: center;
+  display: flex;
+  gap: 4px;
+  margin-left: auto;
+}
+
+.AppBarIconButton {
+  color: var(--text-muted);
+}
+
+.AppBarIconButton:hover {
+  background-color: var(--surface-hover);
+  color: var(--text);
+}
+
+/* ---------------- Mobile drawer ---------------- */
+
+.NavDrawer {
+  background-color: var(--surface);
+  background-image: none;
+  border-left: 1px solid var(--border);
+  min-width: 264px;
+}
+
+.NavDrawerHeader {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  padding: 14px 16px;
+}
+
+.NavDrawerList {
+  padding: 8px;
+}
+
+.NavDrawerItem {
+  border-radius: var(--radius-md);
+  margin-bottom: 2px;
+}
+
+.NavDrawerIcon {
+  color: var(--text-subtle);
+  min-width: 34px;
+}
+
+@media (max-width: 600px) {
+  .AppToolbar {
+    gap: 10px;
+    padding: 0 14px;
+  }
+
+  .BrandName {
+    font-size: 0.95rem;
+  }
 }

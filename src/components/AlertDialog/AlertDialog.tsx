@@ -5,6 +5,7 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
+import { useTranslation } from 'react-i18next';
 
 interface AlertDialogProps {
   children: React.ReactNode;
@@ -14,7 +15,14 @@ interface AlertDialogProps {
   onCancel?: Function;
 }
 
-export const AlertDialog: React.FC<AlertDialogProps> = ({ children, title, message, onConfirm, onCancel = () => {} }) => {
+export const AlertDialog: React.FC<AlertDialogProps> = ({
+  children,
+  title,
+  message,
+  onConfirm,
+  onCancel = () => {},
+}) => {
+  const { t } = useTranslation();
   const [openDialog, setOpenDialog] = React.useState(false);
 
   const handleClickOpen = () => {
@@ -26,39 +34,41 @@ export const AlertDialog: React.FC<AlertDialogProps> = ({ children, title, messa
     onCancel();
   };
 
-  const handleConfirm = () => { 
+  const handleConfirm = () => {
     setOpenDialog(false);
     onConfirm();
   };
 
   return (
     <>
-      <div onClick={handleClickOpen}>
-        {children}
-      </div>
+      <div onClick={handleClickOpen}>{children}</div>
       <Dialog
         open={openDialog}
         onClose={handleClose}
-        maxWidth="xs"
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
+        maxWidth='xs'
+        aria-labelledby='alert-dialog-title'
+        aria-describedby='alert-dialog-description'
         data-testid='alert-dialog'
       >
-        <DialogTitle id="alert-dialog-title">{title}</DialogTitle>
+        <DialogTitle id='alert-dialog-title'>{title}</DialogTitle>
         <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            {message}
-          </DialogContentText>
+          <DialogContentText id='alert-dialog-description'>{message}</DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button data-testid="alert-dialog-cancel" onClick={handleClose} color="inherit">
-            Cancel
+          <Button data-testid='alert-dialog-cancel' onClick={handleClose} color='inherit'>
+            {t('common.cancel')}
           </Button>
-          <Button data-testid="alert-dialog-confirm" onClick={handleConfirm} color="primary" autoFocus>
-            Confirm
+          <Button
+            data-testid='alert-dialog-confirm'
+            onClick={handleConfirm}
+            color='primary'
+            variant='contained'
+            autoFocus
+          >
+            {t('common.confirm')}
           </Button>
         </DialogActions>
       </Dialog>
     </>
   );
-}
+};

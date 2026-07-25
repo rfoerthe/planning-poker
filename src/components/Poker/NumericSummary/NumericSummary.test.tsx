@@ -38,10 +38,10 @@ describe('NumericSummary component', () => {
     const average = within(screen.getByTestId('summary-average'));
     const median = within(screen.getByTestId('summary-median'));
 
-    expect(average.getByText('8.7')).toBeInTheDocument();
-    expect(average.getByText('Nearest card: 8')).toBeInTheDocument();
+    expect(average.getByText('8,7')).toBeInTheDocument();
+    expect(screen.getByText(/Nächstliegende Karte: 8/)).toBeInTheDocument();
     expect(median.getByText('8')).toBeInTheDocument();
-    expect(median.getByText('Range: 5 – 13')).toBeInTheDocument();
+    expect(screen.getByText(/Spannweite: 5 – 13/)).toBeInTheDocument();
   });
 
   it('should display the consensus status', () => {
@@ -53,8 +53,8 @@ describe('NumericSummary component', () => {
 
     render(<NumericSummary summary={summary} />);
 
-    expect(screen.getByText('CRITICAL SPREAD')).toBeInTheDocument();
-    expect(screen.getByText('Discussion required!')).toBeInTheDocument();
+    expect(screen.getByText('Kritische Streuung')).toBeInTheDocument();
+    expect(screen.getByText('Diskussion erforderlich!')).toBeInTheDocument();
   });
 
   it('should display the distribution including players without an estimate', () => {
@@ -66,8 +66,8 @@ describe('NumericSummary component', () => {
 
     render(<NumericSummary summary={summary} />);
 
-    expect(screen.getByText('Distribution: 2 votes, 1 without estimate')).toBeInTheDocument();
-    expect(screen.getByTitle('2 votes for 5')).toBeInTheDocument();
+    expect(screen.getByText('Verteilung: 2 Stimmen, 1 ohne Schätzung')).toBeInTheDocument();
+    expect(screen.getByTitle('2 Stimmen für 5')).toBeInTheDocument();
   });
 
   it('should use the singular for a single vote', () => {
@@ -77,8 +77,8 @@ describe('NumericSummary component', () => {
 
     render(<NumericSummary summary={summary} />);
 
-    expect(screen.getByText('Distribution: 1 vote')).toBeInTheDocument();
-    expect(screen.getByTitle('1 vote for 5')).toBeInTheDocument();
+    expect(screen.getByText('Verteilung: 1 Stimme')).toBeInTheDocument();
+    expect(screen.getByTitle('1 Stimme für 5')).toBeInTheDocument();
   });
 
   it('should name the outliers', () => {
@@ -91,6 +91,6 @@ describe('NumericSummary component', () => {
 
     render(<NumericSummary summary={summary} />);
 
-    expect(screen.getByText('Outliers: Thor (55)')).toBeInTheDocument();
+    expect(screen.getByText('Ausreißer: Thor (55)')).toBeInTheDocument();
   });
 });

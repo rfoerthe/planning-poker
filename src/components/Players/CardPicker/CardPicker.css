@@ -1,72 +1,121 @@
-.CardPickerTitle {
-  margin-top: 20px;
-  margin-bottom: 20px;
+.CardPickerSection {
+  margin-top: 8px;
 }
 
-.CardPickerContainer {
-  bottom: 0;
-  padding: 20px 50px 10px 50px;
-  width: 100%;
-}
-
-.CardPickerGrid {
+.CardPickerHead {
+  align-items: baseline;
   display: flex;
   flex-wrap: wrap;
-  gap: 32px;
-  justify-content: center;
+  gap: 4px 12px;
+  margin-bottom: 14px;
 }
 
-.CardPickerGridItem {
-  flex: 0 0 auto;
+.CardPickerTitle {
+  margin: 0;
 }
 
-.CardPicker {
-  min-width: 100px;
-  max-width: 100px;
-  max-height: 140px;
-  min-height: 140px;
-  margin-top: 10px;
+.CardPickerHint {
+  color: var(--text-subtle);
+  font-size: 0.78rem;
+  margin: 0 0 0 auto;
+}
+
+.CardPickerDeck {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  /* Room for the lift of the selected card. */
+  padding-top: 14px;
+}
+
+.CardPickerDeckLocked {
+  filter: grayscale(1);
+  opacity: 0.55;
+}
+
+.PickerCard {
+  align-items: center;
   appearance: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
   cursor: pointer;
-  background-color: var(--color-background-secondary);
-  font: inherit;
+  display: flex;
+  font-family: var(--font-num);
+  font-weight: 600;
+  height: 94px;
+  justify-content: center;
+  letter-spacing: -0.03em;
   padding: 0;
-  text-align: inherit;
+  position: relative;
   touch-action: manipulation;
+  transition:
+    box-shadow var(--duration-fast) var(--ease),
+    transform var(--duration-fast) var(--ease);
+  width: 66px;
   -webkit-tap-highlight-color: transparent;
 }
 
-.CardPicker:not(:disabled):hover {
-  box-shadow: 0 0 12px 0 lightgrey;
+.PickerCard:not(:disabled):hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-6px);
 }
 
-.CardPicker:disabled {
+.PickerCardSelected {
+  box-shadow:
+    0 0 0 2px var(--accent),
+    var(--shadow-md);
+  transform: translateY(-12px);
+}
+
+.PickerCardSelected:not(:disabled):hover {
+  transform: translateY(-14px);
+}
+
+.PickerCard:disabled {
   cursor: default;
 }
 
-.CardContent {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-around;
-  padding-bottom: 20px !important;
+.PickerCardCorner {
+  font-size: 0.7rem;
+  font-weight: 600;
+  left: 7px;
+  letter-spacing: 0;
+  opacity: 0.65;
+  position: absolute;
+  top: 6px;
 }
 
-.CardContentTop {
-  margin-top: -5px;
-  text-align: left;
+.PickerCardValue {
+  font-size: 1.35rem;
 }
 
-.CardContentMiddle {
-  padding: 18px 0 18px 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+.PickerCardSymbol {
+  font-size: 1.45rem;
 }
 
-.CardContentBottom {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  height: 25px;
-  text-align: right;
+@media (max-width: 480px) {
+  .PickerCard {
+    height: 80px;
+    width: 56px;
+  }
+
+  .PickerCardValue {
+    font-size: 1.15rem;
+  }
+
+  .CardPickerHint {
+    margin-left: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .PickerCard:not(:disabled):hover,
+  .PickerCardSelected:not(:disabled):hover {
+    transform: none;
+  }
+
+  .PickerCardSelected {
+    transform: none;
+  }
 }

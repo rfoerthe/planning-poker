@@ -1,113 +1,11 @@
-.NumericSummaryCard {
-  width: min(800px, calc(100% - 20px));
-  margin: 0 auto 20px;
-  border-radius: 4px;
-  background-color: var(--color-background-secondary);
-}
-
-.NumericSummaryContent {
-  text-align: center;
-}
-
-.NumericSummaryTitle {
-  color: var(--color-text-secondary);
-  letter-spacing: 0;
-  text-transform: uppercase;
-}
-
-.NumericSummaryValues {
-  display: flex;
-  justify-content: center;
-  gap: 16px;
-  flex-wrap: wrap;
-  margin-top: 8px;
-}
-
-.NumericSummaryItem {
-  min-width: 180px;
-  max-width: 250px;
-  padding: 10px 14px;
-  border: 1px solid var(--color-border);
-  border-radius: 4px;
-  background-color: var(--color-background);
-}
-
-.NumericSummaryItem .MuiTypography-h6 {
-  font-weight: 700;
-}
-
-.NumericConsensusItem.consensus {
-  border-color: #6ea86b;
-  background-color: rgb(157 212 154 / 20%);
-}
-
-.NumericConsensusItem.moderate-spread {
-  border-color: #c7a33f;
-  background-color: rgb(244 221 148 / 28%);
-}
-
-.NumericConsensusItem.critical-spread {
-  border-color: #d66a63;
-  background-color: rgb(243 152 147 / 24%);
-}
-
-.NumericConsensusDetails {
-  display: block;
-  margin-top: 8px;
-  color: var(--color-text-secondary);
-  overflow-wrap: anywhere;
-}
-
-.NumericSummaryDistribution {
-  width: min(420px, 100%);
-  margin: 16px auto 0;
-  text-align: left;
-}
-
 .NumericDistributionTitle {
   display: block;
-  margin-bottom: 6px;
-  color: var(--color-text-secondary);
-  text-align: center;
-}
-
-.NumericDistributionRow {
-  display: grid;
-  grid-template-columns: 40px 1fr 24px;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 4px;
-}
-
-.NumericDistributionLabel {
-  font-weight: 700;
-  overflow: hidden;
-  text-align: right;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.NumericDistributionTrack {
-  height: 14px;
-  border: 1px solid var(--color-border);
-  border-radius: 7px;
-  background-color: var(--color-background);
-  overflow: hidden;
-}
-
-.NumericDistributionBar {
-  height: 100%;
-  min-width: 6px;
-  border-radius: 7px;
-}
-
-.NumericDistributionCount {
-  color: var(--color-text-secondary);
+  margin-bottom: 9px;
 }
 
 .NumericSummaryOutliers {
-  display: block;
-  margin-top: 12px;
-  color: var(--color-text-secondary);
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  margin: 12px 0 0;
   overflow-wrap: anywhere;
 }

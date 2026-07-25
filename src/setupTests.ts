@@ -44,15 +44,45 @@ declare const vi: any;
   restoreAllMocks: vi.restoreAllMocks,
 };
 
-// Mock the 'react-i18next' module globally for all tests
-// to avoid loading i18n resources and focus on component logic.
-vi.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string) => key,
-    i18n: { language: 'en-US', changeLanguage: vi.fn() },
-  }),
-  Trans: (props: any) => props.children,
-}));
+// Mock 'react-i18next' so tests run without the i18next runtime, but resolve
+// against the real German bundle. Assertions then read like the actual UI
+// instead of matching translation keys.
+vi.mock('react-i18next', async () => {
+  const { de } = (await vi.importActual('./locales/de')) as typeof import('./locales/de');
+
+  const lookup = (key: string): unknown =>
+    key.split('.').reduce<any>((node, segment) => (node == null ? node : node[segment]), de);
+
+  const interpolate = (text: string, options?: Record<string, unknown>) =>
+    options
+      ? text.replace(/{{(\w+)}}/g, (match, name) =>
+          options[name] === undefined ? match : String(options[name]),
+        )
+      : text;
+
+  const translate = (key: string, options?: Record<string, unknown>) => {
+    const count = options?.count;
+    const value =
+      count === undefined
+        ? lookup(key)
+        : (lookup(`${key}_${count === 1 ? 'one' : 'other'}`) ?? lookup(key));
+
+    if (typeof value === 'string') {
+      return interpolate(value, options);
+    }
+
+    // Arrays and objects are returned as-is for `returnObjects` style lookups.
+    return value === undefined ? key : value;
+  };
+
+  return {
+    useTranslation: () => ({
+      t: translate,
+      i18n: { language: 'de', changeLanguage: vi.fn() },
+    }),
+    Trans: (props: any) => props.children,
+  };
+});
 
 // Polyfill window.matchMedia for tests (used by MUI useMediaQuery)
 if (!(window as any).matchMedia) {
