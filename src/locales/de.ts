@@ -39,8 +39,8 @@ export const de = {
 
   home: {
     badge: 'Kostenlos & Open Source',
-    titleLead: 'Schätzen im Team.',
-    titleAccent: 'Ohne Reibung.',
+    titleLead: 'Gemeinsam schätzen.',
+    titleAccent: 'In Sekunden startklar.',
     lede: 'Session anlegen, Link teilen, verdeckt abstimmen, gemeinsam aufdecken. Kein Login, keine Installation — in unter zehn Sekunden startklar.',
     features: {
       decks: {
