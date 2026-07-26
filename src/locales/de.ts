@@ -44,8 +44,8 @@ export const de = {
     lede: 'Session anlegen, Link teilen, verdeckt abstimmen, gemeinsam aufdecken. Kein Login, keine Installation — in unter zehn Sekunden startklar.',
     features: {
       decks: {
-        title: 'Fünf Kartendecks',
-        text: 'Fibonacci, Short Fibonacci, T-Shirt, gemischt oder eigene Werte.',
+        title: 'Vier Kartendecks',
+        text: 'Fibonacci, Short Fibonacci, T-Shirt oder eigene Werte.',
       },
       stats: {
         title: 'Runden-Statistik',
@@ -74,7 +74,6 @@ export const de = {
       shortFibonacci: 'Short Fibonacci',
       fibonacci: 'Fibonacci',
       tshirt: 'T-Shirt',
-      tshirtAndNumber: 'T-Shirt & Zahlen',
       custom: 'Eigene Werte',
     },
     deckValues: {
@@ -197,11 +196,47 @@ export const de = {
     title: 'Ergebnis',
     median: 'Median',
     average: 'Durchschnitt',
-    nearestCard: 'Nächstliegende Karte: {{card}}',
+    averageLabel: 'Durchschnitt:',
+    recommendation: 'Empfehlung: {{card}} — die Karte, die dem Durchschnitt am nächsten liegt',
+    medianHelp: {
+      heading: 'So entsteht der Median',
+      hint: 'Die Empfehlung darunter geht dagegen vom Durchschnitt aus und kann deshalb von dieser Zahl abweichen.',
+    },
+    averageHelp: {
+      heading: 'So entsteht der Durchschnitt',
+      intro:
+        'Der Durchschnitt gewichtet alle Stimmen gleich. Ein einzelner Ausreißer zieht ihn deshalb spürbar mit — anders als den Median.',
+      step: 'Alle Stimmen addieren und teilen:',
+    },
+    recommendationHelp: {
+      heading: 'So entsteht die Empfehlung',
+      intro:
+        'Der Durchschnitt trifft selten genau eine Karte. Empfohlen wird die Karte, die ihm am nächsten kommt.',
+      stepDistances: 'Abstand der benachbarten Karten:',
+      hint: 'Bei gleichem Abstand fällt die Wahl auf die höhere Karte, damit nicht systematisch zu niedrig geschätzt wird.',
+    },
     range: 'Spannweite',
-    rangeLabel: 'Spannweite: {{lowest}} – {{highest}}',
-    standardDeviation: 'σ',
+    rangeHelp: {
+      heading: 'So entsteht die Spannweite',
+      intro: 'Die niedrigste und die höchste abgegebene Karte.',
+      step: 'Stimmen:',
+      hint: 'Nicht zu verwechseln mit dem Abstand in der Bewertung: der zählt Kartenschritte, nicht Kartenwerte.',
+    },
     abstentions: 'Enthaltungen',
+    abstentionsHelp: {
+      heading: 'Enthaltungen',
+      intro: 'Stimmen für ❓ oder ☕ — also alle, die keine Zahl genannt haben.',
+      hint: 'Sie fließen in keine Kennzahl ein und beeinflussen weder Median noch Durchschnitt.',
+    },
+    outlierHelp: {
+      heading: 'Wie Ausreißer bestimmt werden',
+      intro:
+        'Ausreißer sind die Stimmen, die am weitesten von der Mitte des Feldes entfernt liegen. Sie sind der beste Startpunkt für die Diskussion.',
+      stepMedian: 'Position der mittleren Stimme:',
+      stepDistances: 'Abstand jeder Stimme dazu:',
+      stepPick: 'Ausreißer ab {{distance}} Kartenschritten:',
+      hint: 'Erst ab {{minimum}} Stimmen, weil bei zweien beide gleich weit von der Mitte entfernt wären.',
+    },
     distribution: 'Verteilung',
     withoutEstimate: '{{count}} ohne Schätzung',
     distributionTooltip: '{{votes}} für {{card}}',
@@ -211,13 +246,108 @@ export const de = {
   tshirtSummary: {
     title: 'T-Shirt-Ergebnis',
     medianSize: 'Median-Größe',
+    effortRange: 'Aufwandsspanne: {{range}}',
+    effortRangeHelp: {
+      heading: 'So entsteht die Aufwandsspanne',
+      intro:
+        'Die Spanne, für die die Median-Größe steht. Der Median-Aufwand darunter ist deren Mitte.',
+      step: 'Spanne der Größe {{size}}:',
+    },
     totalMedianValue: 'Median-Aufwand',
     empty: 'Keine T-Shirt-Stimmen zum Auswerten.',
+    medianSizeHelp: {
+      heading: 'So entsteht die Median-Größe',
+    },
+    medianEffortHelp: {
+      heading: 'So entsteht der Median-Aufwand',
+      intro:
+        'Jede Größe steht für eine Aufwandsspanne, nicht für eine feste Zahl. Als einzelner Wert wird die Mitte dieser Spanne genommen.',
+      stepRangeOne: 'Spanne der Median-Größe {{size}}:',
+      stepRangeTwo: 'Spannen der beiden mittleren Größen:',
+      stepMiddleOne: 'Mitte der Spanne:',
+      stepMiddleTwo: 'Mitte je Spanne:',
+      stepAverage: 'Mittelwert daraus:',
+    },
+  },
+
+  median: {
+    intro:
+      'Der Median ist die mittlere Stimme: die eine Hälfte liegt darunter, die andere darüber. Ein einzelner Ausreißer verschiebt ihn kaum — anders als den Durchschnitt.',
+    stepSort: 'Stimmen der Größe nach sortieren:',
+    stepMiddleOne: 'Mittlere Stimme nehmen ({{position}}. von {{count}}):',
+    stepMiddleTwo: 'Die beiden mittleren Stimmen nehmen ({{first}}. und {{second}}. von {{count}}):',
+    stepMiddleTwoAverage:
+      'Mittelwert der beiden mittleren Stimmen ({{first}}. und {{second}}. von {{count}}):',
+  },
+
+  deviation: {
+    label: 'σ',
+    unitCards: 'Kartenschritte',
+    unitSizes: 'Größenschritte',
+    headingCards: 'Streuung über die Kartenpositionen',
+    headingSizes: 'Streuung über die Größenstufen',
+    cardLabel: 'Karte',
+    sizeLabel: 'Größe',
+    positionLabel: 'Position',
+    stepLabel: 'Stufe',
+    votesLabel: 'Stimmen',
+    scalePositions: 'Positionen',
+    scaleSteps: 'Stufen',
+    stepMean: 'Mittelwert der {{scale}}:',
+    stepDeviations: 'Abstand jeder Stimme dazu:',
+    stepSquares: 'Quadrieren und mitteln:',
+    stepRoot: 'Wurzel ziehen:',
+    hintCards:
+      'Positionen statt Kartenwerte, weil die Abstände zwischen Fibonacci-Zahlen nach oben immer größer werden.',
+    hintSizes:
+      'Stufen statt Aufwände, weil die Aufwandsspannen von Größe zu Größe immer größer werden.',
+  },
+
+  spread: {
+    headingCards: 'So entsteht der Abstand',
+    headingSizes: 'So entsteht der Abstand',
+    introCards:
+      'Der Abstand zählt, wie viele Kartenschritte zwischen der niedrigsten und der höchsten Stimme liegen.',
+    introSizes:
+      'Der Abstand zählt, wie viele Größenstufen zwischen der kleinsten und der größten Stimme liegen.',
+    stepEnds: 'Niedrigste und höchste Stimme:',
+    stepDifference: 'Differenz:',
+  },
+
+  verdict: {
+    heading: 'So entsteht die Bewertung',
+    intro:
+      'Bewertet wird allein, wie weit die Stimmen auseinanderliegen — nicht, wie hoch geschätzt wurde.',
+    stepSpread: 'Abstand:',
+    spreadValue_one: '{{count}} Schritt — kritisch ab {{limit}}',
+    spreadValue_other: '{{count}} Schritte — kritisch ab {{limit}}',
+    stepDeviation: 'σ:',
+    deviationValue: '{{deviation}} — kritisch über {{limit}}',
+    deviationIgnored: '{{deviation}} — zählt erst ab {{minimum}} Stimmen',
+    stepResult: 'Deshalb:',
+    resultBoth: 'Beide Grenzen überschritten → kritische Streuung',
+    resultSpread: 'Abstand über der Grenze → kritische Streuung',
+    resultDeviation: 'σ über der Grenze → kritische Streuung',
+    resultModerate: 'Abstand genau {{moderate}} → mittlere Streuung',
+    resultConsensus: 'Keine Grenze überschritten → Konsens',
+  },
+
+  ratio: {
+    heading: 'So entsteht das Verhältnis',
+    introCards:
+      'Das Verhältnis vergleicht die höchste mit der niedrigsten Schätzung und sagt, um welchen Faktor das Team auseinanderliegt.',
+    introSizes:
+      'Das Verhältnis vergleicht den größten mit dem kleinsten geschätzten Aufwand. Jede Größe steht für eine Spanne, genommen wird deren Mitte.',
+    stepLargest: 'Aufwand der größten Stimme {{size}}:',
+    stepSmallest: 'Aufwand der kleinsten Stimme {{size}}:',
+    stepDivide: 'Größte ÷ kleinste Schätzung:',
   },
 
   consensus: {
-    details: 'Spanne: {{spread}} · σ: {{deviation}}',
-    detailsWithRatio: 'Spanne: {{spread}} · σ: {{deviation}} · Verhältnis: {{ratio}}×',
+    spread_one: 'Abstand: {{count}} Schritt',
+    spread_other: 'Abstand: {{count}} Schritte',
+    deviation: 'σ: {{deviation}}',
+    ratio: 'Verhältnis: {{ratio}}×',
     consensus: {
       badge: '✓',
       code: 'Konsens',

@@ -90,12 +90,14 @@ describe('GameArea component', () => {
 
     expect(summary.getByText('T-Shirt-Ergebnis')).toBeInTheDocument();
     expect(summary.getByText('Median-Größe')).toBeInTheDocument();
-    expect(summary.getByText('21-50 PT')).toBeInTheDocument();
+    expect(summary.getByText('Aufwandsspanne: 21-50 PT')).toBeInTheDocument();
     expect(summary.getByText('Median-Aufwand')).toBeInTheDocument();
     expect(summary.getByText('35,5 PT')).toBeInTheDocument();
     expect(summary.getByText('Mittlere Streuung')).toBeInTheDocument();
     expect(summary.getByText('Kurze Klärung empfohlen.')).toBeInTheDocument();
-    expect(summary.getByText('Spanne: 2 · σ: 0,8 · Verhältnis: 9,1×')).toBeInTheDocument();
+    expect(summary.getByText('Abstand: 2 Schritte')).toBeInTheDocument();
+    expect(summary.getByText('σ: 0,8')).toBeInTheDocument();
+    expect(summary.getByText('Verhältnis: 4,9×')).toBeInTheDocument();
   });
 
   it('should display a critical T-Shirt consensus status for extreme spreads', () => {
@@ -117,10 +119,12 @@ describe('GameArea component', () => {
     const summary = within(screen.getByTestId('tshirt-summary'));
 
     expect(summary.getByText('XXS-XL')).toBeInTheDocument();
-    expect(summary.getByText('1-300 PT')).toBeInTheDocument();
+    expect(summary.getByText('Aufwandsspanne: 1-300 PT')).toBeInTheDocument();
     expect(summary.getByText('Kritische Streuung')).toBeInTheDocument();
     expect(summary.getByText('Diskussion erforderlich!')).toBeInTheDocument();
-    expect(summary.getByText('Spanne: 5 · σ: 2,5 · Verhältnis: 300×')).toBeInTheDocument();
+    expect(summary.getByText('Abstand: 5 Schritte')).toBeInTheDocument();
+    expect(summary.getByText('σ: 2,5')).toBeInTheDocument();
+    expect(summary.getByText('Verhältnis: 66,8×')).toBeInTheDocument();
   });
 
   describe('presence indicators', () => {

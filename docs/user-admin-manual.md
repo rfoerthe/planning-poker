@@ -35,7 +35,6 @@ This manual is for Planning Poker participants, session moderators, and support/
    - Short Fibonacci
    - Fibonacci
    - T-shirt
-   - T-shirt and numbers
    - Custom
 
 6. Choose whether members may manage the session.

@@ -31,6 +31,8 @@
   font-weight: 620;
   left: 50%;
   padding: 1px 8px;
+  /* A label, and it overlaps the close button on narrow cards. Never take a click. */
+  pointer-events: none;
   position: absolute;
   top: -9px;
   transform: translateX(-50%);

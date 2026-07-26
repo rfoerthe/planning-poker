@@ -65,18 +65,6 @@ export const tShirtCards: CardConfig[] = [
   { value: -1, displayValue: '-1', color: 'var(--color-background-secondary)' },
 ];
 
-export const tShirtAndNumbersCards: CardConfig[] = [
-  { value: 10, displayValue: 'S', color: '#9EC8FE' },
-  { value: 20, displayValue: 'M', color: '#9EC8FE' },
-  { value: 30, displayValue: 'L', color: '#A3DFF2' },
-  { value: 40, displayValue: 'XL', color: '#A3DFF2' },
-  { value: 50, displayValue: '1', color: '#9DD49A' },
-  { value: 60, displayValue: '2', color: '#9DD49A' },
-  { value: 70, displayValue: '3', color: '#F4DD94' },
-  { value: 80, displayValue: '4', color: '#F4DD94' },
-  { value: 90, displayValue: '5', color: '#F39893' },
-];
-
 export const customCardsTemplate: CardConfig[] = [
   { value: 0, displayValue: '0', color: 'var(--color-background-secondary)' },
   { value: 1, displayValue: '1', color: '#9EC8FE' },
@@ -103,8 +91,6 @@ export const getCards = (gameType: GameType | undefined): CardConfig[] => {
       return fibonacciCards;
     case GameType.TShirt:
       return tShirtCards;
-    case GameType.TShirtAndNumber:
-      return tShirtAndNumbersCards;
     case GameType.Custom:
       return customCardsTemplate;
     default:

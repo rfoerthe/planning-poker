@@ -26,11 +26,6 @@ const deckOptions: { gameType: GameType; labelKey: string; values?: string }[] =
     values: 'XXS · XS · S · M · L · XL · XXL',
   },
   {
-    gameType: GameType.TShirtAndNumber,
-    labelKey: 'createGame.decks.tshirtAndNumber',
-    values: 'S · M · L · XL · 1 · 2 · 3 · 4 · 5',
-  },
-  {
     gameType: GameType.Custom,
     labelKey: 'createGame.decks.custom',
   },

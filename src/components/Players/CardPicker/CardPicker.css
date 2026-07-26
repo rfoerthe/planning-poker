@@ -24,7 +24,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-  /* Room for the lift of the selected card. */
+  /* Room for the chosen card to rise into without clipping. */
   padding-top: 14px;
 }
 
@@ -69,7 +69,7 @@
 }
 
 .PickerCardSelected:not(:disabled):hover {
-  transform: translateY(-14px);
+  transform: translateY(-12px);
 }
 
 .PickerCard:disabled {
@@ -110,12 +110,16 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .PickerCard:not(:disabled):hover,
-  .PickerCardSelected:not(:disabled):hover {
+  .PickerCard {
+    transition: box-shadow var(--duration-fast) var(--ease);
+  }
+
+  .PickerCard:not(:disabled):hover {
     transform: none;
   }
 
-  .PickerCardSelected {
+  .PickerCardSelected,
+  .PickerCardSelected:not(:disabled):hover {
     transform: none;
   }
 }

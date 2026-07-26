@@ -3,7 +3,6 @@ import {
   addGameToStore,
   addPlayerToGameInStore,
   getGameFromStore,
-  getPlayersFromStore,
   removeGameFromStore,
   removeOldGameFromStore,
   streamData,
@@ -11,7 +10,6 @@ import {
   updateGameDataInStore,
 } from '../repository/firebase';
 import { NewGame } from '../types/game';
-import { Player } from '../types/player';
 import { Status } from '../types/status';
 import { removeGameFromCache, resetPlayers, updatePlayerGames } from './players';
 
@@ -95,36 +93,6 @@ export const startTimer = async (gameId: string, durationSeconds: number) => {
 
 export const stopTimer = async (gameId: string) => {
   await updateGameDataInStore(gameId, { timerEndsAt: null });
-};
-
-export const getGameStatus = (players: Player[]): Status => {
-  let numberOfPlayersPlayed = 0;
-  players.forEach((player: Player) => {
-    if (player.status === Status.Finished) {
-      numberOfPlayersPlayed++;
-    }
-  });
-  if (numberOfPlayersPlayed === 0) {
-    return Status.Started;
-  }
-  return Status.InProgress;
-};
-
-export const updateGameStatus = async (gameId: string): Promise<boolean> => {
-  const game = await getGame(gameId);
-  if (!game) {
-    console.log('Game not found');
-    return false;
-  }
-  const players = await getPlayersFromStore(gameId);
-  if (players) {
-    const status = getGameStatus(players);
-    const dataToUpdate = {
-      gameStatus: status,
-    };
-    return await updateGameDataInStore(gameId, dataToUpdate);
-  }
-  return false;
 };
 
 export const removeGame = async (gameId: string) => {

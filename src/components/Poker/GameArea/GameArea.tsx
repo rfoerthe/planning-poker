@@ -79,8 +79,7 @@ export const GameArea: React.FC<GameAreaProps> = ({ game, players, currentPlayer
 
   const isRevealed = gameStatus === Status.Finished;
   const votedCount = players.filter((player) => player.status === Status.Finished).length;
-  const hasTshirtLegend =
-    game.gameType === GameType.TShirt || game.gameType === GameType.TShirtAndNumber;
+  const hasTshirtLegend = game.gameType === GameType.TShirt;
 
   return (
     <div className='PageShell GameArea'>

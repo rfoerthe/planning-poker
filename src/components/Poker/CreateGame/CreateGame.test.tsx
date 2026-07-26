@@ -142,28 +142,6 @@ describe('CreateGame component', () => {
       expect.objectContaining({ createdBy: 'Rock', gameType: 'ShortFibonacci', name: 'Marvels' }),
     );
   });
-  it('should be able to create new session of TShirt & Numbers', async () => {
-    render(<CreateGame />);
-    const sessionName = screen.getByPlaceholderText('z. B. Sprint 42 — Refinement');
-    await userEvent.clear(sessionName);
-    await userEvent.type(sessionName, 'Marvels');
-
-    const userName = screen.getByPlaceholderText('Wie sollen dich die anderen sehen?');
-    await userEvent.clear(userName);
-    await userEvent.type(userName, 'Rock');
-
-    const tShirt = screen.getByTestId('deck-option-TShirtAndNumber');
-    await userEvent.click(tShirt);
-
-    const createButton = screen.getByText('Session starten');
-    await userEvent.click(createButton);
-
-    expect(gamesService.addNewGame).toHaveBeenCalled();
-
-    expect(gamesService.addNewGame).toHaveBeenCalledWith(
-      expect.objectContaining({ createdBy: 'Rock', gameType: 'TShirtAndNumber', name: 'Marvels' }),
-    );
-  });
   it('should be able to create new session of Custom option', async () => {
     render(<CreateGame />);
     const sessionName = screen.getByPlaceholderText('z. B. Sprint 42 — Refinement');

@@ -40,7 +40,6 @@ describe('statistics service', () => {
 
     it('should treat t-shirt and custom decks as non numeric', () => {
       expect(isNumericGameType(GameType.TShirt)).toBe(false);
-      expect(isNumericGameType(GameType.TShirtAndNumber)).toBe(false);
       expect(isNumericGameType(GameType.Custom)).toBe(false);
     });
   });

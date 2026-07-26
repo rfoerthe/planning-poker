@@ -21,9 +21,16 @@ export const CardPicker: React.FC<CardPickerProps> = ({ game, players, currentPl
   const { t } = useTranslation();
   const [randomEmoji, setRandomEmoji] = useState(getRandomEmoji);
 
-  const playPlayer = (gameId: string, playerId: string, card: CardConfig) => {
-    if (game.gameStatus !== Status.Finished) {
-      void updatePlayerValue(gameId, playerId, card.value, randomEmoji);
+  const playPlayer = async (gameId: string, playerId: string, card: CardConfig) => {
+    if (game.gameStatus === Status.Finished) {
+      return;
+    }
+    try {
+      await updatePlayerValue(gameId, playerId, card.value, randomEmoji, game.gameStatus);
+    } catch (error) {
+      // Only fails once the own entry is gone, and a removed participant is
+      // sent out of the session anyway.
+      console.debug('Failed to record the estimate', error);
     }
   };
 
@@ -62,7 +69,7 @@ export const CardPicker: React.FC<CardPickerProps> = ({ game, players, currentPl
               disabled={isFinished}
               aria-pressed={isSelected}
               aria-label={getCardLabel(card, t)}
-              onClick={() => playPlayer(game.id, currentPlayerId, card)}
+              onClick={() => void playPlayer(game.id, currentPlayerId, card)}
               style={getCardStyle(card, isFinished)}
             >
               {card.value >= 0 ? (

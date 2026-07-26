@@ -5,12 +5,13 @@ import {
   getPlayerFromStore,
   getPlayersFromStore,
   removePlayerFromGameInStore,
+  updateGameDataInStore,
+  updatePlayerFieldsInStore,
   updatePlayerInStore,
 } from '../repository/firebase';
 import { getPlayerGamesFromCache, updatePlayerGamesInCache } from '../repository/localStorage';
 import { Player, PlayerGame } from '../types/player';
 import { Status } from '../types/status';
-import { updateGameStatus } from './games';
 import { isModerator } from '../utils/isModerator';
 
 export const addPlayer = async (gameId: string, player: Player) => {
@@ -26,21 +27,35 @@ export const removePlayer = async (gameId: string, playerId: string) => {
     await removePlayerFromGameInStore(gameId, playerId);
   }
 };
-export const updatePlayerValue = async (gameId: string, playerId: string, value: number, randomEmoji: string) => {
-  const player = await getPlayerFromStore(gameId, playerId);
+/**
+ * Records the own estimate.
+ *
+ * Nothing is read back first. The picked card only lights up once the write
+ * reaches the listeners, so a read in front of it puts a server round trip
+ * between the click and any visible reaction — on a slow connection the deck
+ * simply looks dead for as long as that takes. Writing straight away keeps the
+ * click on Firestore's latency compensation, which serves the local listeners
+ * before the server has even answered.
+ *
+ * The round status comes from the caller's snapshot for the same reason: the
+ * own vote is the first one exactly while the round has not started counting.
+ */
+export const updatePlayerValue = async (
+  gameId: string,
+  playerId: string,
+  value: number,
+  randomEmoji: string,
+  gameStatus: Status,
+) => {
+  await updatePlayerFieldsInStore(gameId, playerId, {
+    value: value,
+    emoji: randomEmoji,
+    status: Status.Finished,
+  });
 
-  if (player) {
-    const updatedPlayer = {
-      ...player,
-      value: value,
-      emoji: randomEmoji,
-      status: Status.Finished,
-    };
-    await updatePlayerInStore(gameId, updatedPlayer);
-    await updateGameStatus(gameId);
-    return true;
+  if (gameStatus === Status.Started) {
+    await updateGameDataInStore(gameId, { gameStatus: Status.InProgress });
   }
-  return false;
 };
 export const updatePlayerName = async (gameId: string, playerId: string, name: string) => {
   const player = await getPlayerFromStore(gameId, playerId);

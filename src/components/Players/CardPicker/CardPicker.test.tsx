@@ -88,35 +88,13 @@ describe('CardPicker component', () => {
         expect(cardValueElement.length).toBeGreaterThan(0);
       });
   });
-  it('should display correct card values TShirt & Numbers game type', () => {
-    const view = render(
-      <CardPicker
-        game={{
-          ...mockGame,
-          cards: getCards(GameType.TShirtAndNumber),
-          gameType: GameType.TShirtAndNumber,
-        }}
-        players={mockPlayers}
-        currentPlayerId={currentPlayerId}
-      />,
-    );
-
-    getCards(GameType.TShirtAndNumber)
-      .filter((a) => a.value >= 0)
-      .forEach((card) => {
-        const cardElement = view.container.querySelector(`#card-${card.displayValue}`);
-        expect(cardElement).toBeInTheDocument();
-        const cardValueElement = screen.queryAllByText(card.displayValue);
-        expect(cardValueElement.length).toBeGreaterThan(0);
-      });
-  });
   it('should display correct card values for Custom type', () => {
     const view = render(
       <CardPicker
         game={{
           ...mockGame,
 
-          gameType: GameType.TShirtAndNumber,
+          gameType: GameType.Custom,
         }}
         players={mockPlayers}
         currentPlayerId={currentPlayerId}
@@ -140,7 +118,13 @@ describe('CardPicker component', () => {
     const cardValueElement = screen.queryAllByText(1);
     await userEvent.click(cardValueElement[0]);
     expect(updatePlayerValueSpy).toHaveBeenCalled();
-    expect(updatePlayerValueSpy).toHaveBeenCalledWith(mockGame.id, currentPlayerId, 1, 'something');
+    expect(updatePlayerValueSpy).toHaveBeenCalledWith(
+      mockGame.id,
+      currentPlayerId,
+      1,
+      'something',
+      mockGame.gameStatus,
+    );
   });
 
   it('should not update player value when player clicks on a card and game is finished', async () => {
