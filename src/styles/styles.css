@@ -68,7 +68,9 @@
   --border-soft: #efeff2;
   --text: #16161a;
   --text-muted: #63636e;
-  --text-subtle: #9a9aa5;
+  /* Carries small labels — KPI captions, roles, the footer — so it has to clear
+     4.5:1 on the card surface rather than merely look quiet. */
+  --text-subtle: #75757f;
   --accent: #5b5bd6;
   --accent-soft: #eeeefc;
   --accent-strong: #4a4ac4;
@@ -96,41 +98,52 @@
   --color-text-secondary: #63636e;
 }
 
+/*
+ * The dark ramp is built on perceived lightness (L*), not on the raw contrast
+ * ratio: that ratio compresses so hard near black that a step which is plainly
+ * visible still computes as ~1.1. Every surface therefore stays clear of the
+ * bottom of the scale, where ambient light on the screen crushes the
+ * difference anyway — page L*7, cards L*13, inset areas L*18, borders L*25.
+ */
 :root[data-theme='dark'],
 .DarkTheme {
-  --app-bg: #0a0a0c;
-  --surface: #141417;
-  --surface-sunken: #0f0f12;
-  --surface-hover: #1c1c21;
-  --border: #26262c;
-  --border-soft: #1d1d22;
+  --app-bg: #15151b;
+  --surface: #212127;
+  /* Lighter than the surface, unlike in the light theme: a recess drawn darker
+     would fall back towards the page and lose the card it sits on. */
+  --surface-sunken: #2c2c32;
+  --surface-hover: #29292f;
+  --border: #3b3b41;
+  --border-soft: #2e2e34;
   --text: #f2f2f4;
-  --text-muted: #a0a0ac;
-  --text-subtle: #6b6b78;
-  --accent: #8b8bf5;
-  --accent-soft: #1d1d3a;
-  --accent-strong: #a5a5fa;
-  --accent-contrast: #0a0a0c;
-  --success: #4ecfa6;
-  --success-soft: #102b23;
-  --warning: #e0a052;
-  --warning-soft: #2e2113;
-  --danger: #f08585;
-  --danger-soft: #331919;
+  --text-muted: #b4b4c2;
+  --text-subtle: #8c8c9c;
+  --accent: #9d9dfa;
+  --accent-soft: #2b2b48;
+  --accent-strong: #b4b4fc;
+  --accent-contrast: #15151b;
+  --success: #5fd9b2;
+  --success-soft: #18332b;
+  --warning: #eab069;
+  --warning-soft: #392c1e;
+  --danger: #f79595;
+  --danger-soft: #412727;
   --overlay: rgb(0 0 0 / 62%);
 
   --shadow-sm: 0 1px 2px rgb(0 0 0 / 40%);
   --shadow-md: 0 2px 4px rgb(0 0 0 / 30%), 0 8px 24px rgb(0 0 0 / 35%);
   --shadow-lg: 0 4px 8px rgb(0 0 0 / 30%), 0 24px 48px rgb(0 0 0 / 50%);
 
-  --color-primary: #8b8bf5;
+  --color-primary: #9d9dfa;
   --color-secondary: #445069;
-  --color-background: #141417;
-  --color-background-secondary: #1c1c21;
-  --color-warning: #e0a052;
-  --color-border: #26262c;
+  --color-background: #212127;
+  /* Carries the neutral cards of the deck — 0, ❓ and ☕ — so it has to sit as
+     far above the page as any other card face. */
+  --color-background-secondary: #2c2c32;
+  --color-warning: #eab069;
+  --color-border: #3b3b41;
   --color-text-primary: #f2f2f4;
-  --color-text-secondary: #a0a0ac;
+  --color-text-secondary: #b4b4c2;
 }
 
 /* ------------------------------------------------------------------ *
