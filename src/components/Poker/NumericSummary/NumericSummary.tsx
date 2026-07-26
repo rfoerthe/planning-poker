@@ -27,10 +27,43 @@ import {
 import './NumericSummary.css';
 
 interface NumericSummaryProps {
-  summary: NumericSummaryResult;
+  /** Undefined when the round holds nothing that can be averaged. */
+  summary: NumericSummaryResult | undefined;
 }
 
+/**
+ * A round where everyone picked the unsure or break card still gets its panel:
+ * the panel is the answer to "what came out of the round", and its absence
+ * reads as a bug rather than as an empty result.
+ */
 export const NumericSummary: React.FC<NumericSummaryProps> = ({ summary }) => {
+  const { t } = useTranslation();
+
+  return (
+    <section className='StatPanel' data-testid='numeric-summary'>
+      <div className='StatPanelHead'>
+        <h2 className='StatPanelTitle'>{t('numericSummary.title')}</h2>
+        {summary && (
+          <span className='StatusPill StatusPillDone'>
+            {t('common.votes', { count: summary.voteCount })}
+          </span>
+        )}
+      </div>
+
+      {summary ? (
+        <NumericSummaryBody summary={summary} />
+      ) : (
+        <p className='StatPanelEmpty'>{t('numericSummary.empty')}</p>
+      )}
+    </section>
+  );
+};
+
+/**
+ * The evaluated panel. Split off so the derived explanations can be built from
+ * a summary that is known to exist, rather than guarded at every use.
+ */
+const NumericSummaryBody: React.FC<{ summary: NumericSummaryResult }> = ({ summary }) => {
   const { t } = useTranslation();
   const votesLabel = t('common.votes', { count: summary.voteCount });
 
@@ -62,12 +95,7 @@ export const NumericSummary: React.FC<NumericSummaryProps> = ({ summary }) => {
   );
 
   return (
-    <section className='StatPanel' data-testid='numeric-summary'>
-      <div className='StatPanelHead'>
-        <h2 className='StatPanelTitle'>{t('numericSummary.title')}</h2>
-        <span className='StatusPill StatusPillDone'>{votesLabel}</span>
-      </div>
-
+    <>
       <StatExplainer
         content={{
           heading: t('numericSummary.medianHelp.heading'),
@@ -205,7 +233,7 @@ export const NumericSummary: React.FC<NumericSummaryProps> = ({ summary }) => {
           </StatExplainer>
         </p>
       )}
-    </section>
+    </>
   );
 };
 

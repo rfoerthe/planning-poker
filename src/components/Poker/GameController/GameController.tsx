@@ -14,6 +14,7 @@ import { finishGame, removeGame, resetGame } from '../../../service/games';
 import { Game } from '../../../types/game';
 import { Status } from '../../../types/status';
 import { isModerator } from '../../../utils/isModerator';
+import { DeckSuit } from '../DeckSuit/DeckSuit';
 import { GameTimer } from '../GameTimer/GameTimer';
 import './GameController.css';
 
@@ -63,6 +64,7 @@ export const GameController: React.FC<GameControllerProps> = ({
     <>
       <header className='SessionBar'>
         <div className='SessionBarHeading'>
+          <DeckSuit gameType={game.gameType} className='SessionBarSuit' />
           <h1 className='SessionBarTitle' title={game.name}>
             {game.name}
           </h1>

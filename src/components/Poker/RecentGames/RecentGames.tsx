@@ -1,5 +1,5 @@
 import { Alert, Fade, IconButton, Snackbar } from '@mui/material';
-import DeleteForeverIcon from '@mui/icons-material/DeleteForeverTwoTone';
+import CloseIcon from '@mui/icons-material/Close';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router';
 import { getPlayerRecentGames } from '../../../service/players';
 import { removeGame } from '../../../service/games';
 import { AlertDialog } from '../../AlertDialog/AlertDialog';
+import { DeckSuit } from '../DeckSuit/DeckSuit';
 import { PlayerGame } from '../../../types/player';
 import './RecentGames.css';
 
@@ -70,9 +71,7 @@ export const RecentGames: React.FC<RecentGamesProps> = ({ hideWhenEmpty = false 
                   aria-label={t('recentGames.open')}
                   onClick={() => navigate(`/game/${recentGame.id}`)}
                 >
-                  <span className='ResumeChipIcon' aria-hidden='true'>
-                    ♠
-                  </span>
+                  <DeckSuit gameType={recentGame.gameType} className='ResumeChipSuit' />
                   <span className='ResumeChipName'>{recentGame.name}</span>
                   <span className='ResumeChipMeta'>
                     <span>{t('recentGames.createdByLabel')}</span>
@@ -98,12 +97,12 @@ export const RecentGames: React.FC<RecentGamesProps> = ({ hideWhenEmpty = false 
                       onConfirm={() => handleRemoveGame(recentGame.id)}
                     >
                       <IconButton
-                        className='ResumeChipAction'
+                        className='ResumeChipAction CircleRemove'
                         size='small'
                         title={t('recentGames.removeAction')}
                         aria-label={t('recentGames.removeAction')}
                       >
-                        <DeleteForeverIcon fontSize='small' className='ResumeChipDeleteIcon' />
+                        <CloseIcon className='CircleRemoveIcon' />
                       </IconButton>
                     </AlertDialog>
                   ))}

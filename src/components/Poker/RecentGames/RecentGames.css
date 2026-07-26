@@ -74,10 +74,8 @@
   white-space: nowrap;
 }
 
-.ResumeChipIcon {
-  color: var(--accent);
-  flex: 0 0 auto;
-  font-size: 0.9rem;
+.ResumeChipSuit {
+  font-size: 0.95rem;
 }
 
 /* The name is the only part that gives way when a chip has to shrink. */
@@ -100,11 +98,6 @@
 
 .ResumeChipAction {
   flex: 0 0 auto;
-  padding: 3px;
-}
-
-.ResumeChipDeleteIcon {
-  color: var(--danger);
 }
 
 .ResumeChipLockIcon {

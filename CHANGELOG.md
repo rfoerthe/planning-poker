@@ -4,6 +4,45 @@ All notable changes to this project are documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.0.0] - 2026-07-26
+
+### Added
+
+- Aurora design across every screen: start page, session, result panels, dialogs and footer. The design tokens live in `src/styles/styles.css` and are mirrored into the MUI theme, so components that portal to `document.body` — menus, dialogs, snackbars — resolve the same values as the rest of the app.
+- Round status panel while the votes are still hidden: how many have voted, how many are open, and the remaining time. It never shows anything about the estimates themselves.
+- The consensus verdict became its own block below the figures, with the spread, the standard deviation and the ratio spelled out next to it.
+- An explanation behind every figure of the result panels. Hovering or tapping a value opens a popup with the actual arithmetic of that round — median, average, recommendation, range, abstentions, outliers, standard deviation, spread, ratio, and the verdict itself, including which threshold decided it.
+- Each of the four decks carries one suit of a Skat deck as its mark, in the deck picker, next to the session name and on the entries of the resume bar.
+- A result panel for numeric decks even when nobody gave an estimate. Previously the panel was simply absent, which read as a defect rather than as an empty round.
+- `preview-deploy` script, deploying to a Firebase preview channel that expires after 14 days.
+
+### Changed
+
+- The custom deck takes whole numbers from 0 to 999 only. Entries are checked while typing, duplicates are marked, and the question-mark and break cards are added automatically. The card now carries the entered number as its value instead of the position of the input field, which is what lets a custom deck be evaluated like any other numeric deck.
+- The UI is German only, and the translations are compiled into the bundle instead of being fetched at runtime. No request on first paint and no flash of untranslated keys.
+- New brand mark: two offset cards on a plain accent tile, replacing the spade on a violet-to-teal gradient. The gradient sat a hue away from the accent the deck suits are drawn in.
+- The resume bar removes an entry with the same circular close control as the player cards, instead of a red bin.
+- The T-shirt effort ratio compares the middles of the two effort ranges. It used to hold the top of one range against the bottom of another, which made neighbouring sizes look four times apart.
+- The consensus thresholds are shared between the numeric and the T-shirt panel, so the two can no longer drift apart, and the explanations name the same numbers the rule uses.
+
+### Fixed
+
+- Safari usually accepted only the first click on an estimate card, then ignored the deck for a few seconds. Recording a vote read the player back from Firestore before writing, and that round trip sat between the click and any visible reaction. The write now goes out directly, which keeps the click on Firestore's latency compensation.
+- The outlier badge on a player card swallowed clicks meant for the card underneath it.
+- The rounded intermediate values in the standard-deviation walkthrough no longer add up to something other than the result shown.
+- German plural forms in the verdict details ("1 Schritt" instead of "1 Schritte").
+
+### Removed
+
+- The "T-shirt and numbers" deck, from the UI, the code and the documentation. Sessions still carrying that type are no longer run through the numeric evaluation: the deck check names the numeric decks instead of excluding the others, so a type this version does not know cannot fall through to "numeric".
+- The language switch and the English, Brazilian Portuguese and Chinese (Traditional) translation files, along with the `i18next-http-backend` and `i18next-browser-languagedetector` dependencies.
+- `getGameStatus` and `updateGameStatus`, which nothing called any more.
+
+### Notes
+
+- Existing sessions keep working. Only the removed deck loses its result panel, and no stored document is migrated or rewritten.
+- Major version because the app dropped a deck and three languages — nothing about the data in Firestore changed.
+
 ## [2.2.0] - 2026-07-25
 
 ### Added

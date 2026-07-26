@@ -24,7 +24,6 @@ import {
   getVerdictContent,
   ScaleWording,
 } from '../StatExplainer/voteScale';
-import './TshirtSummary.css';
 
 interface TshirtSummaryProps {
   game: Game;
@@ -119,7 +118,7 @@ export const TshirtSummary: React.FC<TshirtSummaryProps> = ({ game, players }) =
       {summary ? (
         <TshirtSummaryBody summary={summary} />
       ) : (
-        <p className='TshirtSummaryEmpty'>{t('tshirtSummary.empty')}</p>
+        <p className='StatPanelEmpty'>{t('tshirtSummary.empty')}</p>
       )}
     </section>
   );

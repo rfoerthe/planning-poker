@@ -29,6 +29,15 @@ describe('CreateGame component', () => {
     expect(screen.getByPlaceholderText('Wie sollen dich die anderen sehen?')).toBeInTheDocument();
   });
 
+  it('should mark every deck option with its own suit', () => {
+    render(<CreateGame />);
+
+    expect(screen.getByTestId('deck-option-ShortFibonacci')).toHaveTextContent('♦');
+    expect(screen.getByTestId('deck-option-Fibonacci')).toHaveTextContent('♥');
+    expect(screen.getByTestId('deck-option-TShirt')).toHaveTextContent('♠');
+    expect(screen.getByTestId('deck-option-Custom')).toHaveTextContent('♣');
+  });
+
   it('should display create button', () => {
     render(<CreateGame />);
 

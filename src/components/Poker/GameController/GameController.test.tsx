@@ -48,6 +48,16 @@ describe('GameController component', () => {
     render(<GameController game={mockGame} currentPlayerId={mockCurrentPlayerId} />);
     expect(screen.getByText(mockGame.name)).toBeInTheDocument();
   });
+  it('should mark the session with the suit of its deck', () => {
+    render(
+      <GameController
+        game={{ ...mockGame, gameType: GameType.Fibonacci }}
+        currentPlayerId={mockCurrentPlayerId}
+      />,
+    );
+
+    expect(screen.getByRole('img', { name: 'Fibonacci' })).toHaveTextContent('♥');
+  });
   it('should display game status', () => {
     render(<GameController game={mockGame} currentPlayerId={mockCurrentPlayerId} />);
 

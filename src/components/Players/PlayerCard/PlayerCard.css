@@ -40,37 +40,15 @@
 }
 
 /*
- * Close control in the card corner. It sits over the top-right of the face,
- * which can carry any card colour after the reveal, so it brings its own
- * surface backdrop to stay readable.
+ * Places the shared close control in the card corner. It sits over the
+ * top-right of the face, which can carry any card colour after the reveal,
+ * so the control's own surface backdrop is what keeps it readable.
  */
 .SeatRemove {
-  background-color: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 50%;
-  color: var(--text-subtle);
-  height: 20px;
-  padding: 0;
   position: absolute;
   right: 4px;
   top: 4px;
-  transition:
-    background-color var(--duration-fast) var(--ease),
-    border-color var(--duration-fast) var(--ease),
-    color var(--duration-fast) var(--ease);
-  width: 20px;
   z-index: 1;
-}
-
-.SeatRemove:hover,
-.SeatRemove:focus-visible {
-  background-color: var(--danger-soft);
-  border-color: var(--danger);
-  color: var(--danger);
-}
-
-.SeatRemoveIcon {
-  font-size: 0.82rem;
 }
 
 .SeatFace {

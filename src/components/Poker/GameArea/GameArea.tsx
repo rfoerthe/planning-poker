@@ -3,7 +3,7 @@ import { Game, GameType } from '../../../types/game';
 import { Player } from '../../../types/player';
 import { finishGame, stopTimer } from '../../../service/games';
 import { getActivePlayerIds, presenceHeartbeatMs } from '../../../service/presence';
-import { getNumericSummary } from '../../../service/statistics';
+import { getNumericSummary, isNumericGameType } from '../../../service/statistics';
 import {
   countdownThresholdSeconds,
   getRemainingSeconds,
@@ -105,7 +105,7 @@ export const GameArea: React.FC<GameAreaProps> = ({ game, players, currentPlayer
         <aside className='GameAreaSide'>
           {isRevealed ? (
             <>
-              {numericSummary && <NumericSummary summary={numericSummary} />}
+              {isNumericGameType(game.gameType) && <NumericSummary summary={numericSummary} />}
               <TshirtSummary game={game} players={players} />
             </>
           ) : (

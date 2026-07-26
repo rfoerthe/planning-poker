@@ -15,6 +15,12 @@
   min-width: 0;
 }
 
+/* Belongs to the session name, so it sits closer to it than the status pill. */
+.SessionBarSuit {
+  font-size: 1.3rem;
+  margin-right: -4px;
+}
+
 .SessionBarTitle {
   font-size: 1.35rem;
   font-weight: 640;

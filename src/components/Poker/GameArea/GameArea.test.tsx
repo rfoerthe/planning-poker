@@ -69,6 +69,47 @@ describe('GameArea component', () => {
     expect(within(screen.getByTestId('card-picker')).queryAllByText('1')).toHaveLength(2);
   });
 
+  it('should display the result panel when nobody gave an estimate', () => {
+    const revealedGame = {
+      ...mockGame,
+      gameType: GameType.Fibonacci,
+      cards: getCards(GameType.Fibonacci),
+      gameStatus: Status.Finished,
+    };
+    const undecidedPlayers: Player[] = [
+      { id: 'a1', name: 'SpiderMan', status: Status.Finished, value: -2 },
+      { id: 'a2', name: 'IronMan', status: Status.Finished, value: -1 },
+    ];
+
+    renderWithRouter(
+      <GameArea
+        game={revealedGame}
+        players={undecidedPlayers}
+        currentPlayerId={mockCurrentPlayerId}
+      />,
+    );
+
+    const summary = within(screen.getByTestId('numeric-summary'));
+
+    expect(summary.getByText('Ergebnis')).toBeInTheDocument();
+    expect(summary.getByText('Keine Schätzungen zum Auswerten.')).toBeInTheDocument();
+  });
+
+  it('should not display the numeric result panel for a T-Shirt game', () => {
+    const tShirtGame = {
+      ...mockGame,
+      gameType: GameType.TShirt,
+      cards: getCards(GameType.TShirt),
+      gameStatus: Status.Finished,
+    };
+
+    renderWithRouter(
+      <GameArea game={tShirtGame} players={mockPlayers} currentPlayerId={mockCurrentPlayerId} />,
+    );
+
+    expect(screen.queryByTestId('numeric-summary')).not.toBeInTheDocument();
+  });
+
   it('should display T-Shirt median summary when the game is finished', () => {
     const tShirtGame = {
       ...mockGame,

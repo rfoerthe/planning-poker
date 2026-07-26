@@ -32,10 +32,12 @@ This manual is for Planning Poker participants, session moderators, and support/
 4. Enter your moderator display name.
 5. Select a card type:
 
-   - Short Fibonacci
-   - Fibonacci
-   - T-shirt
-   - Custom (whole numbers from 0 to 999; the question-mark and break cards are added automatically)
+   - Short Fibonacci (♦)
+   - Fibonacci (♥)
+   - T-shirt (♠)
+   - Custom (♣) — whole numbers from 0 to 999; the question-mark and break cards are added automatically
+
+   Each deck carries one suit of a Skat deck as its mark, all four in the accent colour rather than the red and black of a real deck. The mark appears on the deck buttons, next to the session name during the round, and on the session's entry in the resume bar, so sessions with different decks can be told apart at a glance.
 
 6. Choose whether members may manage the session.
 7. Create the session.
@@ -89,6 +91,7 @@ When the moderator reveals the session:
 
 - Submitted cards become visible.
 - Numeric decks get a result card with average, median, and spread.
+- A round in which nobody gave an estimate still gets its result card, stating that there is nothing to evaluate.
 - The team can discuss differences and decide on a final estimate.
 
 ### Estimate Result

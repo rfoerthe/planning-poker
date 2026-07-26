@@ -330,12 +330,15 @@
 }
 
 .DeckChip {
+  align-items: center;
   background-color: var(--app-bg);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
   color: var(--text-muted);
   cursor: pointer;
+  display: inline-flex;
   font-size: 0.84rem;
+  gap: 7px;
   font-weight: 540;
   padding: 8px 13px;
   transition:
@@ -373,6 +376,10 @@
 .DeckChip:has(input:focus-visible) {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
+}
+
+.DeckChipSuit {
+  font-size: 1rem;
 }
 
 .DeckValues {
@@ -557,6 +564,36 @@
   max-width: 760px;
 }
 
+/*
+ * Close control for removing an entry — a player seat, an earlier session.
+ * Quiet until it is aimed at, because the removal behind it cannot be undone
+ * and the entry, not the control, is what should catch the eye.
+ */
+.CircleRemove {
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  color: var(--text-subtle);
+  height: 20px;
+  padding: 0;
+  transition:
+    background-color var(--duration-fast) var(--ease),
+    border-color var(--duration-fast) var(--ease),
+    color var(--duration-fast) var(--ease);
+  width: 20px;
+}
+
+.CircleRemove:hover,
+.CircleRemove:focus-visible {
+  background-color: var(--danger-soft);
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+.CircleRemoveIcon {
+  font-size: 0.82rem;
+}
+
 /* ------------------------------------------------------------------ *
  * Stat panels — shared by the round status and the result summaries
  * ------------------------------------------------------------------ */
@@ -581,6 +618,13 @@
   font-size: 0.82rem;
   font-weight: 600;
   letter-spacing: -0.01em;
+  margin: 0;
+}
+
+/* Stands in for the figures when a round produced nothing to evaluate. */
+.StatPanelEmpty {
+  color: var(--text-subtle);
+  font-size: 0.85rem;
   margin: 0;
 }
 

@@ -97,12 +97,12 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
         <IconButton
           title={t('playerCard.remove')}
           aria-label={t('playerCard.remove')}
-          className='SeatRemove'
+          className='SeatRemove CircleRemove'
           size='small'
           onClick={() => removeUser(game.id, player.id)}
           data-testid='remove-button'
         >
-          <CloseIcon className='SeatRemoveIcon' />
+          <CloseIcon className='CircleRemoveIcon' />
         </IconButton>
       )}
 

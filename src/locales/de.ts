@@ -196,6 +196,7 @@ export const de = {
 
   numericSummary: {
     title: 'Ergebnis',
+    empty: 'Keine Schätzungen zum Auswerten.',
     median: 'Median',
     average: 'Durchschnitt',
     averageLabel: 'Durchschnitt:',

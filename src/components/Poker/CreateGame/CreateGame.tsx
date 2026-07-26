@@ -8,6 +8,7 @@ import {
   getCustomCards,
   isValidCustomCardValue,
 } from '../../Players/CardPicker/CardConfigs';
+import { DeckSuit } from '../DeckSuit/DeckSuit';
 import './CreateGame.css';
 
 const customOptionCount = 15;
@@ -171,6 +172,7 @@ export const CreateGame = () => {
                   checked={gameType === option.gameType}
                   onChange={() => setGameType(option.gameType)}
                 />
+                <DeckSuit gameType={option.gameType} decorative className='DeckChipSuit' />
                 {t(option.labelKey)}
               </label>
             ))}

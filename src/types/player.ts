@@ -1,3 +1,4 @@
+import { GameType } from './game';
 import { Status } from './status';
 
 export interface Player {
@@ -20,4 +21,6 @@ export interface PlayerGame {
   isModerator?: boolean;
   isLocked?: boolean;
   existsInStore?: boolean;
+  /** Read from the session, not from the cache — the deck may predate the cache entry. */
+  gameType?: GameType;
 }

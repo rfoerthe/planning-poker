@@ -139,7 +139,20 @@ export const Toolbar = ({
             title={t('toolbar.version', { version: import.meta.env.PACKAGE_VERSION })}
           >
             <span className='BrandMark' aria-hidden='true'>
-              ♠
+              <svg viewBox='0 0 24 24' width='18' height='18'>
+                <rect
+                  x='2.6'
+                  y='6'
+                  width='9.6'
+                  height='13.6'
+                  rx='2.2'
+                  transform='rotate(-18 7.4 12.8)'
+                  fill='none'
+                  stroke='currentColor'
+                  strokeWidth='1.8'
+                />
+                <rect x='11.4' y='4.4' width='10' height='14' rx='2.4' fill='currentColor' />
+              </svg>
             </span>
             <span className='BrandName'>{title}</span>
           </button>

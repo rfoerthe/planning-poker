@@ -1,6 +1,6 @@
 {
   "name": "planning-poker",
-  "version": "2.2.0",
+  "version": "3.0.0",
   "type": "module",
   "private": true,
   "dependencies": {
@@ -12,8 +12,6 @@
     "country-flag-icons": "^1.6.17",
     "firebase": "^12.13.0",
     "i18next": "^26.0.10",
-    "i18next-browser-languagedetector": "^8.2.1",
-    "i18next-http-backend": "^4.0.0",
     "react": "19.2.6",
     "react-cookie-consent": "^10.0.1",
     "react-dom": "19.2.6",

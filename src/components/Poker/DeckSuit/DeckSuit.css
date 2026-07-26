@@ -1,0 +1,9 @@
+/*
+ * The suit mark of a card deck. It takes its size from whatever it sits in,
+ * so a chip, a heading and a list row each get a mark that matches their text.
+ */
+.DeckSuit {
+  color: var(--accent);
+  flex: 0 0 auto;
+  line-height: 1;
+}

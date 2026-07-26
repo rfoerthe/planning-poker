@@ -77,6 +77,7 @@ export const getPlayerRecentGames = async (): Promise<PlayerGame[]> => {
     const game = await getGameFromStore(playerGame.id);
     if (game) {
       playerGame.isLocked = game.isLocked;
+      playerGame.gameType = game.gameType;
       playerGame.existsInStore = true;
       playerGame.isModerator = isModerator(
         playerGame.createdById,
