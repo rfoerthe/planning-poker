@@ -60,20 +60,20 @@
 :root,
 :root[data-theme='light'],
 .LightTheme {
-  --app-bg: #fafafa;
+  --app-bg: #f9fafc;
   --surface: #ffffff;
-  --surface-sunken: #f2f3f5;
-  --surface-hover: #f4f4f6;
-  --border: #e6e6ea;
-  --border-soft: #efeff2;
-  --text: #16161a;
-  --text-muted: #63636e;
+  --surface-sunken: #f1f3f7;
+  --surface-hover: #f2f4f8;
+  --border: #e3e7ed;
+  --border-soft: #edeff4;
+  --text: #13171d;
+  --text-muted: #5e6571;
   /* Carries small labels — KPI captions, roles, the footer — so it has to clear
      4.5:1 on the card surface rather than merely look quiet. */
-  --text-subtle: #75757f;
-  --accent: #5b5bd6;
-  --accent-soft: #eeeefc;
-  --accent-strong: #4a4ac4;
+  --text-subtle: #707682;
+  --accent: #2563eb;
+  --accent-soft: #e5f0ff;
+  --accent-strong: #1651d5;
   --accent-contrast: #ffffff;
   --success: #17876a;
   --success-soft: #e5f5ef;
@@ -81,21 +81,21 @@
   --warning-soft: #fdf1e0;
   --danger: #c73e3e;
   --danger-soft: #fdecec;
-  --overlay: rgb(16 16 24 / 45%);
+  --overlay: rgb(12 18 28 / 45%);
 
-  --shadow-sm: 0 1px 2px rgb(16 16 24 / 5%);
-  --shadow-md: 0 2px 4px rgb(16 16 24 / 4%), 0 8px 24px rgb(16 16 24 / 6%);
-  --shadow-lg: 0 4px 8px rgb(16 16 24 / 5%), 0 24px 48px rgb(16 16 24 / 10%);
+  --shadow-sm: 0 1px 2px rgb(12 18 28 / 5%);
+  --shadow-md: 0 2px 4px rgb(12 18 28 / 4%), 0 8px 24px rgb(12 18 28 / 6%);
+  --shadow-lg: 0 4px 8px rgb(12 18 28 / 5%), 0 24px 48px rgb(12 18 28 / 10%);
 
   /* Legacy aliases — consumed by CardConfigs and inline styles. */
-  --color-primary: #5b5bd6;
-  --color-secondary: #d7d7d7;
+  --color-primary: #2563eb;
+  --color-secondary: #d5dae2;
   --color-background: #ffffff;
-  --color-background-secondary: #f2f3f5;
+  --color-background-secondary: #f1f3f7;
   --color-warning: #b4690e;
-  --color-border: #e6e6ea;
-  --color-text-primary: #16161a;
-  --color-text-secondary: #63636e;
+  --color-border: #e3e7ed;
+  --color-text-primary: #13171d;
+  --color-text-secondary: #5e6571;
 }
 
 /*
@@ -107,21 +107,21 @@
  */
 :root[data-theme='dark'],
 .DarkTheme {
-  --app-bg: #15151b;
-  --surface: #212127;
+  --app-bg: #12161e;
+  --surface: #1d222a;
   /* Lighter than the surface, unlike in the light theme: a recess drawn darker
      would fall back towards the page and lose the card it sits on. */
-  --surface-sunken: #2c2c32;
-  --surface-hover: #29292f;
-  --border: #3b3b41;
-  --border-soft: #2e2e34;
-  --text: #f2f2f4;
-  --text-muted: #b4b4c2;
-  --text-subtle: #8c8c9c;
-  --accent: #9d9dfa;
-  --accent-soft: #2b2b48;
-  --accent-strong: #b4b4fc;
-  --accent-contrast: #15151b;
+  --surface-sunken: #282d35;
+  --surface-hover: #262a32;
+  --border: #383c44;
+  --border-soft: #2b2f37;
+  --text: #f1f2f5;
+  --text-muted: #aeb6c5;
+  --text-subtle: #858e9f;
+  --accent: #7ca7fd;
+  --accent-soft: #1b2d52;
+  --accent-strong: #9abdfe;
+  --accent-contrast: #12161e;
   --success: #5fd9b2;
   --success-soft: #18332b;
   --warning: #eab069;
@@ -134,16 +134,16 @@
   --shadow-md: 0 2px 4px rgb(0 0 0 / 30%), 0 8px 24px rgb(0 0 0 / 35%);
   --shadow-lg: 0 4px 8px rgb(0 0 0 / 30%), 0 24px 48px rgb(0 0 0 / 50%);
 
-  --color-primary: #9d9dfa;
-  --color-secondary: #445069;
-  --color-background: #212127;
+  --color-primary: #7ca7fd;
+  --color-secondary: #3f4a60;
+  --color-background: #1d222a;
   /* Carries the neutral cards of the deck — 0, ❓ and ☕ — so it has to sit as
      far above the page as any other card face. */
-  --color-background-secondary: #2c2c32;
+  --color-background-secondary: #282d35;
   --color-warning: #eab069;
-  --color-border: #3b3b41;
-  --color-text-primary: #f2f2f4;
-  --color-text-secondary: #b4b4c2;
+  --color-border: #383c44;
+  --color-text-primary: #f1f2f5;
+  --color-text-secondary: #aeb6c5;
 }
 
 /* ------------------------------------------------------------------ *

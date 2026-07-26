@@ -4,6 +4,17 @@ All notable changes to this project are documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.0.1] - 2026-07-26
+
+### Changed
+
+- Both themes are built around `#2563eb` as the primary and accent colour, replacing the violet. Every token was converted to OKLCH, turned to the hue of the new blue and written back with its lightness and chroma untouched — including the greys, which carried a violet tint that would have sat beside a blue accent rather than under it. The documented steps of the dark ramp (page L\*7, cards L\*13, inset areas L\*18, borders L\*25) and every contrast ratio are therefore unchanged: accent on white 5.2:1, accent on a card in the dark theme 6.7:1, and the small labels still clear 4.5:1 on the surface they sit on.
+- The MUI theme, the focus-ring fallback in `index.css` and `theme_color` in the web manifest follow the same values. The theme mirror matters: menus, dialogs and snackbars portal to `document.body` and would otherwise have stayed violet.
+
+### Notes
+
+- Green, amber and red keep their meaning — consensus, warning, deletion — and the pastel card faces of the decks are unchanged. Only the brand and the neutrals moved.
+
 ## [3.0.0] - 2026-07-26
 
 ### Added
