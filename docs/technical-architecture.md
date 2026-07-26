@@ -293,7 +293,7 @@ The app does not expose a REST API. The service layer acts as the internal appli
 
 | Function | Purpose | Notes |
 | --- | --- | --- |
-| `isNumericGameType(gameType)` | Marks decks whose card values are real estimates. | Names the Fibonacci decks rather than excluding the others, so a deck a later version no longer offers is never evaluated numerically. |
+| `isNumericGameType(gameType)` | Marks decks whose card values are real estimates. | Names the numeric decks (Fibonacci variants and custom) rather than excluding the others, so a deck a later version no longer offers is never evaluated numerically. Custom decks from before the whole-number restriction are additionally filtered out by checking that every card displays its own value. |
 | `getNumericSummary(game, players)` | Full statistics of a revealed round. | Returns `undefined` unless the game status is `Finished`, so vote details cannot leak before the reveal. |
 | `getNearestCard(numericCards, value)` | Card closest to a value. | Ties resolve to the higher card to avoid systematic under-estimation. |
 | `getMedian(sortedValues)` | Median of an ascending list. | Averages both middle values for even counts. |

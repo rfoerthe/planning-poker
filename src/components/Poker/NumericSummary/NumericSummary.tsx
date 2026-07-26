@@ -1,5 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { GameType } from '../../../types/game';
 import {
   formatNumber,
   getMedian,
@@ -33,6 +34,14 @@ export const NumericSummary: React.FC<NumericSummaryProps> = ({ summary }) => {
   const { t } = useTranslation();
   const votesLabel = t('common.votes', { count: summary.voteCount });
 
+  /*
+   * A custom deck follows no known sequence, so its explanations must not
+   * claim one — the growing-gaps argument holds either way, just for a
+   * different reason.
+   */
+  const hintKey =
+    summary.gameType === GameType.Custom ? 'deviation.hintCardsCustom' : 'deviation.hintCards';
+
   const wording: ScaleWording = {
     itemLabel: t('deviation.cardLabel'),
     stepLabel: t('deviation.positionLabel'),
@@ -40,7 +49,7 @@ export const NumericSummary: React.FC<NumericSummaryProps> = ({ summary }) => {
     deviationHeading: t('deviation.headingCards'),
     spreadHeading: t('spread.headingCards'),
     spreadIntro: t('spread.introCards'),
-    hint: t('deviation.hintCards'),
+    hint: t(hintKey),
   };
   const scaleSteps = getScaleSteps(
     summary.votes.map((vote) => ({ label: vote.displayValue, rank: vote.rank })),

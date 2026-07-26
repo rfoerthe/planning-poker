@@ -175,6 +175,8 @@ describe('CreateGame component', () => {
         cards: [
           { color: '#9EC8FE', displayValue: '1', value: 1 },
           { color: '#9EC8FE', displayValue: '2', value: 2 },
+          { color: 'var(--color-background-secondary)', displayValue: '❓', value: -2 },
+          { color: 'var(--color-background-secondary)', displayValue: '-1', value: -1 },
         ],
       }),
     );
@@ -196,11 +198,66 @@ describe('CreateGame component', () => {
     await userEvent.click(createButton);
 
     await waitFor(() => {
-      const errorMsg = screen.queryByText(/mindestens zwei eigene Kartenwerte/i);
+      const errorMsg = screen.queryByText(/mindestens zwei verschiedene ganze Zahlen/i);
       if (!errorMsg) {
         screen.debug();
       }
       expect(errorMsg).toBeInTheDocument();
     });
+  });
+  it('should reject a duplicate custom value and block session creation', async () => {
+    render(<CreateGame />);
+    const sessionName = screen.getByPlaceholderText('z. B. Sprint 42 — Refinement');
+    await userEvent.clear(sessionName);
+    await userEvent.type(sessionName, 'Marvels');
+
+    const userName = screen.getByPlaceholderText('Wie sollen dich die anderen sehen?');
+    await userEvent.clear(userName);
+    await userEvent.type(userName, 'Rock');
+
+    const custom = screen.getByTestId('deck-option-Custom');
+    await userEvent.click(custom);
+
+    const input1 = screen.getByTestId('custom-option-1');
+    await userEvent.type(input1, '7');
+    const input2 = screen.getByTestId('custom-option-2');
+    await userEvent.type(input2, '7');
+    const input3 = screen.getByTestId('custom-option-3');
+    await userEvent.type(input3, '3');
+
+    // The duplicate is flagged as soon as it exists, before any submit attempt.
+    expect(
+      screen.getByText('Jede Zahl darf nur einmal vorkommen — bitte doppelte Werte ändern.'),
+    ).toBeInTheDocument();
+    expect(input1).toHaveAttribute('aria-invalid', 'true');
+    expect(input2).toHaveAttribute('aria-invalid', 'true');
+    expect(input3).toHaveAttribute('aria-invalid', 'false');
+
+    const createButton = screen.getByText('Session starten');
+    await userEvent.click(createButton);
+
+    expect(gamesService.addNewGame).not.toHaveBeenCalled();
+  });
+  it('should clear the duplicate error once the values are made distinct', async () => {
+    render(<CreateGame />);
+    const custom = screen.getByTestId('deck-option-Custom');
+    await userEvent.click(custom);
+
+    const input1 = screen.getByTestId('custom-option-1');
+    await userEvent.type(input1, '7');
+    const input2 = screen.getByTestId('custom-option-2');
+    await userEvent.type(input2, '7');
+
+    expect(
+      screen.getByText('Jede Zahl darf nur einmal vorkommen — bitte doppelte Werte ändern.'),
+    ).toBeInTheDocument();
+
+    await userEvent.clear(input2);
+    await userEvent.type(input2, '9');
+
+    expect(
+      screen.queryByText('Jede Zahl darf nur einmal vorkommen — bitte doppelte Werte ändern.'),
+    ).not.toBeInTheDocument();
+    expect(input1).toHaveAttribute('aria-invalid', 'false');
   });
 });

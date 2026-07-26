@@ -3,11 +3,41 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import { addNewGame } from '../../../service/games';
 import { GameType, NewGame } from '../../../types/game';
-import { getCards, getCustomCards } from '../../Players/CardPicker/CardConfigs';
+import {
+  getCards,
+  getCustomCards,
+  isValidCustomCardValue,
+} from '../../Players/CardPicker/CardConfigs';
 import './CreateGame.css';
 
 const customOptionCount = 15;
 const minimumCustomOptions = 2;
+
+/**
+ * Indices of fields whose value occurs more than once among the valid entries.
+ * Live, not just on submit: two fields that already carry the same number are
+ * a duplicate the moment that happens, not only once the user is done typing.
+ */
+const getDuplicateIndices = (options: string[]): Set<number> => {
+  const indicesByValue = new Map<number, number[]>();
+  options.forEach((option, index) => {
+    if (!isValidCustomCardValue(option)) {
+      return;
+    }
+    const value = Number(option.trim());
+    const indices = indicesByValue.get(value) ?? [];
+    indices.push(index);
+    indicesByValue.set(value, indices);
+  });
+
+  const duplicateIndices = new Set<number>();
+  indicesByValue.forEach((indices) => {
+    if (indices.length > 1) {
+      indices.forEach((index) => duplicateIndices.add(index));
+    }
+  });
+  return duplicateIndices;
+};
 
 const deckOptions: { gameType: GameType; labelKey: string; values?: string }[] = [
   {
@@ -42,14 +72,19 @@ export const CreateGame = () => {
   const [customOptions, setCustomOptions] = useState<string[]>(
     Array(customOptionCount).fill('') as string[],
   );
-  const [error, setError] = useState(false);
+  const [showMinimumError, setShowMinimumError] = useState(false);
+
+  const duplicateIndices = getDuplicateIndices(customOptions);
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
     if (gameType === GameType.Custom) {
-      const filledOptions = customOptions.filter((option) => option && option.trim() !== '').length;
-      setError(filledOptions < minimumCustomOptions);
-      if (filledOptions < minimumCustomOptions) {
+      const validValues = customOptions
+        .filter(isValidCustomCardValue)
+        .map((option) => Number(option.trim()));
+      const isBelowMinimum = new Set(validValues).size < minimumCustomOptions;
+      setShowMinimumError(isBelowMinimum);
+      if (isBelowMinimum || duplicateIndices.size > 0) {
         return;
       }
     }
@@ -74,7 +109,8 @@ export const CreateGame = () => {
 
   const handleCustomOptionChange = (index: number, value: string) => {
     const newCustomOptions = [...customOptions];
-    newCustomOptions[index] = value;
+    // Digits only, three at most — anything else (also pasted) is dropped.
+    newCustomOptions[index] = value.replace(/\D/g, '').slice(0, 3);
     setCustomOptions(newCustomOptions);
   };
 
@@ -153,14 +189,18 @@ export const CreateGame = () => {
                   id={`custom-option-${index}`}
                   data-testid={`custom-option-${index}`}
                   aria-label={`${t('createGame.customLabel')} ${index + 1}`}
+                  aria-invalid={duplicateIndices.has(index)}
                   maxLength={3}
+                  inputMode='numeric'
                   type='text'
                   value={option}
                   onChange={(event) => handleCustomOptionChange(index, event.target.value)}
                 />
               ))}
             </div>
-            {error ? (
+            {duplicateIndices.size > 0 ? (
+              <p className='FormError'>{t('createGame.customDuplicateError')}</p>
+            ) : showMinimumError ? (
               <p className='FormError'>{t('createGame.customError')}</p>
             ) : (
               <p className='FormHint'>{t('createGame.customHint')}</p>

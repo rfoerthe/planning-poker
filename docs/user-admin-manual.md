@@ -35,7 +35,7 @@ This manual is for Planning Poker participants, session moderators, and support/
    - Short Fibonacci
    - Fibonacci
    - T-shirt
-   - Custom
+   - Custom (whole numbers from 0 to 999; the question-mark and break cards are added automatically)
 
 6. Choose whether members may manage the session.
 7. Create the session.

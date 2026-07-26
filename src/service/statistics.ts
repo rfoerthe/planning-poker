@@ -34,6 +34,8 @@ export interface DistributionEntry {
 }
 
 export interface NumericSummaryResult {
+  /** Deck of the round, so explanations can speak in the deck's own terms. */
+  gameType: GameType | undefined;
   average: number;
   median: number;
   /** Every counted vote, lowest first. Carries the ranks the spread is built on. */
@@ -92,7 +94,18 @@ export const isCriticalSpread = (
 export const isNumericGameType = (gameType: GameType | undefined): boolean =>
   gameType === undefined ||
   gameType === GameType.Fibonacci ||
-  gameType === GameType.ShortFibonacci;
+  gameType === GameType.ShortFibonacci ||
+  gameType === GameType.Custom;
+
+/**
+ * Whether every estimate card shows the value it carries.
+ *
+ * Custom decks from before the whole-number restriction stored the position of
+ * the input field as the value, with a free-text label on top. Averaging those
+ * would average field positions, so such a deck gets no numeric evaluation.
+ */
+const deckShowsItsValues = (numericCards: CardConfig[]): boolean =>
+  numericCards.every((card) => card.displayValue === String(card.value));
 
 /** One decimal at most, with the decimal comma the German UI expects. */
 export const formatNumber = (value: number): string => {
@@ -277,7 +290,7 @@ export const getNumericSummary = (
   const numericCards = getNumericCards(game);
   const votes = getNumericVotes(players, numericCards);
 
-  if (!votes.length || !numericCards.length) {
+  if (!votes.length || !numericCards.length || !deckShowsItsValues(numericCards)) {
     return undefined;
   }
 
@@ -285,6 +298,7 @@ export const getNumericSummary = (
   const average = values.reduce((sum, value) => sum + value, 0) / votes.length;
 
   return {
+    gameType: game.gameType,
     average,
     median: getMedian(values),
     votes,

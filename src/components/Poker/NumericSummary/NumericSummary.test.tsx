@@ -1,6 +1,6 @@
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { fibonacciCards } from '../../Players/CardPicker/CardConfigs';
+import { fibonacciCards, getCustomCards } from '../../Players/CardPicker/CardConfigs';
 import { getNumericSummary, NumericSummaryResult } from '../../../service/statistics';
 import { Game, GameType } from '../../../types/game';
 import { Player } from '../../../types/player';
@@ -125,6 +125,33 @@ describe('NumericSummary component', () => {
       tooltip.getByText('Mittelwert der beiden mittleren Stimmen (2. und 3. von 4):'),
     ).toBeInTheDocument();
     expect(tooltip.getByText('(5 + 8) ÷ 2 = 6,5')).toBeInTheDocument();
+  });
+
+  it('should explain a custom deck without mentioning Fibonacci', async () => {
+    const customGame: Game = {
+      ...mockGame,
+      gameType: GameType.Custom,
+      cards: getCustomCards(['1', '5', '20']),
+    };
+    const summary = getNumericSummary(customGame, [
+      { id: 'a1', name: 'SpiderMan', status: Status.Finished, value: 1 },
+      { id: 'a2', name: 'IronMan', status: Status.Finished, value: 5 },
+      { id: 'a3', name: 'Hulk', status: Status.Finished, value: 20 },
+    ]);
+    if (!summary) {
+      throw new Error('expected a summary for the custom deck');
+    }
+
+    render(<NumericSummary summary={summary} />);
+
+    await userEvent.hover(screen.getByTestId('summary-deviation'));
+
+    const tooltip = await screen.findByRole('tooltip');
+
+    expect(
+      within(tooltip).getByText(/nicht gleich groß sein müssen/),
+    ).toBeInTheDocument();
+    expect(within(tooltip).queryByText(/Fibonacci/)).not.toBeInTheDocument();
   });
 
   it('should label the deviation with the scale it counts', () => {

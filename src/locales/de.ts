@@ -77,11 +77,13 @@ export const de = {
       custom: 'Eigene Werte',
     },
     deckValues: {
-      custom: 'frei wählbar',
+      custom: 'Ganze Zahlen von 0 bis 999, frei wählbar',
     },
     customLabel: 'Eigene Kartenwerte',
-    customHint: 'Mindestens zwei Werte, je bis zu drei Zeichen.',
-    customError: 'Bitte gib mindestens zwei eigene Kartenwerte ein.',
+    customHint:
+      'Mindestens zwei verschiedene ganze Zahlen von 0 bis 999. Die Karten ❓ und Pause kommen automatisch dazu.',
+    customError: 'Bitte gib mindestens zwei verschiedene ganze Zahlen von 0 bis 999 ein.',
+    customDuplicateError: 'Jede Zahl darf nur einmal vorkommen — bitte doppelte Werte ändern.',
     allowMembers: 'Alle dürfen moderieren',
     allowMembersHint: 'Aufdecken, neu starten und Timer setzen',
     submit: 'Session starten',
@@ -299,6 +301,8 @@ export const de = {
     stepRoot: 'Wurzel ziehen:',
     hintCards:
       'Positionen statt Kartenwerte, weil die Abstände zwischen Fibonacci-Zahlen nach oben immer größer werden.',
+    hintCardsCustom:
+      'Positionen statt Kartenwerte, weil die Abstände zwischen benachbarten Karten nicht gleich groß sein müssen.',
     hintSizes:
       'Stufen statt Aufwände, weil die Aufwandsspannen von Größe zu Größe immer größer werden.',
   },
