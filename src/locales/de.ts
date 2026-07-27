@@ -20,6 +20,8 @@ export const de = {
     version: 'Version: {{version}}',
     openMenu: 'Menü öffnen',
     closeMenu: 'Menü schließen',
+    more: 'Mehr',
+    primaryNavigation: 'Hauptnavigation',
     github: 'Projekt auf GitHub',
     menu: {
       about: 'Was ist Planning Poker?',
@@ -118,6 +120,7 @@ export const de = {
 
   session: {
     round: 'Runde',
+    tableLabel: 'Team am Pokertisch',
     statusLabel: {
       started: 'Bereit',
       inProgress: 'Abstimmung läuft',
@@ -147,7 +150,8 @@ export const de = {
     inviteCopiedSnackbar: 'Einladungslink kopiert.',
     loading: 'Session wird geladen …',
     notFound: 'Diese Session existiert nicht.',
-    updateError: 'Aktualisierungen können gerade nicht empfangen werden. Bitte später erneut versuchen.',
+    updateError:
+      'Aktualisierungen können gerade nicht empfangen werden. Bitte später erneut versuchen.',
   },
 
   roundStatus: {
@@ -174,6 +178,8 @@ export const de = {
     moderator: 'Moderation',
     voted: 'Abgestimmt',
     thinking: 'Überlegt noch',
+    votedIconLabel: 'Hat bereits geschätzt',
+    thinkingIconLabel: 'Überlegt noch',
     abstained: 'Enthalten',
     outlier: 'Ausreißer',
     outlierTitle: 'Ausreißer — weit weg vom Median des Teams',
@@ -278,7 +284,8 @@ export const de = {
       'Der Median ist die mittlere Stimme: die eine Hälfte liegt darunter, die andere darüber. Ein einzelner Ausreißer verschiebt ihn kaum — anders als den Durchschnitt.',
     stepSort: 'Stimmen der Größe nach sortieren:',
     stepMiddleOne: 'Mittlere Stimme nehmen ({{position}}. von {{count}}):',
-    stepMiddleTwo: 'Die beiden mittleren Stimmen nehmen ({{first}}. und {{second}}. von {{count}}):',
+    stepMiddleTwo:
+      'Die beiden mittleren Stimmen nehmen ({{first}}. und {{second}}. von {{count}}):',
     stepMiddleTwoAverage:
       'Mittelwert der beiden mittleren Stimmen ({{first}}. und {{second}}. von {{count}}):',
   },
@@ -533,13 +540,15 @@ export const de = {
           'Umfangreiche Aufgabe: Berichtsfunktionen entwerfen, Daten aus mehreren Quellen zusammenführen und aussagekräftig aufbereiten.',
       },
       {
-        story: 'Als Nutzer:in möchte ich mein Passwort zurücksetzen können, wenn ich es vergessen habe.',
+        story:
+          'Als Nutzer:in möchte ich mein Passwort zurücksetzen können, wenn ich es vergessen habe.',
         estimate: '2 Story Points (Fibonacci)',
         rationale:
           'Überschaubar: Verifizierung per E-Mail und Aktualisierung des Passworts in der Datenbank.',
       },
       {
-        story: 'Als Nutzer:in möchte ich Produkte in den Warenkorb legen und zur Kasse gehen können.',
+        story:
+          'Als Nutzer:in möchte ich Produkte in den Warenkorb legen und zur Kasse gehen können.',
         estimate: 'M (T-Shirt-Größe)',
         rationale:
           'Interaktionen, Warenkorb-Zustand, Bestandsaktualisierung und Anbindung eines Zahlungsdienstleisters — insgesamt mittlerer Umfang.',
@@ -557,7 +566,8 @@ export const de = {
           'Größere Aufgabe: ein flexibles Berechtigungsmodell entwerfen, Rollen definieren und die Sicherheit durchgängig gewährleisten.',
       },
       {
-        story: 'Als Nutzer:in möchte ich E-Mail-Benachrichtigungen zu wichtigen Ereignissen erhalten.',
+        story:
+          'Als Nutzer:in möchte ich E-Mail-Benachrichtigungen zu wichtigen Ereignissen erhalten.',
         estimate: '2 Story Points (Fibonacci)',
         rationale:
           'Vergleichsweise geradlinig: Anbindung eines E-Mail-Dienstes, Vorlagen und ereignisbasierter Versand.',

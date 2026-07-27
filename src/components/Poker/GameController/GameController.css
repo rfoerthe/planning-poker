@@ -1,11 +1,14 @@
 .SessionBar {
   align-items: center;
-  border-bottom: 1px solid var(--border-soft);
+  background-color: color-mix(in srgb, var(--surface) 94%, transparent);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
   display: flex;
   flex-wrap: wrap;
   gap: 14px;
   margin-bottom: 24px;
-  padding-bottom: 20px;
+  padding: 14px 16px;
 }
 
 .SessionBarHeading {
@@ -29,6 +32,10 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.SessionBarHeading .StatusPill {
+  border: 1px solid color-mix(in srgb, currentcolor 18%, transparent);
 }
 
 .SessionBarActions {
@@ -111,7 +118,7 @@
   .SessionBar {
     gap: 10px;
     margin-bottom: 18px;
-    padding-bottom: 14px;
+    padding: 12px 13px;
   }
 
   .SessionBarHeading {

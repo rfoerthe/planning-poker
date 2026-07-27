@@ -1,4 +1,6 @@
 import CloseIcon from '@mui/icons-material/Close';
+import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
+import HourglassEmptyRoundedIcon from '@mui/icons-material/HourglassEmptyRounded';
 import { IconButton } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -107,10 +109,19 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
       )}
 
       <div
-        className={face.isEmoji ? 'SeatFace EmojiGlyph' : 'SeatFace'}
+        className={getFaceClassName(face)}
         style={{ backgroundColor: cardColor, color: getCardTextColor(cardColor) }}
+        role={face.status ? 'img' : undefined}
+        aria-label={face.status ? t(`playerCard.${face.status}IconLabel`) : undefined}
+        data-testid={face.status ? `player-status-${face.status}` : undefined}
       >
-        {face.text}
+        {face.status === 'thinking' && (
+          <HourglassEmptyRoundedIcon className='SeatStatusIcon SeatStatusThinking' />
+        )}
+        {face.status === 'voted' && (
+          <CheckCircleRoundedIcon className='SeatStatusIcon SeatStatusVoted' />
+        )}
+        {!face.status && face.text}
       </div>
 
       <div className='SeatFooter'>
@@ -178,10 +189,16 @@ const getCardColor = (game: Game, value: number | undefined): string => {
   return card ? card.color : 'var(--color-background-secondary)';
 };
 
-/** What the card shows, and whether it needs the colour-emoji font. */
-const getCardFace = (player: Player, game: Game): { text: string; isEmoji: boolean } => {
+interface CardFace {
+  text?: string;
+  isEmoji?: boolean;
+  status?: 'thinking' | 'voted';
+}
+
+/** What the card shows while estimates are hidden and after they are revealed. */
+const getCardFace = (player: Player, game: Game): CardFace => {
   if (game.gameStatus !== Status.Finished) {
-    return { text: player.status === Status.Finished ? '👍' : '🤔', isEmoji: true };
+    return { status: player.status === Status.Finished ? 'voted' : 'thinking' };
   }
 
   if (player.status === Status.Finished) {
@@ -190,7 +207,20 @@ const getCardFace = (player: Player, game: Game): { text: string; isEmoji: boole
     }
     return { text: getCardDisplayValue(game, player.value), isEmoji: false };
   }
-  return { text: '🤔', isEmoji: true };
+  return { status: 'thinking' };
+};
+
+const getFaceClassName = (face: CardFace): string => {
+  const classNames = ['SeatFace'];
+
+  if (face.isEmoji) {
+    classNames.push('EmojiGlyph');
+  }
+  if (face.status) {
+    classNames.push('SeatFaceStatus', `SeatFaceStatus-${face.status}`);
+  }
+
+  return classNames.join(' ');
 };
 
 const getCardDisplayValue = (game: Game, cardValue: number | undefined): string => {

@@ -1,5 +1,6 @@
 .Seat {
-  background-color: var(--surface);
+  backdrop-filter: blur(10px);
+  background-color: var(--table-seat);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   padding: 14px 12px 12px;
@@ -7,11 +8,13 @@
   text-align: center;
   transition:
     border-color var(--duration-base) var(--ease),
-    box-shadow var(--duration-base) var(--ease);
+    box-shadow var(--duration-base) var(--ease),
+    transform var(--duration-base) var(--ease);
 }
 
 .Seat:hover {
   box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
 }
 
 .SeatIsMe {
@@ -64,6 +67,28 @@
   letter-spacing: -0.02em;
   margin-bottom: 10px;
   transition: background-color var(--duration-base) var(--ease);
+}
+
+.SeatFaceStatus {
+  background-image: radial-gradient(
+    circle,
+    color-mix(in srgb, currentcolor 9%, transparent),
+    transparent 68%
+  );
+}
+
+.SeatStatusIcon {
+  font-size: 1.75rem;
+}
+
+.SeatStatusThinking {
+  color: var(--warning);
+  filter: drop-shadow(0 2px 5px color-mix(in srgb, var(--warning) 20%, transparent));
+}
+
+.SeatStatusVoted {
+  color: var(--success);
+  filter: drop-shadow(0 2px 5px color-mix(in srgb, var(--success) 20%, transparent));
 }
 
 .SeatFooter {
@@ -156,5 +181,17 @@
   .SeatFace {
     font-size: 1.35rem;
     height: 56px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .Seat {
+    transition:
+      border-color var(--duration-base) var(--ease),
+      box-shadow var(--duration-base) var(--ease);
+  }
+
+  .Seat:hover {
+    transform: none;
   }
 }

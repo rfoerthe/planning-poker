@@ -1,5 +1,11 @@
 .CardPickerSection {
+  background-color: color-mix(in srgb, var(--surface) 94%, transparent);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-sm);
   margin-top: 8px;
+  overflow: hidden;
+  padding: 18px;
 }
 
 .CardPickerHead {
@@ -21,9 +27,11 @@
 }
 
 .CardPickerDeck {
+  align-items: flex-end;
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
+  justify-content: center;
   /* Room for the chosen card to rise into without clipping. */
   padding-top: 14px;
 }
@@ -34,6 +42,8 @@
 }
 
 .PickerCard {
+  --card-tilt: 0deg;
+
   align-items: center;
   appearance: none;
   border: 1px solid var(--border);
@@ -52,24 +62,48 @@
   transition:
     box-shadow var(--duration-fast) var(--ease),
     transform var(--duration-fast) var(--ease);
+  transform: rotate(var(--card-tilt));
   width: 66px;
   -webkit-tap-highlight-color: transparent;
 }
 
+.PickerCard:nth-child(6n + 1) {
+  --card-tilt: -1.8deg;
+}
+
+.PickerCard:nth-child(6n + 2) {
+  --card-tilt: -0.9deg;
+}
+
+.PickerCard:nth-child(6n + 4) {
+  --card-tilt: 0.9deg;
+}
+
+.PickerCard:nth-child(6n + 5) {
+  --card-tilt: 1.8deg;
+}
+
 .PickerCard:not(:disabled):hover {
   box-shadow: var(--shadow-md);
-  transform: translateY(-6px);
+  transform: rotate(var(--card-tilt)) translateY(-6px);
 }
 
 .PickerCardSelected {
+  animation: CardPicked 0.28s var(--ease);
   box-shadow:
     0 0 0 2px var(--accent),
     var(--shadow-md);
-  transform: translateY(-12px);
+  transform: rotate(0deg) translateY(-12px);
 }
 
 .PickerCardSelected:not(:disabled):hover {
-  transform: translateY(-12px);
+  transform: rotate(0deg) translateY(-12px);
+}
+
+@keyframes CardPicked {
+  50% {
+    transform: rotate(0deg) translateY(-16px) scale(1.03);
+  }
 }
 
 .PickerCard:disabled {
@@ -94,9 +128,39 @@
   font-size: 1.45rem;
 }
 
+/* The standard eleven-card deck fits on one row beside the result sidebar on
+   FHD screens. Custom decks still wrap naturally when they contain more. */
+@media (min-width: 961px) {
+  .GameArea .CardPickerDeck {
+    gap: 8px;
+  }
+
+  .GameArea .PickerCard {
+    height: 86px;
+    width: 58px;
+  }
+}
+
 @media (max-width: 480px) {
+  .CardPickerSection {
+    margin-left: -14px;
+    margin-right: -14px;
+    padding: 16px 14px 18px;
+  }
+
+  .CardPickerDeck {
+    display: grid;
+    gap: 10px 8px;
+    grid-template-columns: repeat(auto-fit, minmax(56px, 1fr));
+    margin-left: -14px;
+    margin-right: -14px;
+    padding: 16px 14px 8px;
+  }
+
   .PickerCard {
+    --card-tilt: 0deg;
     height: 80px;
+    justify-self: center;
     width: 56px;
   }
 
@@ -109,9 +173,26 @@
   }
 }
 
+@media (min-width: 481px) and (max-width: 760px) {
+  .CardPickerDeck {
+    display: grid;
+    gap: 10px;
+    grid-template-columns: repeat(auto-fit, minmax(62px, 1fr));
+    padding-bottom: 8px;
+  }
+
+  .PickerCard {
+    --card-tilt: 0deg;
+    height: 88px;
+    justify-self: center;
+    width: 62px;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .PickerCard {
     transition: box-shadow var(--duration-fast) var(--ease);
+    transform: none;
   }
 
   .PickerCard:not(:disabled):hover {
@@ -120,6 +201,7 @@
 
   .PickerCardSelected,
   .PickerCardSelected:not(:disabled):hover {
-    transform: none;
+    animation: none;
+    transform: translateY(-8px);
   }
 }

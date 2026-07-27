@@ -58,6 +58,7 @@
 }
 
 .NavLinks {
+  align-items: center;
   display: flex;
   flex: 1 1 auto;
   gap: 2px;
@@ -66,12 +67,14 @@
 }
 
 .NavLink {
+  align-items: center;
   appearance: none;
   background: transparent;
   border: 0;
   border-radius: var(--radius-sm);
   color: var(--text-muted);
   cursor: pointer;
+  display: inline-flex;
   font: inherit;
   font-size: 0.845rem;
   font-weight: 500;
@@ -82,9 +85,37 @@
   white-space: nowrap;
 }
 
+.NavLinkIcon {
+  font-size: 1rem;
+  margin-right: 6px;
+}
+
 .NavLink:hover {
   background-color: var(--surface-hover);
   color: var(--text);
+}
+
+.NavLinkActive:not(.NavLinkPrimary) {
+  background-color: var(--surface-hover);
+  color: var(--text);
+}
+
+.NavLinkPrimary {
+  background-color: var(--accent);
+  box-shadow: var(--shadow-sm);
+  color: var(--accent-contrast);
+  margin-left: 4px;
+}
+
+.NavLinkPrimary:hover,
+.NavLinkPrimary.NavLinkActive {
+  background-color: var(--accent);
+  color: var(--accent-contrast);
+  filter: brightness(1.06);
+}
+
+.NavLinkMore {
+  padding-right: 9px;
 }
 
 .AppBarActions {
@@ -126,6 +157,15 @@
 .NavDrawerItem {
   border-radius: var(--radius-md);
   margin-bottom: 2px;
+}
+
+.NavDrawerItem.Mui-selected {
+  background-color: var(--accent-soft);
+  color: var(--accent-strong);
+}
+
+.NavDrawerItem.Mui-selected .NavDrawerIcon {
+  color: var(--accent);
 }
 
 .NavDrawerIcon {

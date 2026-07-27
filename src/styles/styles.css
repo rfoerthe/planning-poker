@@ -83,6 +83,14 @@
   --danger-soft: #fdecec;
   --overlay: rgb(12 18 28 / 45%);
 
+  /* The active round gets a quiet card-table atmosphere without changing the
+     product shell into a themed game UI. */
+  --table-stage: linear-gradient(145deg, #f4f8ff 0%, #edf4f3 48%, #f7f9fc 100%);
+  --table-edge: #d9e4e8;
+  --table-line: rgb(37 99 235 / 15%);
+  --table-glow: rgb(37 99 235 / 10%);
+  --table-seat: rgb(255 255 255 / 88%);
+
   --shadow-sm: 0 1px 2px rgb(12 18 28 / 5%);
   --shadow-md: 0 2px 4px rgb(12 18 28 / 4%), 0 8px 24px rgb(12 18 28 / 6%);
   --shadow-lg: 0 4px 8px rgb(12 18 28 / 5%), 0 24px 48px rgb(12 18 28 / 10%);
@@ -129,6 +137,12 @@
   --danger: #f79595;
   --danger-soft: #412727;
   --overlay: rgb(0 0 0 / 62%);
+
+  --table-stage: linear-gradient(145deg, #17262a 0%, #14252a 48%, #17212d 100%);
+  --table-edge: #314249;
+  --table-line: rgb(124 167 253 / 18%);
+  --table-glow: rgb(124 167 253 / 13%);
+  --table-seat: rgb(29 34 42 / 88%);
 
   --shadow-sm: 0 1px 2px rgb(0 0 0 / 40%);
   --shadow-md: 0 2px 4px rgb(0 0 0 / 30%), 0 8px 24px rgb(0 0 0 / 35%);
@@ -718,6 +732,7 @@
 
 .Verdict.consensus {
   background-color: var(--success-soft);
+  color: var(--success);
 }
 
 .Verdict.consensus .VerdictBadge {
@@ -730,6 +745,7 @@
 
 .Verdict.moderate-spread {
   background-color: var(--warning-soft);
+  color: var(--warning);
 }
 
 .Verdict.moderate-spread .VerdictBadge {
@@ -742,6 +758,7 @@
 
 .Verdict.critical-spread {
   background-color: var(--danger-soft);
+  color: var(--danger);
 }
 
 .Verdict.critical-spread .VerdictBadge {
@@ -806,7 +823,7 @@
 
 @media (max-width: 600px) {
   .PageShell {
-    padding: 24px 14px 96px;
+    padding: 24px 14px 40px;
   }
 
   .FormPanelHead {

@@ -1,18 +1,34 @@
 .GameArea {
   padding-top: 28px;
+  position: relative;
 }
 
 .GameAreaGrid {
   align-items: start;
   display: grid;
   gap: 28px;
-  grid-template-columns: minmax(0, 1fr) 320px;
+  grid-template-columns: minmax(0, 1fr) 300px;
 }
 
 .GameAreaMain {
   display: grid;
   gap: 20px;
   min-width: 0;
+}
+
+.GameAreaRevealed .GameAreaSide .StatPanel {
+  animation: ResultArrives 0.5s var(--ease) both;
+  border-color: color-mix(in srgb, var(--success) 38%, var(--border));
+  box-shadow:
+    0 0 0 3px color-mix(in srgb, var(--success-soft) 72%, transparent),
+    var(--shadow-md);
+}
+
+@keyframes ResultArrives {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.985);
+  }
 }
 
 .GameAreaSide {
@@ -38,5 +54,11 @@
     /* Clearance for the fixed action dock is carried by the footer below. */
     padding-bottom: 28px;
     padding-top: 18px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .GameAreaRevealed .GameAreaSide .StatPanel {
+    animation: none;
   }
 }

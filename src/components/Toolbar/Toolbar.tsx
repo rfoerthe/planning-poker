@@ -20,6 +20,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined';
 import LightModeOutlinedIcon from '@mui/icons-material/LightModeOutlined';
 import MenuIcon from '@mui/icons-material/Menu';
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import MergeTypeOutlinedIcon from '@mui/icons-material/MergeTypeOutlined';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import BookOutlinedIcon from '@mui/icons-material/MenuBookOutlined';
@@ -28,7 +29,7 @@ import PolicyOutlinedIcon from '@mui/icons-material/PolicyOutlined';
 import SettingsBrightnessOutlinedIcon from '@mui/icons-material/SettingsBrightnessOutlined';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router';
+import { useLocation, useNavigate } from 'react-router';
 import { ThemePreference } from '../../service/theme';
 import './Toolbar.css';
 
@@ -96,18 +97,23 @@ const navItems: NavItem[] = [
   },
 ];
 
+const primaryNavItems = navItems.slice(0, 2);
+const secondaryNavItems = navItems.slice(2);
+
 export const Toolbar = ({
   themePreference = 'system',
   onThemePreferenceChange = () => {},
 }: ToolbarProps) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { t } = useTranslation();
-  // The six German nav labels need roughly 710px; together with the brand and
-  // the icon buttons they stop fitting below this width and would be clipped.
-  const isCompact = useMediaQuery('(max-width: 1100px)');
+  const isCompact = useMediaQuery('(max-width: 760px)');
   const [themeMenuAnchorEl, setThemeMenuAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [secondaryMenuAnchorEl, setSecondaryMenuAnchorEl] =
+    React.useState<null | HTMLElement>(null);
   const [isDrawerOpen, setIsDrawerOpen] = React.useState(false);
   const isThemeMenuOpen = Boolean(themeMenuAnchorEl);
+  const isSecondaryMenuOpen = Boolean(secondaryMenuAnchorEl);
   const selectedThemeOption =
     themeOptions.find((themeOption) => themeOption.value === themePreference) ?? themeOptions[2];
   const SelectedThemeIcon = selectedThemeOption.Icon;
@@ -121,12 +127,17 @@ export const Toolbar = ({
 
   const handleNavigation = (item: NavItem) => {
     setIsDrawerOpen(false);
+    setSecondaryMenuAnchorEl(null);
     if (item.isExternal) {
       window.location.href = item.target;
       return;
     }
     navigate(item.target);
   };
+
+  const isCurrentRoute = (item: NavItem) =>
+    !item.isExternal &&
+    (item.target === '/' ? location.pathname === '/' : location.pathname.startsWith(item.target));
 
   return (
     <>
@@ -158,19 +169,39 @@ export const Toolbar = ({
           </button>
 
           {!isCompact && (
-            <nav className='NavLinks'>
-              {navItems.map((item) => (
+            <nav className='NavLinks' aria-label={t('toolbar.primaryNavigation')}>
+              {primaryNavItems.map((item, index) => (
                 <button
                   key={item.testId}
                   type='button'
-                  className='NavLink'
+                  className={[
+                    'NavLink',
+                    index === 0 ? 'NavLinkPrimary' : '',
+                    isCurrentRoute(item) ? 'NavLinkActive' : '',
+                  ]
+                    .filter(Boolean)
+                    .join(' ')}
                   data-testid={item.testId}
                   title={t(item.labelKey)}
+                  aria-current={isCurrentRoute(item) ? 'page' : undefined}
                   onClick={() => handleNavigation(item)}
                 >
+                  <item.Icon className='NavLinkIcon' fontSize='small' />
                   {t(item.labelKey)}
                 </button>
               ))}
+              <button
+                id='secondary-navigation-button'
+                type='button'
+                className='NavLink NavLinkMore'
+                aria-controls={isSecondaryMenuOpen ? 'secondary-navigation-menu' : undefined}
+                aria-haspopup='menu'
+                aria-expanded={isSecondaryMenuOpen ? 'true' : undefined}
+                onClick={(event) => setSecondaryMenuAnchorEl(event.currentTarget)}
+              >
+                <MoreHorizIcon className='NavLinkIcon' fontSize='small' />
+                {t('toolbar.more')}
+              </button>
             </nav>
           )}
 
@@ -242,6 +273,28 @@ export const Toolbar = ({
         ))}
       </Menu>
 
+      <Menu
+        id='secondary-navigation-menu'
+        anchorEl={secondaryMenuAnchorEl}
+        open={isSecondaryMenuOpen}
+        onClose={() => setSecondaryMenuAnchorEl(null)}
+        slotProps={{ list: { 'aria-labelledby': 'secondary-navigation-button' } }}
+      >
+        {secondaryNavItems.map((item) => (
+          <MenuItem
+            key={item.testId}
+            selected={isCurrentRoute(item)}
+            onClick={() => handleNavigation(item)}
+            data-testid={item.testId}
+          >
+            <ListItemIcon>
+              <item.Icon fontSize='small' />
+            </ListItemIcon>
+            <ListItemText>{t(item.labelKey)}</ListItemText>
+          </MenuItem>
+        ))}
+      </Menu>
+
       <Drawer
         anchor='right'
         open={isDrawerOpen}
@@ -265,6 +318,8 @@ export const Toolbar = ({
               key={item.testId}
               className='NavDrawerItem'
               data-testid={`drawer.${item.testId}`}
+              selected={isCurrentRoute(item)}
+              aria-current={isCurrentRoute(item) ? 'page' : undefined}
               onClick={() => handleNavigation(item)}
             >
               <ListItemIcon className='NavDrawerIcon'>

@@ -1,7 +1,7 @@
 .VotingProgress {
   align-items: center;
-  background-color: var(--surface);
-  border: 1px solid var(--border);
+  background-color: color-mix(in srgb, var(--accent-soft) 42%, var(--surface));
+  border: 1px solid color-mix(in srgb, var(--accent) 18%, var(--border));
   border-radius: var(--radius-lg);
   display: flex;
   gap: 12px;

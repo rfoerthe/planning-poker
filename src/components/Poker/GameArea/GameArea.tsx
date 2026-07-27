@@ -82,7 +82,10 @@ export const GameArea: React.FC<GameAreaProps> = ({ game, players, currentPlayer
   const hasTshirtLegend = game.gameType === GameType.TShirt;
 
   return (
-    <div className='PageShell GameArea'>
+    <div
+      className={isRevealed ? 'PageShell GameArea GameAreaRevealed' : 'PageShell GameArea'}
+      data-round-state={isRevealed ? 'revealed' : 'voting'}
+    >
       <GameController game={game} currentPlayerId={currentPlayerId} remainingMs={remainingMs} />
 
       <div className='GameAreaGrid'>

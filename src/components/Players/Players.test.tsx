@@ -30,4 +30,19 @@ describe('Players component', () => {
       expect(screen.getByText(player.name)).toBeInTheDocument();
     });
   });
+
+  it('should use the compact table density for larger teams', () => {
+    const crowdedPlayers = Array.from({ length: 9 }, (_, index) => ({
+      id: `player-${index}`,
+      name: `Player ${index}`,
+      status: Status.InProgress,
+      value: 0,
+    }));
+
+    const { container } = render(
+      <Players game={mockGame} players={crowdedPlayers} currentPlayerId={mockCurrentPlayerId} />,
+    );
+
+    expect(container.querySelector('.PokerTableCrowded')).toHaveAttribute('data-player-count', '9');
+  });
 });
