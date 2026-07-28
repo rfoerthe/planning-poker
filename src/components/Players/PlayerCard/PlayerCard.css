@@ -1,5 +1,10 @@
+/*
+ * Deliberately without `backdrop-filter`. One blurred backdrop per seat means a
+ * dozen blurred layers on a full table, each re-sampled whenever anything above
+ * them changes — and the seat colour is opaque enough that nobody could see
+ * what the blur was doing anyway.
+ */
 .Seat {
-  backdrop-filter: blur(10px);
   background-color: var(--table-seat);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);

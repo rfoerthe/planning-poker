@@ -213,6 +213,14 @@
   white-space: nowrap;
 }
 
+/*
+ * The dot does not blink. A round runs for minutes, so the pulse it used to
+ * carry was an animation that never ended: the compositor kept working for as
+ * long as the session was open, and every frame invalidated the blurred
+ * backdrop of the app bar above it. Measured on a table of twelve, that put
+ * Chrome's GPU process at ~45% of a core on an idle page; without it, ~2%.
+ * The label next to the dot already says that the round is running.
+ */
 .StatusPill .StatusPillDot {
   background-color: currentcolor;
   border-radius: 50%;
@@ -230,25 +238,9 @@
   color: var(--warning);
 }
 
-.StatusPillRunning .StatusPillDot {
-  animation: AuroraBlink 1.6s infinite;
-}
-
 .StatusPillDone {
   background-color: var(--success-soft);
   color: var(--success);
-}
-
-@keyframes AuroraBlink {
-  50% {
-    opacity: 0.3;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .StatusPillRunning .StatusPillDot {
-    animation: none;
-  }
 }
 
 /* ------------------------------------------------------------------ *

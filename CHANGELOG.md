@@ -18,6 +18,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - `public/apple-touch-icon.png` replaces the unrelated logo that Safari and iOS had been using for bookmarks and the home screen. It is opaque, because iOS puts its own rounded mask over the icon and a transparent corner would come out black.
 - The frames inside `favicon.ico` are classic DIB bitmaps rather than embedded PNGs, and the file stops at 64 px — anything larger is the SVG's job. Safari decodes an `.ico` through ImageIO, which does not read PNG-compressed entries and then shows no icon at all, while Chrome brings its own decoder and accepts both. For the same reason the `.ico` is declared before the SVG in `index.html` and carries a `sizes` attribute: Safari has no SVG favicons and takes the `.ico`, browsers that do prefer the sizeless SVG.
 
+### Fixed
+
+- An open session no longer keeps a processor core busy. The dot in the status pill pulsed for as long as a round ran, and a round runs for minutes: the compositor never came to rest, and every frame invalidated the blurred backdrop of the app bar above it. Measured on a table of twelve seats, Chrome's GPU process sat at ~45 % of a core on a page nobody was touching; it is ~2 % now. The pill still names the state in words, which is what carried the information.
+- The seats no longer carry a `backdrop-filter`. A full table meant a dozen blurred layers, each re-sampled whenever anything above them changed — for an effect the opaque seat colour hid anyway. The app bar keeps its frosted glass: it is a single surface, and with no permanent animation left, nothing forces it to be recomputed.
+
 ## [3.0.1] - 2026-07-26
 
 ### Changed
