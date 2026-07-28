@@ -103,6 +103,45 @@ describe('Poker component', () => {
     expect(screen.getByText(mockGame.name)).toBeInTheDocument();
     expect(screen.getByText('Bereit')).toBeInTheDocument();
   });
+  it('should name the open session in the browser tab and give the title back on leaving', async () => {
+    document.title = 'Planning Poker — Schätzen im Team';
+    const mockGame: Game = {
+      id: 'abc',
+      name: 'avengers',
+      cards: [{ value: 1, displayValue: '1', color: 'red' }],
+      createdBy: 'IronMan',
+      gameStatus: Status.NotStarted,
+    } as Game;
+    const mockPlayers: Player[] = [
+      { id: 'xx', name: 'xyz', status: Status.NotStarted, value: 0 },
+    ] as Player[];
+
+    onSnapshot
+      .mockImplementationOnce((ref: any, cb: (snap: any) => void) => {
+        cb({ exists: () => true, data: () => mockGame });
+        return vi.fn();
+      })
+      .mockImplementationOnce((ref: any, cb: (snap: any) => void) => {
+        cb({
+          forEach: (iterCb: (doc: any) => void) => {
+            mockPlayers.forEach((p) => iterCb({ data: () => p }));
+          },
+        });
+        return vi.fn();
+      });
+
+    vi.spyOn(gamesService, 'streamGame').mockReturnValue({} as any);
+    vi.spyOn(gamesService, 'streamPlayers').mockReturnValue({} as any);
+    vi.spyOn(playersService, 'getCurrentPlayerId').mockReturnValue('xx');
+
+    const { unmount } = render(<Poker />);
+
+    await screen.findByText(mockGame.name);
+    expect(document.title).toBe('Planning Poker - avengers');
+
+    unmount();
+    expect(document.title).toBe('Planning Poker — Schätzen im Team');
+  });
   it('should display confirmation dialog when user clicks the back button', async () => {
     const mockGame: Game = {
       id: 'abc',

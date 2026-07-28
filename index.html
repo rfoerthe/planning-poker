@@ -9,8 +9,13 @@
       name="description"
       content="Kostenlose Planning-Poker-App für Scrum- und Agile-Teams. Session anlegen, Team einladen, verdeckt schätzen und gemeinsam aufdecken — mit Runden-Statistik, optionalem Timer und Präsenzanzeige. Ohne Login und ohne Installation."
     />
-    <link rel="icon" href="/favicon.ico" />
-    <link rel="apple-touch-icon" href="/logo192.png" />
+    <!--
+      The .ico comes first and declares a size: Safari has no SVG favicons and
+      takes it, while browsers that do prefer the sizeless SVG below.
+    -->
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/manifest.json" />
     <link rel="stylesheet" href="/fonts.css" />
     <title>Planning Poker — Schätzen im Team</title>

@@ -4,6 +4,20 @@ All notable changes to this project are documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.0.2] - 2026-07-28
+
+### Added
+
+- An open session puts its name into the browser tab: "Planning Poker - \<session\>". The title is given back when the session is left, so a tab never keeps the name of a session that is no longer open.
+- The seats sit on a poker table while the round runs, and a hidden card says what its participant is doing — an hourglass while they are thinking, a check once they have voted. Tables with more than eight participants switch to a tighter layout.
+- The toolbar keeps its first two entries in the bar and moves the rest behind a "Mehr" menu, which is also what raised the point at which the whole navigation collapses into the drawer. The entry for the current page is marked as such.
+
+### Changed
+
+- The favicon is the brand mark of the header: two offset cards on the accent tile. The 16 and 24 px frames of the `.ico` are drawn with the tile colour cut in around the front card — at that size the two cards touch and melt into a single white blob otherwise. `public/favicon.svg` carries the plain mark for browsers that support it.
+- `public/apple-touch-icon.png` replaces the unrelated logo that Safari and iOS had been using for bookmarks and the home screen. It is opaque, because iOS puts its own rounded mask over the icon and a transparent corner would come out black.
+- The frames inside `favicon.ico` are classic DIB bitmaps rather than embedded PNGs, and the file stops at 64 px — anything larger is the SVG's job. Safari decodes an `.ico` through ImageIO, which does not read PNG-compressed entries and then shows no icon at all, while Chrome brings its own decoder and accepts both. For the same reason the `.ico` is declared before the SVG in `index.html` and carries a `sizes` attribute: Safari has no SVG favicons and takes the `.ico`, browsers that do prefer the sizeless SVG.
+
 ## [3.0.1] - 2026-07-26
 
 ### Changed

@@ -7,6 +7,7 @@ import { streamGame, streamPlayers } from '../../service/games';
 import { getCurrentPlayerId } from '../../service/players';
 import { Game } from '../../types/game';
 import { Player } from '../../types/player';
+import { useDocumentTitle } from '../../utils/useDocumentTitle';
 import { GameArea } from './GameArea/GameArea';
 import './Poker.css';
 
@@ -19,6 +20,9 @@ export const Poker = () => {
   const [loading, setIsLoading] = useState(true);
   const [currentPlayerId, setCurrentPlayerId] = useState<string | undefined>(undefined);
   const [hasError, setHasError] = useState(false);
+
+  // Named sessions only: an unnamed one would leave a dangling separator.
+  useDocumentTitle(game?.name ? t('session.documentTitle', { name: game.name }) : undefined);
 
   useEffect(() => {
     let effectCleanup = true;

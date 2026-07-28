@@ -120,6 +120,9 @@ export const de = {
 
   session: {
     round: 'Runde',
+    /* Browser tab of an open session. The session name comes last so it stays
+       readable when the tab shrinks and the title is cut off from the right. */
+    documentTitle: 'Planning Poker - {{name}}',
     tableLabel: 'Team am Pokertisch',
     statusLabel: {
       started: 'Bereit',
