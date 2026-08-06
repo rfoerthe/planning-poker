@@ -1,0 +1,147 @@
+/*
+ * Wider than MUI's 300px default. Each calculation step then fits on one line,
+ * which keeps the popup short enough to be placed next to its figure — wrapping
+ * every step made it taller than the space above or below.
+ */
+.StatExplainerTooltip {
+  max-width: min(30rem, calc(100vw - 24px));
+}
+
+.StatExplainer {
+  display: grid;
+  gap: 3px;
+  line-height: 1.4;
+}
+
+.StatExplainerHeading {
+  font-weight: 650;
+  margin-bottom: 3px;
+}
+
+.StatExplainerIntro {
+  margin-bottom: 5px;
+}
+
+/* A leading row label, then one column per vote. Columns come from the
+   component, which is the only place that knows how many votes there were. */
+.StatExplainerTable {
+  column-gap: 10px;
+  display: grid;
+  font-family: var(--font-num);
+  justify-content: start;
+  margin: 3px 0 6px;
+  text-align: right;
+}
+
+.StatExplainerRowLabel {
+  font-family: var(--font-sans);
+  opacity: 0.75;
+  text-align: left;
+  white-space: nowrap;
+}
+
+/* Numbering comes from the list itself, so the steps stay out of the wording. */
+.StatExplainerSteps {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+  padding-left: 1.1rem;
+}
+
+.StatExplainerCalc {
+  font-family: var(--font-num);
+  overflow-wrap: anywhere;
+}
+
+/* The tooltip surface is dark in both themes, so these alphas are on white. */
+.StatExplainerHint {
+  border-top: 1px solid rgb(255 255 255 / 22%);
+  color: rgb(255 255 255 / 78%);
+  margin-top: 8px;
+  padding-top: 7px;
+}
+
+/*
+ * Triggers. They carry the look of the figure they replace but are buttons, so
+ * the explanation is reachable by keyboard and by tap and not only by mouse.
+ */
+/*
+ * `:where()` keeps this reset at the specificity of a bare element selector, so
+ * that whatever class describes the figure — a KPI tile, the hero number, the
+ * verdict title — still decides how it looks.
+ */
+button:where(.StatTrigger) {
+  appearance: none;
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: help;
+  font: inherit;
+  padding: 0;
+  text-align: left;
+}
+
+.KpiTrigger {
+  background-color: var(--app-bg);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-md);
+  padding: 10px 11px;
+  transition:
+    background-color var(--duration-fast) var(--ease),
+    border-color var(--duration-fast) var(--ease);
+  width: 100%;
+}
+
+.KpiTrigger:hover,
+.KpiTrigger:focus-visible {
+  background-color: var(--surface);
+  border-color: var(--border);
+}
+
+/*
+ * The hero figure has no frame of its own. Only the number carries the dotted
+ * rule — running it under the caption as well would read as one long underline
+ * rather than a mark on the figure.
+ */
+.HeroTrigger {
+  align-items: baseline;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.HeroTrigger .StatHeroValue {
+  text-decoration: underline dotted var(--text-subtle);
+  text-underline-offset: 7px;
+}
+
+.HeroTrigger:hover .StatHeroValue,
+.HeroTrigger:focus-visible .StatHeroValue {
+  text-decoration-color: var(--accent);
+}
+
+/* Inline in the verdict line, so it has to stay a run of text. */
+.VerdictFigure {
+  text-decoration: underline dotted currentcolor;
+  text-underline-offset: 3px;
+}
+
+.VerdictFigure:hover,
+.VerdictFigure:focus-visible {
+  text-decoration-style: solid;
+}
+
+/*
+ * For a whole sentence rather than a figure. The rule is drawn in the muted
+ * tone instead of the text colour, because across two lines the same weight as
+ * on a short figure reads as emphasis rather than as an affordance.
+ */
+.TextTrigger {
+  text-decoration: underline dotted var(--text-subtle);
+  text-underline-offset: 3px;
+}
+
+.TextTrigger:hover,
+.TextTrigger:focus-visible {
+  text-decoration-color: var(--accent);
+}

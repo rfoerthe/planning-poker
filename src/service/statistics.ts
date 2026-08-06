@@ -9,10 +9,9 @@ export enum ConsensusStatus {
   CriticalSpread = 'critical-spread',
 }
 
+/** Wording for a status lives in the translation bundle, not in the statistics. */
 export interface ConsensusResult {
   status: ConsensusStatus;
-  code: string;
-  message: string;
   rankSpread: number;
   standardDeviation: number;
   spreadRatio?: number;
@@ -35,11 +34,17 @@ export interface DistributionEntry {
 }
 
 export interface NumericSummaryResult {
+  /** Deck of the round, so explanations can speak in the deck's own terms. */
+  gameType: GameType | undefined;
   average: number;
   median: number;
+  /** Every counted vote, lowest first. Carries the ranks the spread is built on. */
+  votes: NumericVote[];
   lowest: NumericVote;
   highest: NumericVote;
   recommendedCard: CardConfig;
+  /** The cards the average falls between, for explaining why one of them won. */
+  recommendationCandidates: CardConfig[];
   voteCount: number;
   abstentionCount: number;
   distribution: DistributionEntry[];
@@ -48,17 +53,63 @@ export interface NumericSummaryResult {
 }
 
 // A vote is an outlier when its card is at least this many positions away from the median card.
-const outlierRankDistance = 2;
+export const outlierRankDistance = 2;
 // Below this number of votes an outlier is not meaningful.
-const minimumVotesForOutliers = 3;
+export const minimumVotesForOutliers = 3;
 
+/*
+ * Thresholds of the consensus verdict. Exported because the panels explain the
+ * verdict to the reader, and an explanation that names a different number than
+ * the rule would be worse than none at all.
+ */
+export const criticalRankSpread = 3;
+export const moderateRankSpread = 2;
+export const criticalStandardDeviation = 1.5;
+// Below this, a deviation says more about the number of votes than about agreement.
+export const minimumVotesForDeviationRule = 2;
+
+/**
+ * Whether the votes are too far apart to accept the round.
+ *
+ * Either end of the deck being far from the other is enough on its own; the
+ * deviation rule additionally catches a field that is spread out without any
+ * single vote sitting far out.
+ */
+export const isCriticalSpread = (
+  rankSpread: number,
+  standardDeviation: number,
+  voteCount: number,
+): boolean =>
+  rankSpread >= criticalRankSpread ||
+  (voteCount > minimumVotesForDeviationRule && standardDeviation > criticalStandardDeviation);
+
+/**
+ * Whether the card values of a deck are real estimates that may be averaged.
+ *
+ * Named decks rather than excluded ones: a session document outlives the code
+ * that created it, so a deck this version no longer offers must not be run
+ * through the numeric evaluation. An unset type predates the deck choice and
+ * has always meant the default numeric deck.
+ */
 export const isNumericGameType = (gameType: GameType | undefined): boolean =>
-  gameType !== GameType.TShirt &&
-  gameType !== GameType.TShirtAndNumber &&
-  gameType !== GameType.Custom;
+  gameType === undefined ||
+  gameType === GameType.Fibonacci ||
+  gameType === GameType.ShortFibonacci ||
+  gameType === GameType.Custom;
 
+/**
+ * Whether every estimate card shows the value it carries.
+ *
+ * Custom decks from before the whole-number restriction stored the position of
+ * the input field as the value, with a free-text label on top. Averaging those
+ * would average field positions, so such a deck gets no numeric evaluation.
+ */
+const deckShowsItsValues = (numericCards: CardConfig[]): boolean =>
+  numericCards.every((card) => card.displayValue === String(card.value));
+
+/** One decimal at most, with the decimal comma the German UI expects. */
 export const formatNumber = (value: number): string => {
-  return Number.isInteger(value) ? value.toString() : value.toFixed(1);
+  return Number.isInteger(value) ? value.toString() : value.toFixed(1).replace('.', ',');
 };
 
 /**
@@ -104,11 +155,21 @@ const getAbstentionCount = (players: Player[]): number => {
   ).length;
 };
 
-export const getMedian = (sortedValues: number[]): number => {
-  const lowerMiddle = sortedValues[Math.floor((sortedValues.length - 1) / 2)];
-  const upperMiddle = sortedValues[Math.ceil((sortedValues.length - 1) / 2)];
+/**
+ * Where the middle of a sorted list sits. Both indexes are the same entry for
+ * an odd number of votes, and the two entries the middle falls between for an
+ * even one. Shared so that an explanation of the median cannot point at a
+ * different entry than the calculation used.
+ */
+export const getMedianIndexes = (length: number): [number, number] => [
+  Math.floor((length - 1) / 2),
+  Math.ceil((length - 1) / 2),
+];
 
-  return (lowerMiddle + upperMiddle) / 2;
+export const getMedian = (sortedValues: number[]): number => {
+  const [lowerIndex, upperIndex] = getMedianIndexes(sortedValues.length);
+
+  return (sortedValues[lowerIndex] + sortedValues[upperIndex]) / 2;
 };
 
 /**
@@ -129,6 +190,15 @@ export const getNearestCard = (numericCards: CardConfig[], value: number): CardC
     }
     return nearest;
   }, numericCards[0]);
+};
+
+/** The cards immediately below and above a value, deduplicated when it hits one exactly. */
+const getNearestCandidates = (numericCards: CardConfig[], value: number): CardConfig[] => {
+  const below = [...numericCards].reverse().find((card) => card.value <= value);
+  const above = numericCards.find((card) => card.value >= value);
+  const candidates = [below, above].filter((card): card is CardConfig => card !== undefined);
+
+  return [...new Set(candidates)];
 };
 
 const getDistribution = (votes: NumericVote[], numericCards: CardConfig[]): DistributionEntry[] => {
@@ -177,22 +247,18 @@ const getConsensus = (votes: NumericVote[]): ConsensusResult => {
   const highestValue = votes[votes.length - 1].value;
   const spreadRatio = lowestValue > 0 ? highestValue / lowestValue : undefined;
 
-  if (rankSpread >= 3 || (votes.length > 2 && standardDeviation > 1.5)) {
+  if (isCriticalSpread(rankSpread, standardDeviation, votes.length)) {
     return {
       status: ConsensusStatus.CriticalSpread,
-      code: 'CRITICAL SPREAD',
-      message: 'Discussion required!',
       rankSpread,
       standardDeviation,
       spreadRatio,
     };
   }
 
-  if (rankSpread === 2) {
+  if (rankSpread === moderateRankSpread) {
     return {
       status: ConsensusStatus.ModerateSpread,
-      code: 'MODERATE SPREAD',
-      message: 'Short clarification recommended.',
       rankSpread,
       standardDeviation,
       spreadRatio,
@@ -201,8 +267,6 @@ const getConsensus = (votes: NumericVote[]): ConsensusResult => {
 
   return {
     status: ConsensusStatus.Consensus,
-    code: 'CONSENSUS',
-    message: 'Estimate plausible.',
     rankSpread,
     standardDeviation,
     spreadRatio,
@@ -226,7 +290,7 @@ export const getNumericSummary = (
   const numericCards = getNumericCards(game);
   const votes = getNumericVotes(players, numericCards);
 
-  if (!votes.length || !numericCards.length) {
+  if (!votes.length || !numericCards.length || !deckShowsItsValues(numericCards)) {
     return undefined;
   }
 
@@ -234,11 +298,14 @@ export const getNumericSummary = (
   const average = values.reduce((sum, value) => sum + value, 0) / votes.length;
 
   return {
+    gameType: game.gameType,
     average,
     median: getMedian(values),
+    votes,
     lowest: votes[0],
     highest: votes[votes.length - 1],
     recommendedCard: getNearestCard(numericCards, average),
+    recommendationCandidates: getNearestCandidates(numericCards, average),
     voteCount: votes.length,
     abstentionCount: getAbstentionCount(players),
     distribution: getDistribution(votes, numericCards),

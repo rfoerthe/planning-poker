@@ -13,7 +13,7 @@ The project is intended to:
 - Support distributed teams during estimation conversations.
 - Make voting status visible without revealing estimates too early.
 - Let moderators quickly restart rounds and remove inactive participants.
-- Offer common estimation systems such as Fibonacci, short Fibonacci, T-shirt sizing, mixed T-shirt/number decks, and custom cards.
+- Offer common estimation systems such as Fibonacci, short Fibonacci, T-shirt sizing, and custom cards.
 - Provide an open-source implementation that contributors can inspect, extend, and deploy.
 
 ## What The Product Does

@@ -23,9 +23,12 @@ export default defineConfig({
     mockReset: true,
   },
   server: {
-    // Open the default browser with the dev server URL
-    open: true,            // or 'string' to open a specific path
+    // Open the default browser with the dev server URL. Tooling that manages
+    // the server itself (and brings its own preview) sets PORT — in that case
+    // a popping system browser would only get in the way.
+    open: !process.env.PORT, // or 'string' to open a specific path
     // host: true,          // helpful in WSL/Docker to expose to network
-    // port: 5173,          // set a fixed port if you prefer
+    // Fixed default port; tooling may assign a free one via PORT.
+    port: process.env.PORT ? Number(process.env.PORT) : 5173,
   },
 });

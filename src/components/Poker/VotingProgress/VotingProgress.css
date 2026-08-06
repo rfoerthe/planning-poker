@@ -1,0 +1,58 @@
+.VotingProgress {
+  align-items: center;
+  background-color: color-mix(in srgb, var(--accent-soft) 42%, var(--surface));
+  border: 1px solid color-mix(in srgb, var(--accent) 18%, var(--border));
+  border-radius: var(--radius-lg);
+  display: flex;
+  gap: 12px;
+  padding: 12px 14px;
+}
+
+.VotingProgressLabel {
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  white-space: nowrap;
+}
+
+.VotingProgressTrack {
+  background-color: var(--surface-sunken);
+  border-radius: 3px;
+  flex: 1 1 auto;
+  height: 6px;
+  min-width: 40px;
+  overflow: hidden;
+}
+
+.VotingProgressTrack i {
+  background-color: var(--accent);
+  border-radius: 3px;
+  display: block;
+  height: 100%;
+  transition: width var(--duration-base) var(--ease);
+}
+
+.VotingProgressPercent {
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  min-width: 42px;
+  text-align: right;
+}
+
+@media (max-width: 560px) {
+  .VotingProgress {
+    flex-wrap: wrap;
+    gap: 8px 12px;
+  }
+
+  /* The bar needs a full row of its own to stay readable. */
+  .VotingProgressLabel {
+    flex: 1 1 100%;
+    white-space: normal;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .VotingProgressTrack i {
+    transition: none;
+  }
+}

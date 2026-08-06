@@ -65,18 +65,6 @@ export const tShirtCards: CardConfig[] = [
   { value: -1, displayValue: '-1', color: 'var(--color-background-secondary)' },
 ];
 
-export const tShirtAndNumbersCards: CardConfig[] = [
-  { value: 10, displayValue: 'S', color: '#9EC8FE' },
-  { value: 20, displayValue: 'M', color: '#9EC8FE' },
-  { value: 30, displayValue: 'L', color: '#A3DFF2' },
-  { value: 40, displayValue: 'XL', color: '#A3DFF2' },
-  { value: 50, displayValue: '1', color: '#9DD49A' },
-  { value: 60, displayValue: '2', color: '#9DD49A' },
-  { value: 70, displayValue: '3', color: '#F4DD94' },
-  { value: 80, displayValue: '4', color: '#F4DD94' },
-  { value: 90, displayValue: '5', color: '#F39893' },
-];
-
 export const customCardsTemplate: CardConfig[] = [
   { value: 0, displayValue: '0', color: 'var(--color-background-secondary)' },
   { value: 1, displayValue: '1', color: '#9EC8FE' },
@@ -103,8 +91,6 @@ export const getCards = (gameType: GameType | undefined): CardConfig[] => {
       return fibonacciCards;
     case GameType.TShirt:
       return tShirtCards;
-    case GameType.TShirtAndNumber:
-      return tShirtAndNumbersCards;
     case GameType.Custom:
       return customCardsTemplate;
     default:
@@ -135,11 +121,42 @@ export const getRandomEmoji = () => {
   return emojis[0];
 };
 
-export const getCustomCards = (values: string[]) => {
-  const customCards: CardConfig[] = customCardsTemplate;
-  values.forEach((value, index) => (customCards[index].displayValue = value));
+/** A whole number from 0 to 999 — three digits keep every value inside the bound. */
+export const isValidCustomCardValue = (input: string): boolean => /^\d{1,3}$/.test(input.trim());
 
-  return customCards.filter(
-    (card) => card.displayValue !== undefined && card.displayValue.trim() !== '',
-  );
+/* Cool to warm with rising value, two neighbouring cards per shade — the same
+   progression the built-in decks use. */
+const customColorRamp = ['#9EC8FE', '#A3DFF2', '#9DD49A', '#F4DD94', '#F39893', '#D96C6C', '#9B59B6'];
+
+/**
+ * Builds a custom deck from the entered values.
+ *
+ * The card value IS the entered number, not the position of the input field:
+ * the whole point of restricting custom cards to whole numbers is that the
+ * deck can be evaluated like any other numeric deck, and that requires real
+ * values. Duplicates collapse into one card, and the deck is sorted so ranks
+ * and colors follow the values. The unsure and break cards come along
+ * automatically, like on every built-in deck.
+ */
+export const getCustomCards = (values: string[]): CardConfig[] => {
+  const numbers = [
+    ...new Set(values.filter(isValidCustomCardValue).map((value) => Number(value.trim()))),
+  ].sort((a, b) => a - b);
+
+  let coloredCount = 0;
+  const estimateCards = numbers.map((number): CardConfig => {
+    if (number === 0) {
+      return { value: 0, displayValue: '0', color: 'var(--color-background-secondary)' };
+    }
+
+    const color = customColorRamp[Math.min(Math.floor(coloredCount / 2), customColorRamp.length - 1)];
+    coloredCount += 1;
+    return { value: number, displayValue: String(number), color };
+  });
+
+  return [
+    ...estimateCards,
+    { value: -2, displayValue: '❓', color: 'var(--color-background-secondary)' },
+    { value: -1, displayValue: '-1', color: 'var(--color-background-secondary)' },
+  ];
 };

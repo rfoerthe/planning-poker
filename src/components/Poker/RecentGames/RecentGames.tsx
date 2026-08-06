@@ -1,33 +1,30 @@
-import {
-  Card,
-  CardContent,
-  CardHeader, Fade, Snackbar,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Typography,
-} from '@mui/material';
-import { red } from '@mui/material/colors';
-import DeleteForeverIcon from '@mui/icons-material/DeleteForeverTwoTone';
+import { Alert, Fade, IconButton, Snackbar } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import { getPlayerRecentGames } from '../../../service/players';
-import './RecentGames.css';
 import { removeGame } from '../../../service/games';
 import { AlertDialog } from '../../AlertDialog/AlertDialog';
+import { DeckSuit } from '../DeckSuit/DeckSuit';
 import { PlayerGame } from '../../../types/player';
-import Alert from '@mui/material/Alert';
+import './RecentGames.css';
 
+interface RecentGamesProps {
+  /**
+   * Drop the whole block instead of showing the empty state. Used where the
+   * list sits next to other content and would only be noise for a first visit.
+   */
+  hideWhenEmpty?: boolean;
+}
 
-export const RecentGames = () => {
+export const RecentGames: React.FC<RecentGamesProps> = ({ hideWhenEmpty = false }) => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [recentGames, setRecentGames] = useState<PlayerGame[] | undefined>(undefined);
-  const [reloadRecent, setReloadRecent] = useState<Boolean>(false);
+  const [reloadRecent, setReloadRecent] = useState<boolean>(false);
   const [showGameProtected, setShowGameProtected] = useState(false);
-
 
   useEffect(() => {
     let fetchCleanup = true;
@@ -46,91 +43,85 @@ export const RecentGames = () => {
     };
   }, [reloadRecent]);
 
-  const isEmptyRecentGames = (): boolean => {
-    if (!recentGames) {
-      return true;
-    }
-    return recentGames && recentGames.length === 0;
-  };
-
   const handleRemoveGame = async (recentGameId: string) => {
     await removeGame(recentGameId);
     setReloadRecent(!reloadRecent);
   };
 
+  const namedGames = (recentGames ?? []).filter((recentGame) => recentGame.name);
+
+  if (hideWhenEmpty && namedGames.length === 0) {
+    return null;
+  }
 
   return (
     <>
-    <Card variant='outlined' className='RecentGamesCard'>
-      <CardHeader
-        className='RecentGamesCardTitle'
-        title='Recent Session'
-        slotProps={{ title: { variant: 'h6', noWrap: true }}}
-      />
-      <CardContent className='RecentGamesCardContent'>
-        {isEmptyRecentGames() && <Typography variant='body2'>No recent sessions found</Typography>}
-        {recentGames && recentGames.length > 0 && (
-          <TableContainer className='RecentGamesTableContainer'>
-            <Table stickyHeader>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Name</TableCell>
-                  <TableCell>Created By</TableCell>
-                  <TableCell></TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {recentGames.map(
-                  (recentGame) =>
-                    recentGame.name && (
-                      <TableRow
-                        hover
-                        key={recentGame.id}
-                        className='RecentGamesTableRow'
-                        onClick={() => navigate(`/game/${recentGame.id}`)}
-                      >
-                        <TableCell>{recentGame.name}</TableCell>
-                        <TableCell align='left'>{recentGame.createdBy}</TableCell>
-                        { recentGame.isModerator ? (
-                          recentGame.isLocked ? (
-                            <TableCell align='center' onClick={(e) => e.stopPropagation()} title={'Deleting the game is not allowed'}>
-                              <DeleteForeverIcon style={{ color: '#bbb', filter: 'grayscale(100%)'}}
+      <section className='ResumeBar' aria-label={t('recentGames.title')}>
+        <h2 className='SectionLabel ResumeBarLead'>{t('recentGames.title')}</h2>
 
-                                                 onClick={() => setShowGameProtected(true)} />
-                            </TableCell>
-                          ) : (
-                            <TableCell align='center' onClick={(e) => e.stopPropagation()}>
-                              <AlertDialog
-                                title='Remove recent game'
-                                message={`Are you sure? That will delete the game: ${recentGame.name} and remove all players from the session.`}
-                                onConfirm={() => handleRemoveGame(recentGame.id)}
-                              >
-                                <DeleteForeverIcon style={{ color: red[300] }} />
-                              </AlertDialog>
-                            </TableCell>
-                          )
-                        ) : (
-                          <TableCell align='left'></TableCell>
-                        )}
-                      </TableRow>
-                    ),
-                )}
-              </TableBody>
-            </Table>
-          </TableContainer>
+        {namedGames.length === 0 ? (
+          <p className='ResumeBarEmpty'>{t('recentGames.empty')}</p>
+        ) : (
+          <ul className='ResumeBarList'>
+            {namedGames.map((recentGame) => (
+              <li className='ResumeChip' key={recentGame.id}>
+                <button
+                  type='button'
+                  className='ResumeChipOpen'
+                  aria-label={t('recentGames.open')}
+                  onClick={() => navigate(`/game/${recentGame.id}`)}
+                >
+                  <DeckSuit gameType={recentGame.gameType} className='ResumeChipSuit' />
+                  <span className='ResumeChipName'>{recentGame.name}</span>
+                  <span className='ResumeChipMeta'>
+                    <span>{t('recentGames.createdByLabel')}</span>
+                    <span>{recentGame.createdBy}</span>
+                  </span>
+                </button>
+
+                {recentGame.isModerator &&
+                  (recentGame.isLocked ? (
+                    <IconButton
+                      className='ResumeChipAction'
+                      size='small'
+                      title={t('recentGames.lockedTitle')}
+                      aria-label={t('recentGames.lockedTitle')}
+                      onClick={() => setShowGameProtected(true)}
+                    >
+                      <LockOutlinedIcon fontSize='small' className='ResumeChipLockIcon' />
+                    </IconButton>
+                  ) : (
+                    <AlertDialog
+                      title={t('recentGames.removeTitle')}
+                      message={t('recentGames.removeMessage', { name: recentGame.name })}
+                      onConfirm={() => handleRemoveGame(recentGame.id)}
+                    >
+                      <IconButton
+                        className='ResumeChipAction CircleRemove'
+                        size='small'
+                        title={t('recentGames.removeAction')}
+                        aria-label={t('recentGames.removeAction')}
+                      >
+                        <CloseIcon className='CircleRemoveIcon' />
+                      </IconButton>
+                    </AlertDialog>
+                  ))}
+              </li>
+            ))}
+          </ul>
         )}
-      </CardContent>
-    </Card>
+      </section>
+
       <Snackbar
         anchorOrigin={{ horizontal: 'right', vertical: 'top' }}
         open={showGameProtected}
         autoHideDuration={5000}
-        slotProps={{ transition: Fade }}
+        slots={{ transition: Fade }}
         transitionDuration={1000}
         onClose={() => setShowGameProtected(false)}
       >
-        <Alert severity='error'>Deleting the game is not allowed!</Alert>
+        <Alert severity='error'>{t('recentGames.lockedSnackbar')}</Alert>
       </Snackbar>
     </>
-);
+  );
 };

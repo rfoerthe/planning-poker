@@ -1,0 +1,43 @@
+.RoundStatusOfTotal {
+  color: var(--text-subtle);
+  font-size: 1.4rem;
+}
+
+.RoundStatusTimerLabel {
+  display: block;
+  margin-bottom: 9px;
+}
+
+.RoundStatusTimer {
+  align-items: center;
+  display: flex;
+  gap: 10px;
+}
+
+.RoundStatusTimerValue {
+  color: var(--accent-strong);
+  font-family: var(--font-num);
+  font-size: 0.95rem;
+  font-weight: 620;
+}
+
+.RoundStatusTimerTrack {
+  flex: 1 1 auto;
+  height: 6px;
+}
+
+.RoundStatusTimerFill {
+  background-color: var(--accent);
+}
+
+.RoundStatusTimerTotal {
+  color: var(--text-subtle);
+  font-size: 0.74rem;
+  white-space: nowrap;
+}
+
+.RoundStatusTimerIdle {
+  color: var(--text-subtle);
+  font-size: 0.8rem;
+  margin: 0;
+}

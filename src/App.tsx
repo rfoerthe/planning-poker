@@ -1,8 +1,10 @@
 import { CssBaseline, useMediaQuery } from '@mui/material';
 import { StyledEngineProvider, ThemeProvider } from '@mui/material/styles';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import CookieConsent from 'react-cookie-consent';
 import { Route, BrowserRouter as Router, Routes } from 'react-router';
+import { Footer } from './components/Footer/Footer';
 import { Toolbar } from './components/Toolbar/Toolbar';
 import { AboutPage } from './pages/AboutPage/AboutPage';
 import DeleteOldGames from './pages/DeleteOldGames/DeleteOldGames';
@@ -24,6 +26,16 @@ function App() {
   const [themePreference, setThemePreference] = useState<ThemePreference>(getStoredThemePreference);
   const resolvedThemeMode = resolveThemeMode(themePreference, prefersDarkMode);
   const theme = useMemo(() => createAppTheme(resolvedThemeMode), [resolvedThemeMode]);
+  const { t } = useTranslation();
+
+  /*
+   * Mirror the theme onto the document root. Drawers, menus and dialogs are
+   * portalled to `document.body` and never see the class on the app root, so
+   * without this their design tokens would resolve to nothing.
+   */
+  useEffect(() => {
+    document.documentElement.dataset.theme = resolvedThemeMode;
+  }, [resolvedThemeMode]);
 
   const handleThemePreferenceChange = (nextThemePreference: ThemePreference) => {
     setThemePreference(nextThemePreference);
@@ -49,25 +61,28 @@ function App() {
               <Route path='/guide' element={<GuidePage />} />
               <Route path='/*' element={<HomePage />} />
             </Routes>
-            <CookieConsent location="bottom" cookieName="planning-poker-privacy" expires={90} overlay>
-              <h1>Privacy Information and Data Usage</h1>
-              <h3>Use of Cookies and Browser Local Storage</h3>
-              <p>To provide you with the best possible user experience when using our web application, we use cookies and your browser’s local storage.
-                A cookie is used to manage your consent to these terms. Certain information is stored locally on your device in the local storage,
-                such as settings, cached data, or the application’s status information. This data is stored exclusively on your device and
-                is not transmitted to our servers or to third parties. The use of local storage is solely for technical and functional purposes
-                and serves to ensure a user-friendly and efficient experience on our website.</p>
-              <p>All information stored in the local storage can be viewed or deleted by you at any time via your browser settings.</p>
-              <h3>Use of Google Firestore</h3>
-              <p>Our web application uses Google Firestore, a cloud-based database service provided by Google Ireland Limited,
-              Gordon House, Barrow Street, Dublin 4, Ireland (“Google”). Firestore enables us to store, synchronize, and
-              retrieve data in real time. In doing so, personal data such as email addresses, user activities, or user-provided
-              content may be processed and transferred to Google servers and stored there.</p>
-              <p>The processing of data by Google Firestore is based on Article 6(1)(f) GDPR (legitimate interest), as offering
-                a modern and stable web application cannot be ensured without this technology, or—if required for specific purposes—on the basis of your consent pursuant to Article 6(1)(a) GDPR.
-                For further information on data processing by Google, please visit: https://policies.google.com/privacy</p>
-              <p>It is possible that data may also be transferred to servers in the USA in the course of use. Google is certified under
-                the EU-U.S. Data Privacy Framework, thus ensuring a level of protection appropriate to European data protection standards.</p>
+            <Footer />
+            <CookieConsent
+              location='bottom'
+              cookieName='planning-poker-privacy'
+              expires={90}
+              overlay
+              buttonText={t('cookieConsent.accept')}
+              disableStyles
+              overlayClasses='ConsentOverlay'
+              containerClasses='ConsentPanel'
+              contentClasses='ConsentContent'
+              buttonWrapperClasses='ConsentActions'
+              buttonClasses='AuroraButton AuroraButtonPrimary'
+            >
+              <h2>{t('cookieConsent.title')}</h2>
+              <h3>{t('cookieConsent.localStorage.title')}</h3>
+              <p>{t('cookieConsent.localStorage.body')}</p>
+              <p>{t('cookieConsent.localStorage.control')}</p>
+              <h3>{t('cookieConsent.firestore.title')}</h3>
+              <p>{t('cookieConsent.firestore.body')}</p>
+              <p>{t('cookieConsent.firestore.legalBasis')}</p>
+              <p>{t('cookieConsent.firestore.transfer')}</p>
             </CookieConsent>
           </Router>
         </StyledEngineProvider>

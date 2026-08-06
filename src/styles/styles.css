@@ -1,27 +1,828 @@
-.LightTheme{
-    --color-primary : #75A1DE;
-    --color-secondary:#d7d7d7;
-    --color-background: white;
-    --color-background-secondary: #e7edf3;
-    --color-warning:orangered;
-    --color-border:grey;
-    --color-text-primary:#1f2933;
-    --color-text-secondary:#52616f;
-    background-color: var(--color-background);
-    color: var(--color-text-primary);
-    min-height: 100vh;
+/*
+ * Aurora design tokens.
+ *
+ * One accent colour, generous whitespace, soft edges and no heavy shadows.
+ *
+ * The tokens are declared twice: on the document root, keyed by the
+ * `data-theme` attribute, and on the app root's theme class. The first is what
+ * portalled surfaces need — MUI mounts drawers, menus and dialogs directly on
+ * `document.body`, outside the app root, where a token defined only on the
+ * class would resolve to nothing and silently blank the declaration out.
+ * Both are kept in sync from App.tsx.
+ *
+ * The `--color-*` names at the bottom of each block are kept as aliases because
+ * card configs and inline styles hand these strings straight to the DOM.
+ */
+
+:root,
+.LightTheme,
+.DarkTheme {
+  /* Type */
+  --font-sans: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif;
+  --font-num: ui-monospace, 'SF Mono', 'JetBrains Mono', Menlo, Consolas, monospace;
+
+  /* Radii */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 22px;
+  --radius-full: 999px;
+
+  /* Motion */
+  --ease: cubic-bezier(0.32, 0.72, 0, 1);
+  --duration-fast: 0.15s;
+  --duration-base: 0.25s;
+
+  /* Layout */
+  --page-max: 1160px;
+  --appbar-height: 56px;
 }
 
-.DarkTheme{
-    --color-primary : #8bb9f3;
-    --color-secondary:#445069;
-    --color-background: #121821;
-    --color-background-secondary: #1e2733;
-    --color-warning:#ff8a50;
-    --color-border:#64748b;
-    --color-text-primary:#f1f5f9;
-    --color-text-secondary:#cbd5e1;
-    background-color: var(--color-background);
-    color: var(--color-text-primary);
-    min-height: 100vh;
+/* The app shell itself — never the document root. */
+.LightTheme,
+.DarkTheme {
+  background-color: var(--app-bg);
+  color: var(--text);
+  /*
+   * Column layout over the full window height so the footer always sits on the
+   * bottom edge, however short the page is. `dvh` keeps that true while a
+   * mobile browser shows or hides its address bar.
+   */
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100dvh;
+  transition:
+    background-color var(--duration-base) var(--ease),
+    color var(--duration-base) var(--ease);
+}
+
+:root,
+:root[data-theme='light'],
+.LightTheme {
+  --app-bg: #f9fafc;
+  --surface: #ffffff;
+  --surface-sunken: #f1f3f7;
+  --surface-hover: #f2f4f8;
+  --border: #e3e7ed;
+  --border-soft: #edeff4;
+  --text: #13171d;
+  --text-muted: #5e6571;
+  /* Carries small labels — KPI captions, roles, the footer — so it has to clear
+     4.5:1 on the card surface rather than merely look quiet. */
+  --text-subtle: #707682;
+  --accent: #2563eb;
+  --accent-soft: #e5f0ff;
+  --accent-strong: #1651d5;
+  --accent-contrast: #ffffff;
+  --success: #17876a;
+  --success-soft: #e5f5ef;
+  --warning: #b4690e;
+  --warning-soft: #fdf1e0;
+  --danger: #c73e3e;
+  --danger-soft: #fdecec;
+  --overlay: rgb(12 18 28 / 45%);
+
+  /* The active round gets a quiet card-table atmosphere without changing the
+     product shell into a themed game UI. */
+  --table-stage: linear-gradient(145deg, #f4f8ff 0%, #edf4f3 48%, #f7f9fc 100%);
+  --table-edge: #d9e4e8;
+  --table-line: rgb(37 99 235 / 15%);
+  --table-glow: rgb(37 99 235 / 10%);
+  --table-seat: rgb(255 255 255 / 88%);
+
+  --shadow-sm: 0 1px 2px rgb(12 18 28 / 5%);
+  --shadow-md: 0 2px 4px rgb(12 18 28 / 4%), 0 8px 24px rgb(12 18 28 / 6%);
+  --shadow-lg: 0 4px 8px rgb(12 18 28 / 5%), 0 24px 48px rgb(12 18 28 / 10%);
+
+  /* Legacy aliases — consumed by CardConfigs and inline styles. */
+  --color-primary: #2563eb;
+  --color-secondary: #d5dae2;
+  --color-background: #ffffff;
+  --color-background-secondary: #f1f3f7;
+  --color-warning: #b4690e;
+  --color-border: #e3e7ed;
+  --color-text-primary: #13171d;
+  --color-text-secondary: #5e6571;
+}
+
+/*
+ * The dark ramp is built on perceived lightness (L*), not on the raw contrast
+ * ratio: that ratio compresses so hard near black that a step which is plainly
+ * visible still computes as ~1.1. Every surface therefore stays clear of the
+ * bottom of the scale, where ambient light on the screen crushes the
+ * difference anyway — page L*7, cards L*13, inset areas L*18, borders L*25.
+ */
+:root[data-theme='dark'],
+.DarkTheme {
+  --app-bg: #12161e;
+  --surface: #1d222a;
+  /* Lighter than the surface, unlike in the light theme: a recess drawn darker
+     would fall back towards the page and lose the card it sits on. */
+  --surface-sunken: #282d35;
+  --surface-hover: #262a32;
+  --border: #383c44;
+  --border-soft: #2b2f37;
+  --text: #f1f2f5;
+  --text-muted: #aeb6c5;
+  --text-subtle: #858e9f;
+  --accent: #7ca7fd;
+  --accent-soft: #1b2d52;
+  --accent-strong: #9abdfe;
+  --accent-contrast: #12161e;
+  --success: #5fd9b2;
+  --success-soft: #18332b;
+  --warning: #eab069;
+  --warning-soft: #392c1e;
+  --danger: #f79595;
+  --danger-soft: #412727;
+  --overlay: rgb(0 0 0 / 62%);
+
+  --table-stage: linear-gradient(145deg, #17262a 0%, #14252a 48%, #17212d 100%);
+  --table-edge: #314249;
+  --table-line: rgb(124 167 253 / 18%);
+  --table-glow: rgb(124 167 253 / 13%);
+  --table-seat: rgb(29 34 42 / 88%);
+
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 40%);
+  --shadow-md: 0 2px 4px rgb(0 0 0 / 30%), 0 8px 24px rgb(0 0 0 / 35%);
+  --shadow-lg: 0 4px 8px rgb(0 0 0 / 30%), 0 24px 48px rgb(0 0 0 / 50%);
+
+  --color-primary: #7ca7fd;
+  --color-secondary: #3f4a60;
+  --color-background: #1d222a;
+  /* Carries the neutral cards of the deck — 0, ❓ and ☕ — so it has to sit as
+     far above the page as any other card face. */
+  --color-background-secondary: #282d35;
+  --color-warning: #eab069;
+  --color-border: #383c44;
+  --color-text-primary: #f1f2f5;
+  --color-text-secondary: #aeb6c5;
+}
+
+/* ------------------------------------------------------------------ *
+ * Shared primitives
+ * ------------------------------------------------------------------ */
+
+/*
+ * Takes the leftover height of the app column, which is what pushes the footer
+ * down to the window edge on short pages.
+ */
+.PageShell {
+  flex: 1 0 auto;
+  margin: 0 auto;
+  max-width: var(--page-max);
+  padding: 40px 20px 80px;
+  width: 100%;
+}
+
+.Panel {
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md);
+}
+
+/*
+ * Emoji next to numeric type. The card faces use a monospace stack for the
+ * estimates, and some monospace fonts ship a flat text glyph for symbols like
+ * the coffee cup — this forces the colour emoji instead.
+ */
+.EmojiGlyph {
+  font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', var(--font-sans);
+}
+
+.SectionLabel {
+  color: var(--text-subtle);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+/* Status pills — shared by the session header and the summary panels. */
+.StatusPill {
+  align-items: center;
+  border-radius: var(--radius-full);
+  display: inline-flex;
+  font-size: 0.78rem;
+  font-weight: 600;
+  gap: 6px;
+  height: 26px;
+  padding: 0 11px;
+  white-space: nowrap;
+}
+
+/*
+ * The dot does not blink. A round runs for minutes, so the pulse it used to
+ * carry was an animation that never ended: the compositor kept working for as
+ * long as the session was open, and every frame invalidated the blurred
+ * backdrop of the app bar above it. Measured on a table of twelve, that put
+ * Chrome's GPU process at ~45% of a core on an idle page; without it, ~2%.
+ * The label next to the dot already says that the round is running.
+ */
+.StatusPill .StatusPillDot {
+  background-color: currentcolor;
+  border-radius: 50%;
+  height: 6px;
+  width: 6px;
+}
+
+.StatusPillNeutral {
+  background-color: var(--surface-sunken);
+  color: var(--text-muted);
+}
+
+.StatusPillRunning {
+  background-color: var(--warning-soft);
+  color: var(--warning);
+}
+
+.StatusPillDone {
+  background-color: var(--success-soft);
+  color: var(--success);
+}
+
+/* ------------------------------------------------------------------ *
+ * Form primitives — shared by the create and join panels
+ * ------------------------------------------------------------------ */
+
+.FormPanel {
+  overflow: hidden;
+}
+
+.FormPanelHead {
+  padding: 22px 24px 0;
+}
+
+.FormPanelTitle {
+  font-size: 1.12rem;
+  font-weight: 620;
+  letter-spacing: -0.02em;
+  margin: 0 0 4px;
+}
+
+.FormPanelSubtitle {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+.FormPanelBody {
+  display: grid;
+  gap: 16px;
+  padding: 22px 24px 24px;
+}
+
+.FormField {
+  display: grid;
+  gap: 6px;
+}
+
+.FormLabel {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  font-weight: 550;
+}
+
+.FormInput {
+  background-color: var(--app-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.92rem;
+  height: 42px;
+  outline: none;
+  padding: 0 12px;
+  transition:
+    border-color var(--duration-fast) var(--ease),
+    box-shadow var(--duration-fast) var(--ease);
+  width: 100%;
+}
+
+.FormInput::placeholder {
+  color: var(--text-subtle);
+}
+
+.FormInput:focus {
+  background-color: var(--surface);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+.FormInput[aria-invalid='true'] {
+  border-color: var(--danger);
+}
+
+.FormError {
+  color: var(--danger);
+  font-size: 0.8rem;
+  margin: 0;
+}
+
+.FormHint {
+  color: var(--text-subtle);
+  font-size: 0.78rem;
+  margin: 0;
+}
+
+/* Deck picker — wrapping chips, with the values of the pick spelled out below */
+
+.DeckChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.DeckChip {
+  align-items: center;
+  background-color: var(--app-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--text-muted);
+  cursor: pointer;
+  display: inline-flex;
+  font-size: 0.84rem;
+  gap: 7px;
+  font-weight: 540;
+  padding: 8px 13px;
+  transition:
+    background-color var(--duration-fast) var(--ease),
+    border-color var(--duration-fast) var(--ease),
+    color var(--duration-fast) var(--ease);
+  white-space: nowrap;
+}
+
+.DeckChip:hover {
+  border-color: color-mix(in srgb, var(--accent) 40%, var(--border));
+  color: var(--text);
+}
+
+.DeckChip.IsSelected {
+  background-color: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--accent-strong);
+  font-weight: 570;
+}
+
+/*
+ * Visually hidden but still focusable and exposed to assistive tech — a
+ * zero-sized control drops out of the accessibility tree and off the tab order.
+ */
+.DeckChip input {
+  clip-path: inset(50%);
+  height: 1px;
+  overflow: hidden;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
+}
+
+.DeckChip:has(input:focus-visible) {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.DeckChipSuit {
+  font-size: 1rem;
+}
+
+.DeckValues {
+  color: var(--text-subtle);
+  font-family: var(--font-num);
+  font-size: 0.72rem;
+  margin: 8px 0 0;
+  overflow-wrap: anywhere;
+}
+
+/* Switch row */
+
+.SwitchRow {
+  align-items: center;
+  display: flex;
+  gap: 11px;
+  padding: 4px 2px;
+}
+
+.SwitchControl {
+  appearance: none;
+  background-color: var(--border);
+  border: 0;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  flex: 0 0 auto;
+  height: 21px;
+  padding: 0;
+  position: relative;
+  transition: background-color var(--duration-base) var(--ease);
+  width: 36px;
+}
+
+.SwitchControl::after {
+  background-color: #fff;
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgb(0 0 0 / 25%);
+  content: '';
+  height: 17px;
+  left: 2px;
+  position: absolute;
+  top: 2px;
+  transition: left var(--duration-base) var(--ease);
+  width: 17px;
+}
+
+.SwitchControl[aria-checked='true'] {
+  background-color: var(--accent);
+}
+
+.SwitchControl[aria-checked='true']::after {
+  left: 17px;
+}
+
+.SwitchText {
+  font-size: 0.86rem;
+}
+
+.SwitchText small {
+  color: var(--text-subtle);
+  display: block;
+  font-size: 0.76rem;
+}
+
+/* Buttons */
+
+.AuroraButton {
+  align-items: center;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  display: inline-flex;
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 560;
+  gap: 8px;
+  height: 42px;
+  justify-content: center;
+  padding: 0 18px;
+  transition:
+    background-color var(--duration-fast) var(--ease),
+    border-color var(--duration-fast) var(--ease),
+    box-shadow var(--duration-fast) var(--ease),
+    transform var(--duration-fast) var(--ease);
+  white-space: nowrap;
+}
+
+.AuroraButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.AuroraButtonPrimary {
+  background-color: var(--accent);
+  box-shadow: var(--shadow-sm);
+  color: var(--accent-contrast);
+}
+
+.AuroraButtonPrimary:not(:disabled):hover {
+  box-shadow: var(--shadow-md);
+  filter: brightness(1.08);
+  transform: translateY(-1px);
+}
+
+.AuroraButtonGhost {
+  background-color: transparent;
+  border-color: var(--border);
+  color: var(--text);
+}
+
+.AuroraButtonGhost:not(:disabled):hover {
+  background-color: var(--surface-hover);
+}
+
+.AuroraButtonBlock {
+  width: 100%;
+}
+
+.AuroraButtonSmall {
+  font-size: 0.84rem;
+  height: 34px;
+  padding: 0 14px;
+}
+
+/* ------------------------------------------------------------------ *
+ * Cookie consent — styled here because react-cookie-consent renders
+ * its own markup and only accepts class names.
+ * ------------------------------------------------------------------ */
+
+.ConsentOverlay {
+  background-color: var(--overlay);
+  backdrop-filter: blur(4px);
+  inset: 0;
+  position: fixed;
+  z-index: 1300;
+}
+
+.ConsentPanel {
+  background-color: var(--surface);
+  border-top: 1px solid var(--border);
+  bottom: 0;
+  box-shadow: var(--shadow-lg);
+  left: 0;
+  max-height: 80vh;
+  overflow-y: auto;
+  padding: 26px 20px calc(26px + env(safe-area-inset-bottom));
+  position: fixed;
+  right: 0;
+  z-index: 1301;
+}
+
+.ConsentContent {
+  margin: 0 auto;
+  max-width: 760px;
+}
+
+.ConsentContent h2 {
+  font-size: 1.2rem;
+  font-weight: 630;
+  letter-spacing: -0.02em;
+  margin: 0 0 16px;
+}
+
+.ConsentContent h3 {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin: 20px 0 6px;
+}
+
+.ConsentContent p {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  line-height: 1.6;
+  margin: 0 0 8px;
+  overflow-wrap: anywhere;
+}
+
+.ConsentActions {
+  display: flex;
+  justify-content: flex-end;
+  margin: 20px auto 0;
+  max-width: 760px;
+}
+
+/*
+ * Close control for removing an entry — a player seat, an earlier session.
+ * Quiet until it is aimed at, because the removal behind it cannot be undone
+ * and the entry, not the control, is what should catch the eye.
+ */
+.CircleRemove {
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  color: var(--text-subtle);
+  height: 20px;
+  padding: 0;
+  transition:
+    background-color var(--duration-fast) var(--ease),
+    border-color var(--duration-fast) var(--ease),
+    color var(--duration-fast) var(--ease);
+  width: 20px;
+}
+
+.CircleRemove:hover,
+.CircleRemove:focus-visible {
+  background-color: var(--danger-soft);
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+.CircleRemoveIcon {
+  font-size: 0.82rem;
+}
+
+/* ------------------------------------------------------------------ *
+ * Stat panels — shared by the round status and the result summaries
+ * ------------------------------------------------------------------ */
+
+.StatPanel {
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md);
+  padding: 18px;
+}
+
+.StatPanelHead {
+  align-items: center;
+  display: flex;
+  gap: 10px;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.StatPanelTitle {
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+
+/* Stands in for the figures when a round produced nothing to evaluate. */
+.StatPanelEmpty {
+  color: var(--text-subtle);
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+.StatHero {
+  align-items: baseline;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.StatHeroValue {
+  font-family: var(--font-num);
+  font-size: 2.4rem;
+  font-weight: 620;
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+
+.StatHeroUnit {
+  color: var(--text-subtle);
+  font-size: 0.78rem;
+}
+
+.StatSubline {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  margin: 6px 0 16px;
+  overflow-wrap: anywhere;
+}
+
+.KpiGrid {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: 1fr 1fr;
+  margin-bottom: 16px;
+}
+
+.Kpi {
+  background-color: var(--app-bg);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-md);
+  padding: 10px 11px;
+}
+
+.KpiLabel {
+  color: var(--text-subtle);
+  font-size: 0.7rem;
+  font-weight: 550;
+}
+
+.KpiValue {
+  font-family: var(--font-num);
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.Verdict {
+  align-items: center;
+  border-radius: var(--radius-md);
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+  padding: 11px 12px;
+}
+
+.VerdictBadge {
+  align-items: center;
+  border-radius: 9px;
+  color: #fff;
+  display: flex;
+  flex: 0 0 auto;
+  font-size: 0.85rem;
+  font-weight: 700;
+  height: 30px;
+  justify-content: center;
+  width: 30px;
+}
+
+.VerdictTitle {
+  font-size: 0.84rem;
+  font-weight: 570;
+}
+
+.VerdictText {
+  color: var(--text-muted);
+  display: block;
+  font-size: 0.75rem;
+  overflow-wrap: anywhere;
+}
+
+.Verdict.consensus {
+  background-color: var(--success-soft);
+  color: var(--success);
+}
+
+.Verdict.consensus .VerdictBadge {
+  background-color: var(--success);
+}
+
+.Verdict.consensus .VerdictTitle {
+  color: var(--success);
+}
+
+.Verdict.moderate-spread {
+  background-color: var(--warning-soft);
+  color: var(--warning);
+}
+
+.Verdict.moderate-spread .VerdictBadge {
+  background-color: var(--warning);
+}
+
+.Verdict.moderate-spread .VerdictTitle {
+  color: var(--warning);
+}
+
+.Verdict.critical-spread {
+  background-color: var(--danger-soft);
+  color: var(--danger);
+}
+
+.Verdict.critical-spread .VerdictBadge {
+  background-color: var(--danger);
+}
+
+.Verdict.critical-spread .VerdictTitle {
+  color: var(--danger);
+}
+
+.MiniBarList {
+  display: grid;
+  gap: 7px;
+}
+
+.MiniBarRow {
+  align-items: center;
+  display: grid;
+  gap: 9px;
+  grid-template-columns: 34px 1fr 22px;
+}
+
+.MiniBarLabel {
+  color: var(--text-muted);
+  font-family: var(--font-num);
+  font-size: 0.78rem;
+  overflow: hidden;
+  text-align: right;
+  text-overflow: ellipsis;
+}
+
+.MiniBarTrack {
+  background-color: var(--surface-sunken);
+  border-radius: 6px;
+  height: 22px;
+  overflow: hidden;
+}
+
+.MiniBarFill {
+  border-radius: 6px;
+  display: block;
+  height: 100%;
+  min-width: 4px;
+  transition: width var(--duration-base) var(--ease);
+}
+
+.MiniBarCount {
+  color: var(--text-subtle);
+  font-family: var(--font-num);
+  font-size: 0.74rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .AuroraButtonPrimary:not(:disabled):hover {
+    transform: none;
+  }
+
+  .MiniBarFill {
+    transition: none;
+  }
+}
+
+@media (max-width: 600px) {
+  .PageShell {
+    padding: 24px 14px 40px;
+  }
+
+  .FormPanelHead {
+    padding: 18px 18px 0;
+  }
+
+  .FormPanelBody {
+    padding: 18px;
+  }
 }

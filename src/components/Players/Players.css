@@ -1,22 +1,156 @@
-.PlayersContainer {
-  padding: 20px;
-  display: flex;
-  flex-wrap: wrap;
-  flex-direction: row;
-  overflow: auto;
+.PokerTable {
+  background: var(--table-stage);
+  border: 1px solid var(--table-edge);
+  border-radius: 28px;
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 8%),
+    var(--shadow-md);
+  overflow: hidden;
+  padding: 38px;
+  position: relative;
+}
+
+.PokerTable::before {
+  border: 1px solid var(--table-line);
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 14px color-mix(in srgb, var(--table-glow) 35%, transparent),
+    inset 0 0 60px var(--table-glow);
+  content: '';
+  inset: 24px;
+  pointer-events: none;
+  position: absolute;
+}
+
+.PokerTable::after {
+  background: radial-gradient(circle, var(--table-glow), transparent 70%);
+  border: 1px solid var(--table-line);
+  border-radius: 50%;
+  content: '';
+  height: 118px;
+  left: 50%;
+  pointer-events: none;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 118px;
+}
+
+.PlayersGrid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(132px, 160px));
   justify-content: center;
-  margin: auto;
+  /* Room for the outlier badge that sits above the seat. */
+  padding-top: 9px;
+  position: relative;
+  z-index: 1;
 }
 
-.Player {
-  padding: 20px;
-  border: 1px solid var(--color-border);
-  min-width: 150px;
-  display: flex;
-  flex-direction: column;
-  font-size: medium;
+.PlayersGridIsRevealed .SeatFace {
+  animation: TableReveal 0.44s var(--ease) both;
+  backface-visibility: hidden;
 }
 
-h4 {
-  text-align: center;
+.PlayersGridIsRevealed .Seat:nth-child(2) .SeatFace {
+  animation-delay: 45ms;
+}
+
+.PlayersGridIsRevealed .Seat:nth-child(3) .SeatFace {
+  animation-delay: 90ms;
+}
+
+.PlayersGridIsRevealed .Seat:nth-child(4) .SeatFace {
+  animation-delay: 135ms;
+}
+
+.PlayersGridIsRevealed .Seat:nth-child(n + 5) .SeatFace {
+  animation-delay: 180ms;
+}
+
+@keyframes TableReveal {
+  from {
+    opacity: 0.25;
+    transform: perspective(500px) rotateY(-82deg) translateY(8px);
+  }
+}
+
+/*
+ * A desktop Planning Poker session commonly has 9–12 people. At that size the
+ * regular seats create a third row and push the actual voting controls below
+ * a FHD viewport. Keep the relaxed layout for smaller teams, but switch to a
+ * six-column, two-row density once the table is crowded.
+ */
+@media (min-width: 961px) {
+  .PokerTableCrowded {
+    padding: 24px;
+  }
+
+  .PokerTableCrowded::before {
+    inset: 15px;
+  }
+
+  .PokerTableCrowded::after {
+    height: 92px;
+    width: 92px;
+  }
+
+  .PokerTableCrowded .PlayersGrid {
+    gap: 10px 8px;
+    grid-template-columns: repeat(auto-fit, minmax(104px, 1fr));
+  }
+
+  .PokerTableCrowded .Seat {
+    border-radius: var(--radius-md);
+    padding: 9px 8px 8px;
+  }
+
+  .PokerTableCrowded .SeatFace {
+    border-radius: 10px;
+    font-size: 1.28rem;
+    height: 50px;
+    margin-bottom: 6px;
+  }
+
+  .PokerTableCrowded .SeatFooter {
+    min-height: 22px;
+  }
+
+  .PokerTableCrowded .SeatName,
+  .PokerTableCrowded .SeatNameInput {
+    font-size: 0.76rem;
+    padding: 1px 4px;
+  }
+
+  .PokerTableCrowded .SeatRole {
+    font-size: 0.63rem;
+    min-height: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  .PokerTable {
+    border-radius: var(--radius-xl);
+    padding: 18px 14px;
+  }
+
+  .PokerTable::before {
+    border-radius: var(--radius-xl);
+    inset: 9px;
+  }
+
+  .PokerTable::after {
+    display: none;
+  }
+
+  .PlayersGrid {
+    gap: 10px;
+    grid-template-columns: repeat(auto-fit, minmax(106px, 132px));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .PlayersGridIsRevealed .SeatFace {
+    animation: none;
+  }
 }

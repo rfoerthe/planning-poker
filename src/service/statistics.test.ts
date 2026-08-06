@@ -6,7 +6,11 @@ import {
   getNumericSummary,
   isNumericGameType,
 } from './statistics';
-import { fibonacciCards, shortFibonacciCards } from '../components/Players/CardPicker/CardConfigs';
+import {
+  fibonacciCards,
+  getCustomCards,
+  shortFibonacciCards,
+} from '../components/Players/CardPicker/CardConfigs';
 import { Game, GameType } from '../types/game';
 import { Player } from '../types/player';
 import { Status } from '../types/status';
@@ -32,16 +36,39 @@ describe('statistics service', () => {
   });
 
   describe('numeric game types', () => {
-    it('should treat fibonacci decks and the default deck as numeric', () => {
+    it('should treat fibonacci, custom and the default deck as numeric', () => {
       expect(isNumericGameType(GameType.Fibonacci)).toBe(true);
       expect(isNumericGameType(GameType.ShortFibonacci)).toBe(true);
+      expect(isNumericGameType(GameType.Custom)).toBe(true);
       expect(isNumericGameType(undefined)).toBe(true);
     });
 
-    it('should treat t-shirt and custom decks as non numeric', () => {
+    it('should treat t-shirt decks as non numeric', () => {
       expect(isNumericGameType(GameType.TShirt)).toBe(false);
-      expect(isNumericGameType(GameType.TShirtAndNumber)).toBe(false);
-      expect(isNumericGameType(GameType.Custom)).toBe(false);
+    });
+
+    it('should evaluate a custom deck of whole numbers like any numeric deck', () => {
+      const game = buildGame({ gameType: GameType.Custom, cards: getCustomCards(['1', '5', '20']) });
+      const players = [buildPlayer('a', 1), buildPlayer('b', 5), buildPlayer('c', 20)];
+
+      const summary = getNumericSummary(game, players);
+
+      expect(summary?.median).toBe(5);
+      expect(summary?.recommendedCard.displayValue).toBe('5');
+    });
+
+    it('should not evaluate a legacy custom deck whose labels are not its values', () => {
+      // Decks from before the whole-number restriction stored the input
+      // position as the value, with a free-text label on top.
+      const legacyCards = [
+        { value: 0, displayValue: 'XS', color: 'red' },
+        { value: 1, displayValue: 'M', color: 'blue' },
+        { value: 2, displayValue: 'XL', color: 'green' },
+      ];
+      const game = buildGame({ gameType: GameType.Custom, cards: legacyCards });
+      const players = [buildPlayer('a', 0), buildPlayer('b', 2)];
+
+      expect(getNumericSummary(game, players)).toBeUndefined();
     });
   });
 
@@ -62,7 +89,7 @@ describe('statistics service', () => {
 
     it('should format integers without and other values with one decimal', () => {
       expect(formatNumber(8)).toEqual('8');
-      expect(formatNumber(8.66)).toEqual('8.7');
+      expect(formatNumber(8.66)).toEqual('8,7');
     });
   });
 

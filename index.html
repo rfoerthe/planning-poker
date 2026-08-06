@@ -1,22 +1,28 @@
 <!doctype html>
-<html lang="en">
+<html lang="de">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#000000" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#fafafa" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0a0a0c" media="(prefers-color-scheme: dark)" />
     <meta
       name="description"
-      content="Free Planning Poker App to estimate user stories for your Agile/Scrum teams. Create a session and invite your team members to estimate user stories efficiently. Intuitive UI/UX for voting the story points, showing team members voting status with emojis(👍 - Voting Done, 🤔 - Yet to Vote). Session Moderator has full control on revealing story points and restarting the session. All members can get moderator rights."
+      content="Kostenlose Planning-Poker-App für Scrum- und Agile-Teams. Session anlegen, Team einladen, verdeckt schätzen und gemeinsam aufdecken — mit Runden-Statistik, optionalem Timer und Präsenzanzeige. Ohne Login und ohne Installation."
     />
-    <link rel="icon" href="/favicon.ico" />
-    <link rel="apple-touch-icon" href="/logo192.png" />
+    <!--
+      The .ico comes first and declares a size: Safari has no SVG favicons and
+      takes it, while browsers that do prefer the sizeless SVG below.
+    -->
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/manifest.json" />
     <link rel="stylesheet" href="/fonts.css" />
-    <title>Free Planning Poker App</title>
+    <title>Planning Poker — Schätzen im Team</title>
   </head>
   <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <noscript>Für diese Anwendung muss JavaScript aktiviert sein.</noscript>
     <div id="root"></div>
     <script type="module" src="/src/index.tsx"></script>
   </body>
-  </html>
+</html>

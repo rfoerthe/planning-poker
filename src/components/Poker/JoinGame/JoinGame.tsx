@@ -1,15 +1,6 @@
-import {
-  Button,
-  Card,
-  CardActions,
-  CardContent,
-  CardHeader,
-  Fade,
-  Grow,
-  Snackbar,
-  TextField,
-} from '@mui/material';
+import { Alert, Fade, Snackbar } from '@mui/material';
 import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router';
 import { getGame } from '../../../service/games';
 import {
@@ -17,11 +8,11 @@ import {
   isCurrentPlayerInGame,
   removeGameFromCache,
 } from '../../../service/players';
-import Alert from '@mui/material/Alert';
 import './JoinGame.css';
 
 export const JoinGame = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   let { id } = useParams<{ id: string }>();
 
   const [joinGameId, setJoinGameId] = useState(id);
@@ -66,67 +57,68 @@ export const JoinGame = () => {
 
   return (
     <>
-      <Grow in={true} timeout={500}>
-        <div>
-          <form onSubmit={handleSubmit}>
-            <Card variant='outlined' className='JoinGameCard'>
-              <CardHeader
-                className='JoinGameCardHeader'
-                title='Join a Session'
-                slotProps={{ title: { variant: 'h4' } }}
-              />
-              <CardContent className='JoinGameCardContent'>
-                <TextField
-                  error={!gameFound}
-                  helperText={!gameFound && 'Session not found, check the ID'}
-                  className='JoinGameTextField'
-                  required
-                  id='sessionIdRequired'
-                  label='Session ID'
-                  placeholder='xyz...'
-                  defaultValue={joinGameId}
-                  variant='outlined'
-                  onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                    setJoinGameId(event.target.value)
-                  }
-                />
-                <TextField
-                  className='JoinGameTextField'
-                  required
-                  id='playerNameRequired'
-                  label='Your Name'
-                  placeholder='Enter your name'
-                  defaultValue={playerName}
-                  variant='outlined'
-                  onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                    setPlayerName(event.target.value)
-                  }
-                />
-              </CardContent>
-              <CardActions className='JoinGameCardAction'>
-                <Button
-                  type='submit'
-                  variant='contained'
-                  color='primary'
-                  className='JoinGameButton'
-                  disabled={loading}
-                >
-                  Join
-                </Button>
-              </CardActions>
-            </Card>
-          </form>
+      <form onSubmit={handleSubmit} className='Panel FormPanel'>
+        <div className='FormPanelHead'>
+          <h2 className='FormPanelTitle'>{t('joinGame.title')}</h2>
+          <p className='FormPanelSubtitle'>{t('joinGame.subtitle')}</p>
         </div>
-      </Grow>
+
+        <div className='FormPanelBody'>
+          <div className='FormField'>
+            <label className='FormLabel' htmlFor='sessionIdRequired'>
+              {t('joinGame.sessionId')}
+            </label>
+            <input
+              className='FormInput JoinGameIdInput'
+              id='sessionIdRequired'
+              required
+              aria-invalid={!gameFound}
+              aria-describedby={!gameFound ? 'sessionIdError' : undefined}
+              placeholder={t('joinGame.sessionIdPlaceholder')}
+              defaultValue={joinGameId}
+              onChange={(event: ChangeEvent<HTMLInputElement>) => setJoinGameId(event.target.value)}
+            />
+            {!gameFound && (
+              <p className='FormError' id='sessionIdError'>
+                {t('joinGame.sessionNotFound')}
+              </p>
+            )}
+          </div>
+
+          <div className='FormField'>
+            <label className='FormLabel' htmlFor='playerNameRequired'>
+              {t('joinGame.yourName')}
+            </label>
+            <input
+              className='FormInput'
+              id='playerNameRequired'
+              required
+              maxLength={30}
+              placeholder={t('joinGame.yourNamePlaceholder')}
+              defaultValue={playerName}
+              onChange={(event: ChangeEvent<HTMLInputElement>) => setPlayerName(event.target.value)}
+            />
+          </div>
+
+          <button
+            type='submit'
+            className='AuroraButton AuroraButtonPrimary AuroraButtonBlock'
+            disabled={loading}
+          >
+            {loading ? t('joinGame.submitting') : t('joinGame.submit')}
+          </button>
+        </div>
+      </form>
+
       <Snackbar
         anchorOrigin={{ horizontal: 'right', vertical: 'top' }}
         open={showNotExistMessage}
         autoHideDuration={5000}
-        slotProps={{ transition: Fade }}
+        slots={{ transition: Fade }}
         transitionDuration={1000}
         onClose={() => setShowNotExistMessage(false)}
       >
-        <Alert severity='error'>Session was deleted and doesn't exist anymore!</Alert>
+        <Alert severity='error'>{t('joinGame.deletedSnackbar')}</Alert>
       </Snackbar>
     </>
   );

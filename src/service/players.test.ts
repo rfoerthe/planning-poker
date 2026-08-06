@@ -13,7 +13,6 @@ import {
 } from './players';
 import * as fb from '../repository/firebase';
 import * as storage from '../repository/localStorage';
-import * as games from './games';
 import { Status } from '../types/status';
 import { PlayerGame } from '../types/player';
 import { Game } from '../types/game';
@@ -24,13 +23,14 @@ vi.mock('../repository/firebase', () => ({
   getPlayerFromStore: vi.fn(),
   getPlayersFromStore: vi.fn(),
   removePlayerFromGameInStore: vi.fn(),
+  updateGameDataInStore: vi.fn(),
+  updatePlayerFieldsInStore: vi.fn(),
   updatePlayerInStore: vi.fn(),
 }));
 vi.mock('../repository/localStorage', () => ({
   getPlayerGamesFromCache: vi.fn(),
   updatePlayerGamesInCache: vi.fn(),
 }));
-vi.mock('./games', () => ({ updateGameStatus: vi.fn() }));
 vi.mock('ulid', () => ({ ulid: () => 'cinnamon rolls' }));
 const fakeUlid = 'cinnamon rolls';
 
@@ -99,30 +99,34 @@ describe('Players service', () => {
   });
 
   describe('update player value', () => {
-    it("update the player in store and in the game's status if the player exists", async () => {
-      const spyPlayer = vi.spyOn(fb, 'updatePlayerInStore');
-      const spyGame = vi.spyOn(games, 'updateGameStatus');
+    it('writes the estimate without reading the entry back first', async () => {
+      const spyPlayer = vi.spyOn(fb, 'updatePlayerFieldsInStore');
+      const spyRead = vi.spyOn(fb, 'getPlayerFromStore');
       const emoji = 'emeowticon';
-      vi.spyOn(fb, 'getPlayerFromStore').mockResolvedValueOnce(mockPlayer);
 
-      await updatePlayerValue(mockGame.id, mockPlayer.id, 3, emoji);
+      await updatePlayerValue(mockGame.id, mockPlayer.id, 3, emoji, Status.InProgress);
 
-      expect(spyPlayer).toHaveBeenCalledWith(
-        mockGame.id,
-        expect.objectContaining({ value: 3, emoji }),
-      );
-      expect(spyGame).toHaveBeenCalledWith(mockGame.id);
+      expect(spyPlayer).toHaveBeenCalledWith(mockGame.id, mockPlayer.id, {
+        value: 3,
+        emoji,
+        status: Status.Finished,
+      });
+      expect(spyRead).toHaveBeenCalledTimes(0);
     });
 
-    // NOTE: Shouldn't there be a case that the player doesn't get updated if the game doesn't exist? Fn doesn't have that logix
-    it('should not update the player if the player does not exist', async () => {
-      const spyPlayer = vi.spyOn(fb, 'updatePlayerInStore');
-      const spyGame = vi.spyOn(games, 'updateGameStatus');
-      vi.spyOn(fb, 'getPlayerFromStore').mockResolvedValueOnce(undefined);
+    it('moves a round that has not started counting to in progress', async () => {
+      const spyGame = vi.spyOn(fb, 'updateGameDataInStore');
 
-      await updatePlayerValue(mockGame.id, mockPlayer.id, 3, '');
+      await updatePlayerValue(mockGame.id, mockPlayer.id, 3, '', Status.Started);
 
-      expect(spyPlayer).toHaveBeenCalledTimes(0);
+      expect(spyGame).toHaveBeenCalledWith(mockGame.id, { gameStatus: Status.InProgress });
+    });
+
+    it('leaves the round status alone once it is already in progress', async () => {
+      const spyGame = vi.spyOn(fb, 'updateGameDataInStore');
+
+      await updatePlayerValue(mockGame.id, mockPlayer.id, 3, '', Status.InProgress);
+
       expect(spyGame).toHaveBeenCalledTimes(0);
     });
   });

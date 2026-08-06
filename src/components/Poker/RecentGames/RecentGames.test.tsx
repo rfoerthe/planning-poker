@@ -4,6 +4,7 @@ import React from 'react';
 import { vi } from 'vitest';
 import * as playersService from '../../../service/players';
 import { RecentGames } from './RecentGames';
+import { GameType } from '../../../types/game';
 import { PlayerGame } from '../../../types/player';
 
 const mockNavigate = vi.fn();
@@ -22,7 +23,7 @@ describe('RecentGames component', () => {
   });
   it('should display no recent session when no games found in user local storage', async () => {
     render(<RecentGames />);
-    expect(screen.getByText('No recent sessions found')).toBeInTheDocument();
+    expect(screen.getByText('Noch keine Sessions vorhanden.')).toBeInTheDocument();
   });
   it('should display recent games when games found in local storage', async () => {
     const mockGames: PlayerGame[] = [
@@ -39,6 +40,38 @@ describe('RecentGames component', () => {
     expect(screen.getByText(mockGames[0].createdBy)).toBeInTheDocument();
     expect(screen.getByText(mockGames[1].name)).toBeInTheDocument();
     expect(screen.getByText(mockGames[1].createdBy)).toBeInTheDocument();
+  });
+
+  it('should mark every session with the suit of its deck', async () => {
+    const mockGames: PlayerGame[] = [
+      {
+        id: 'abv',
+        name: 'avengers',
+        createdById: 'IronManId',
+        createdBy: 'IronMan',
+        playerId: 'abv',
+        gameType: GameType.TShirt,
+      },
+      {
+        id: 'xyz',
+        name: 'endgame',
+        createdById: 'SpiderManId',
+        createdBy: 'SpiderMan',
+        playerId: 'abc',
+        gameType: GameType.Custom,
+      },
+      // A session that is gone from the store keeps the mark of the default deck.
+      { id: 'wat', name: 'ragnarok', createdById: 'ThorId', createdBy: 'Thor', playerId: 'def' },
+    ];
+    vi.spyOn(playersService, 'getPlayerRecentGames').mockResolvedValue(mockGames);
+
+    render(<RecentGames />);
+
+    await screen.findByText(mockGames[0].name);
+
+    expect(screen.getByRole('img', { name: 'T-Shirt' })).toHaveTextContent('♠');
+    expect(screen.getByRole('img', { name: 'Eigene Werte' })).toHaveTextContent('♣');
+    expect(screen.getByRole('img', { name: 'Short Fibonacci' })).toHaveTextContent('♦');
   });
 
   it('should navigate to the game when clicking on game', async () => {

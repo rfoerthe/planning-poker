@@ -1,4 +1,4 @@
-import { render, screen, within, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
 import { vi } from 'vitest';
@@ -25,21 +25,30 @@ describe('CreateGame component', () => {
   it('should display correct text fields', () => {
     render(<CreateGame />);
 
-    expect(screen.getByPlaceholderText('Enter a session name')).toBeInTheDocument();
-    expect(screen.getByPlaceholderText('Enter your name')).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('z. B. Sprint 42 — Refinement')).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('Wie sollen dich die anderen sehen?')).toBeInTheDocument();
+  });
+
+  it('should mark every deck option with its own suit', () => {
+    render(<CreateGame />);
+
+    expect(screen.getByTestId('deck-option-ShortFibonacci')).toHaveTextContent('♦');
+    expect(screen.getByTestId('deck-option-Fibonacci')).toHaveTextContent('♥');
+    expect(screen.getByTestId('deck-option-TShirt')).toHaveTextContent('♠');
+    expect(screen.getByTestId('deck-option-Custom')).toHaveTextContent('♣');
   });
 
   it('should display create button', () => {
     render(<CreateGame />);
 
     expect(screen.getByRole('button')).toBeInTheDocument();
-    expect(screen.getByRole('button')).toHaveTextContent('Create');
+    expect(screen.getByRole('button')).toHaveTextContent('Session starten');
   });
 
   it('should empty inputs when clicked', async () => {
     render(<CreateGame />);
-    const sessionName = screen.getByPlaceholderText('Enter a session name');
-    const userName = screen.getByPlaceholderText('Enter your name');
+    const sessionName = screen.getByPlaceholderText('z. B. Sprint 42 — Refinement');
+    const userName = screen.getByPlaceholderText('Wie sollen dich die anderen sehen?');
     await userEvent.click(sessionName);
     await userEvent.click(userName);
 
@@ -49,15 +58,15 @@ describe('CreateGame component', () => {
 
   it('should be able to create new session', async () => {
     render(<CreateGame />);
-    const sessionName = screen.getByPlaceholderText('Enter a session name');
+    const sessionName = screen.getByPlaceholderText('z. B. Sprint 42 — Refinement');
     await userEvent.clear(sessionName);
     await userEvent.type(sessionName, 'Marvels');
 
-    const userName = screen.getByPlaceholderText('Enter your name');
+    const userName = screen.getByPlaceholderText('Wie sollen dich die anderen sehen?');
     await userEvent.clear(userName);
     await userEvent.type(userName, 'Rock');
 
-    const createButton = screen.getByText('Create');
+    const createButton = screen.getByText('Session starten');
     await userEvent.click(createButton);
 
     expect(gamesService.addNewGame).toHaveBeenCalled();
@@ -73,18 +82,18 @@ describe('CreateGame component', () => {
   });
   it('should be able to create new session with Allow members to manage session', async () => {
     render(<CreateGame />);
-    const sessionName = screen.getByPlaceholderText('Enter a session name');
+    const sessionName = screen.getByPlaceholderText('z. B. Sprint 42 — Refinement');
     await userEvent.clear(sessionName);
     await userEvent.type(sessionName, 'Marvels');
 
-    const userName = screen.getByPlaceholderText('Enter your name');
+    const userName = screen.getByPlaceholderText('Wie sollen dich die anderen sehen?');
     await userEvent.clear(userName);
     await userEvent.type(userName, 'Rock');
 
-    const allowMembersToManageSession = screen.getByText('Allow members to manage session');
+    const allowMembersToManageSession = screen.getByRole('switch');
     await userEvent.click(allowMembersToManageSession);
 
-    const createButton = screen.getByText('Create');
+    const createButton = screen.getByText('Session starten');
     await userEvent.click(createButton);
 
     expect(gamesService.addNewGame).toHaveBeenCalled();
@@ -100,18 +109,18 @@ describe('CreateGame component', () => {
   });
   it('should be able to create new session of TShirt Sizing', async () => {
     render(<CreateGame />);
-    const sessionName = screen.getByPlaceholderText('Enter a session name');
+    const sessionName = screen.getByPlaceholderText('z. B. Sprint 42 — Refinement');
     await userEvent.clear(sessionName);
     await userEvent.type(sessionName, 'Marvels');
 
-    const userName = screen.getByPlaceholderText('Enter your name');
+    const userName = screen.getByPlaceholderText('Wie sollen dich die anderen sehen?');
     await userEvent.clear(userName);
     await userEvent.type(userName, 'Rock');
 
-    const tShirt = screen.getByText('T-Shirt (XXS, XS, S, M, L, XL, XXL)', { exact: false });
+    const tShirt = screen.getByTestId('deck-option-TShirt');
     await userEvent.click(tShirt);
 
-    const createButton = screen.getByText('Create');
+    const createButton = screen.getByText('Session starten');
     await userEvent.click(createButton);
 
     expect(gamesService.addNewGame).toHaveBeenCalled();
@@ -122,18 +131,18 @@ describe('CreateGame component', () => {
   });
   it('should be able to create new session of Short Fibonacci Sizing', async () => {
     render(<CreateGame />);
-    const sessionName = screen.getByPlaceholderText('Enter a session name');
+    const sessionName = screen.getByPlaceholderText('z. B. Sprint 42 — Refinement');
     await userEvent.clear(sessionName);
     await userEvent.type(sessionName, 'Marvels');
 
-    const userName = screen.getByPlaceholderText('Enter your name');
+    const userName = screen.getByPlaceholderText('Wie sollen dich die anderen sehen?');
     await userEvent.clear(userName);
     await userEvent.type(userName, 'Rock');
 
-    const gameType = screen.getByText('Short Fibonacci', { exact: false });
+    const gameType = screen.getByTestId('deck-option-ShortFibonacci');
     await userEvent.click(gameType);
 
-    const createButton = screen.getByText('Create');
+    const createButton = screen.getByText('Session starten');
     await userEvent.click(createButton);
 
     expect(gamesService.addNewGame).toHaveBeenCalled();
@@ -142,51 +151,27 @@ describe('CreateGame component', () => {
       expect.objectContaining({ createdBy: 'Rock', gameType: 'ShortFibonacci', name: 'Marvels' }),
     );
   });
-  it('should be able to create new session of TShirt & Numbers', async () => {
-    render(<CreateGame />);
-    const sessionName = screen.getByPlaceholderText('Enter a session name');
-    await userEvent.clear(sessionName);
-    await userEvent.type(sessionName, 'Marvels');
-
-    const userName = screen.getByPlaceholderText('Enter your name');
-    await userEvent.clear(userName);
-    await userEvent.type(userName, 'Rock');
-
-    const tShirt = screen.getByText('T-Shirt & Numbers (S, M, L, XL, 1, 2, 3, 4, 5)', {
-      exact: false,
-    });
-    await userEvent.click(tShirt);
-
-    const createButton = screen.getByText('Create');
-    await userEvent.click(createButton);
-
-    expect(gamesService.addNewGame).toHaveBeenCalled();
-
-    expect(gamesService.addNewGame).toHaveBeenCalledWith(
-      expect.objectContaining({ createdBy: 'Rock', gameType: 'TShirtAndNumber', name: 'Marvels' }),
-    );
-  });
   it('should be able to create new session of Custom option', async () => {
     render(<CreateGame />);
-    const sessionName = screen.getByPlaceholderText('Enter a session name');
+    const sessionName = screen.getByPlaceholderText('z. B. Sprint 42 — Refinement');
     await userEvent.clear(sessionName);
     await userEvent.type(sessionName, 'Marvels');
 
-    const userName = screen.getByPlaceholderText('Enter your name');
+    const userName = screen.getByPlaceholderText('Wie sollen dich die anderen sehen?');
     await userEvent.clear(userName);
     await userEvent.type(userName, 'Rock');
 
-    const custom = screen.getByText('Custom', { exact: false });
+    const custom = screen.getByTestId('deck-option-Custom');
     await userEvent.click(custom);
 
     // input custom values
-    const input1 = within(screen.getByTestId('custom-option-1')).getByRole('textbox');
+    const input1 = screen.getByTestId('custom-option-1');
     await userEvent.type(input1, '1');
 
-    const input2 = within(screen.getByTestId('custom-option-2')).getByRole('textbox');
+    const input2 = screen.getByTestId('custom-option-2');
     await userEvent.type(input2, '2');
 
-    const createButton = screen.getByText('Create');
+    const createButton = screen.getByText('Session starten');
     await userEvent.click(createButton);
 
     expect(gamesService.addNewGame).toHaveBeenCalled();
@@ -199,32 +184,89 @@ describe('CreateGame component', () => {
         cards: [
           { color: '#9EC8FE', displayValue: '1', value: 1 },
           { color: '#9EC8FE', displayValue: '2', value: 2 },
+          { color: 'var(--color-background-secondary)', displayValue: '❓', value: -2 },
+          { color: 'var(--color-background-secondary)', displayValue: '-1', value: -1 },
         ],
       }),
     );
   });
   it('should display error when no custom options entered', async () => {
     render(<CreateGame />);
-    const sessionName = screen.getByPlaceholderText('Enter a session name');
+    const sessionName = screen.getByPlaceholderText('z. B. Sprint 42 — Refinement');
     await userEvent.clear(sessionName);
     await userEvent.type(sessionName, 'Marvels');
 
-    const userName = screen.getByPlaceholderText('Enter your name');
+    const userName = screen.getByPlaceholderText('Wie sollen dich die anderen sehen?');
     await userEvent.clear(userName);
     await userEvent.type(userName, 'Rock');
 
-    const custom = screen.getByText('Custom', { exact: false });
+    const custom = screen.getByTestId('deck-option-Custom');
     await userEvent.click(custom);
 
-    const createButton = screen.getByText('Create');
+    const createButton = screen.getByText('Session starten');
     await userEvent.click(createButton);
 
     await waitFor(() => {
-      const errorMsg = screen.queryByText(/Please enter values for at least two custom option/i);
+      const errorMsg = screen.queryByText(/mindestens zwei verschiedene ganze Zahlen/i);
       if (!errorMsg) {
         screen.debug();
       }
       expect(errorMsg).toBeInTheDocument();
     });
+  });
+  it('should reject a duplicate custom value and block session creation', async () => {
+    render(<CreateGame />);
+    const sessionName = screen.getByPlaceholderText('z. B. Sprint 42 — Refinement');
+    await userEvent.clear(sessionName);
+    await userEvent.type(sessionName, 'Marvels');
+
+    const userName = screen.getByPlaceholderText('Wie sollen dich die anderen sehen?');
+    await userEvent.clear(userName);
+    await userEvent.type(userName, 'Rock');
+
+    const custom = screen.getByTestId('deck-option-Custom');
+    await userEvent.click(custom);
+
+    const input1 = screen.getByTestId('custom-option-1');
+    await userEvent.type(input1, '7');
+    const input2 = screen.getByTestId('custom-option-2');
+    await userEvent.type(input2, '7');
+    const input3 = screen.getByTestId('custom-option-3');
+    await userEvent.type(input3, '3');
+
+    // The duplicate is flagged as soon as it exists, before any submit attempt.
+    expect(
+      screen.getByText('Jede Zahl darf nur einmal vorkommen — bitte doppelte Werte ändern.'),
+    ).toBeInTheDocument();
+    expect(input1).toHaveAttribute('aria-invalid', 'true');
+    expect(input2).toHaveAttribute('aria-invalid', 'true');
+    expect(input3).toHaveAttribute('aria-invalid', 'false');
+
+    const createButton = screen.getByText('Session starten');
+    await userEvent.click(createButton);
+
+    expect(gamesService.addNewGame).not.toHaveBeenCalled();
+  });
+  it('should clear the duplicate error once the values are made distinct', async () => {
+    render(<CreateGame />);
+    const custom = screen.getByTestId('deck-option-Custom');
+    await userEvent.click(custom);
+
+    const input1 = screen.getByTestId('custom-option-1');
+    await userEvent.type(input1, '7');
+    const input2 = screen.getByTestId('custom-option-2');
+    await userEvent.type(input2, '7');
+
+    expect(
+      screen.getByText('Jede Zahl darf nur einmal vorkommen — bitte doppelte Werte ändern.'),
+    ).toBeInTheDocument();
+
+    await userEvent.clear(input2);
+    await userEvent.type(input2, '9');
+
+    expect(
+      screen.queryByText('Jede Zahl darf nur einmal vorkommen — bitte doppelte Werte ändern.'),
+    ).not.toBeInTheDocument();
+    expect(input1).toHaveAttribute('aria-invalid', 'false');
   });
 });

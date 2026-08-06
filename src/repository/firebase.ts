@@ -101,6 +101,20 @@ export const updatePlayerInStore = async (gameId: string, player: Player) => {
   return true;
 };
 
+/**
+ * Writes single fields of a participant entry without reading it first, for
+ * paths where the caller already holds the entry from its live snapshot.
+ */
+export const updatePlayerFieldsInStore = async (
+  gameId: string,
+  playerId: string,
+  fields: Partial<Player>,
+) => {
+  const docRef = doc(db, gamesCollectionName, gameId, playersCollectionName, playerId);
+  await updateDoc(docRef, fields as any);
+  return true;
+};
+
 export const updatePlayerPresenceInStore = async (gameId: string, playerId: string) => {
   const docRef = doc(db, gamesCollectionName, gameId, playersCollectionName, playerId);
   await updateDoc(docRef, { lastSeenAt: new Date() });

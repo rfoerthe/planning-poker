@@ -7,8 +7,6 @@ import {
   updateGame,
   resetGame,
   finishGame,
-  getGameStatus,
-  updateGameStatus,
   startTimer,
   stopTimer,
 } from './games';
@@ -217,53 +215,6 @@ describe('games service', () => {
       await stopTimer(mockId);
 
       expect(spy).toHaveBeenCalledWith(mockId, { timerEndsAt: null });
-    });
-  });
-
-  describe('get the game status', () => {
-    it("should have in progress status when there's some players who have finished", () => {
-      const res = getGameStatus(mockPlayers);
-
-      expect(res).toEqual(Status.InProgress);
-    });
-
-    it("should be started when there's no players that have finished", () => {
-      const fakePlayers = [mockPlayers[1], mockPlayers[2]];
-
-      const res = getGameStatus(fakePlayers);
-
-      expect(res).toEqual(Status.Started);
-    });
-  });
-
-  describe('update the game status', () => {
-    it("should not touch the DB if the game doesn't exist", async () => {
-      vi.spyOn(fb, 'getGameFromStore').mockResolvedValueOnce(undefined);
-
-      const res = await updateGameStatus(mockId);
-
-      expect(res).toBe(false);
-    });
-
-    it('should return false if there are no players in the game in the DB', async () => {
-      vi.spyOn(fb, 'getGameFromStore').mockResolvedValueOnce(mockGame);
-      // @ts-ignore
-      vi.spyOn(fb, 'getPlayersFromStore').mockResolvedValueOnce(undefined);
-
-      const res = await updateGameStatus(mockId);
-
-      expect(res).toBe(false);
-    });
-
-    it('should update the game with the new status', async () => {
-      vi.spyOn(fb, 'getGameFromStore').mockResolvedValueOnce(mockGame);
-      vi.spyOn(fb, 'getPlayersFromStore').mockResolvedValueOnce(mockPlayers);
-      const spy = vi.spyOn(fb, 'updateGameDataInStore').mockResolvedValueOnce(true);
-
-      const res = await updateGameStatus(mockId);
-
-      expect(spy).toHaveBeenCalledWith(mockId, { gameStatus: Status.InProgress });
-      expect(res).toBe(true);
     });
   });
 });

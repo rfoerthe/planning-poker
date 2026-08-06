@@ -13,7 +13,7 @@ Planning Poker is a free, open-source web application for Scrum and Agile teams 
 ## Highlights
 
 - Create and join estimation sessions.
-- Use Short Fibonacci, Fibonacci, T-shirt, T-shirt and number, or custom card decks.
+- Use Short Fibonacci, Fibonacci, T-shirt, or custom card decks.
 - Share invite links with participants.
 - Show voting progress without revealing estimates early.
 - Reveal votes and read the result off a single summary card.

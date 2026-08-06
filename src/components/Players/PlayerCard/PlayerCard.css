@@ -1,119 +1,202 @@
-.PlayerCard {
-  max-width: 240px;
-  min-width: 240px;
-  margin: 10px;
-  height: 120px;
-  width: 90%;
-  overflow: initial;
-  background-color: var(--color-background-secondary);
-  margin-top: 40px;
-  transition: 0.3s;
-  border-radius: 4px;
+/*
+ * Deliberately without `backdrop-filter`. One blurred backdrop per seat means a
+ * dozen blurred layers on a full table, each re-sampled whenever anything above
+ * them changes — and the seat colour is opaque enough that nobody could see
+ * what the blur was doing anyway.
+ */
+.Seat {
+  background-color: var(--table-seat);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 14px 12px 12px;
   position: relative;
+  text-align: center;
+  transition:
+    border-color var(--duration-base) var(--ease),
+    box-shadow var(--duration-base) var(--ease),
+    transform var(--duration-base) var(--ease);
 }
 
-.PlayerCardPresence {
+.Seat:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.SeatIsMe {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+.SeatIsOutlier {
+  border-color: var(--warning);
+}
+
+.SeatOutlierBadge {
+  background-color: var(--warning-soft);
+  border-radius: var(--radius-full);
+  color: var(--warning);
+  font-size: 0.7rem;
+  font-weight: 620;
+  left: 50%;
+  padding: 1px 8px;
+  /* A label, and it overlaps the close button on narrow cards. Never take a click. */
+  pointer-events: none;
   position: absolute;
-  right: 10px;
-  bottom: 8px;
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
-  /* Dark enough to stay readable on the pastel green of a revealed card. */
-  background-color: #1e8e3e;
+  top: -9px;
+  transform: translateX(-50%);
+  white-space: nowrap;
 }
 
-.PlayerCardOutlier {
-  box-shadow: 0 0 0 2px #d66a63;
+/*
+ * Places the shared close control in the card corner. It sits over the
+ * top-right of the face, which can carry any card colour after the reveal,
+ * so the control's own surface backdrop is what keeps it readable.
+ */
+.SeatRemove {
+  position: absolute;
+  right: 4px;
+  top: 4px;
+  z-index: 1;
 }
 
-.PlayerCardTitle {
+.SeatFace {
+  align-items: center;
+  background-color: var(--surface-sunken);
+  border-radius: var(--radius-md);
+  display: flex;
+  font-family: var(--font-num);
+  font-size: 1.55rem;
+  font-weight: 640;
+  height: 66px;
+  justify-content: center;
+  letter-spacing: -0.02em;
+  margin-bottom: 10px;
+  transition: background-color var(--duration-base) var(--ease);
+}
+
+.SeatFaceStatus {
+  background-image: radial-gradient(
+    circle,
+    color-mix(in srgb, currentcolor 9%, transparent),
+    transparent 68%
+  );
+}
+
+.SeatStatusIcon {
+  font-size: 1.75rem;
+}
+
+.SeatStatusThinking {
+  color: var(--warning);
+  filter: drop-shadow(0 2px 5px color-mix(in srgb, var(--warning) 20%, transparent));
+}
+
+.SeatStatusVoted {
+  color: var(--success);
+  filter: drop-shadow(0 2px 5px color-mix(in srgb, var(--success) 20%, transparent));
+}
+
+.SeatFooter {
   align-items: center;
   display: flex;
-  text-align: center;
-  border-radius: 16px;
-  border: 2px solid var(--color-primary);
-  background-color:  var(--color-background);
-  color: var(--color-text-primary);
-  margin: -20px auto 0;
-  width: 88%;
-  padding: 0 12px 0 18px;
-  height: 40px;
+  gap: 2px;
+  justify-content: center;
+  min-height: 26px;
 }
 
-.PlayerCardTitle .MuiCardHeader-content {
+.SeatIdentity {
+  align-items: center;
+  display: flex;
+  gap: 6px;
   min-width: 0;
 }
 
-.PlayerCardTitle .MuiCardHeader-action {
-  align-self: center;
-  margin: 0;
+.SeatPresence {
+  background-color: var(--success);
+  border-radius: 50%;
+  flex: 0 0 auto;
+  height: 6px;
+  width: 6px;
 }
 
-.PlayerCardName {
+.SeatName {
   appearance: none;
-  background: transparent;
-  border: 0;
+  background-color: transparent;
+  /* Transparent by default so the hover state cannot shift the layout. */
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
   color: inherit;
   cursor: default;
-  display: block;
   font: inherit;
-  font-weight: 700;
+  font-size: 0.82rem;
+  font-weight: 550;
   overflow: hidden;
-  padding: 0;
+  padding: 2px 6px;
+  text-overflow: ellipsis;
+  transition:
+    background-color var(--duration-fast) var(--ease),
+    border-color var(--duration-fast) var(--ease);
+  white-space: nowrap;
+}
+
+/*
+ * No pencil: the name is the control. A quiet dotted rule is the permanent
+ * hint — touch devices never hover — and pointing at it previews the input
+ * field the name turns into.
+ */
+.SeatNameEditable {
+  cursor: text;
+  text-decoration: underline dotted var(--text-subtle);
+  text-underline-offset: 3px;
+}
+
+.SeatNameEditable:hover,
+.SeatNameEditable:focus-visible {
+  background-color: var(--app-bg);
+  border-color: var(--border);
+  text-decoration-color: transparent;
+}
+
+.SeatNameInput {
+  background-color: var(--app-bg);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius-sm);
+  box-sizing: border-box;
+  color: var(--text);
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 550;
+  outline: none;
+  padding: 2px 6px;
   text-align: center;
+  width: 100%;
+}
+
+.SeatRole {
+  color: var(--text-subtle);
+  font-size: 0.68rem;
+  margin-top: 1px;
+  min-height: 15px;
+  overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  width: 100%;
 }
 
-.PlayerCardNameEditable {
-  cursor: pointer;
+@media (max-width: 480px) {
+  .SeatFace {
+    font-size: 1.35rem;
+    height: 56px;
+  }
 }
 
-.PlayerCardTitleInput {
-  background: transparent;
-  border: none;
-  border-radius: 8px;
-  outline: none;
-  box-sizing: border-box;
-  color: #17202a;
-  font-size: 0.875rem;
-  font-weight: 700;
-  font-family: 'Roboto', sans-serif;
-  height: 30px;
-  text-align: center;
-  width: 100%;
-}
+@media (prefers-reduced-motion: reduce) {
+  .Seat {
+    transition:
+      border-color var(--duration-base) var(--ease),
+      box-shadow var(--duration-base) var(--ease);
+  }
 
-.PlayerCardTitleInput:focus {
-  background-color: rgb(255 255 255 / 70%);
-  box-shadow: inset 0 0 0 2px rgb(25 118 210 / 25%);
-}
-
-.PlayerCardTitleActive {
-  background-color: #efe1d3 !important;
-  color: #17202a;
-}
-
-.RemoveButton{
-  padding: 4px !important;
-}
-
-.EditButton{
-  padding: 4px !important;
-}
-
-.MuiCardHeader-content {
-  width: 75% !important;
-}
-.PlayerCardContent {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-around;
-}
-
-.PlayerCardContentMiddle {
-  display: flex;
-  justify-content: center;
+  .Seat:hover {
+    transform: none;
+  }
 }

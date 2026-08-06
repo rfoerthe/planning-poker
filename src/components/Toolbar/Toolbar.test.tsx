@@ -11,6 +11,7 @@ vi.mock('react-router', async () => {
   return {
     ...actual,
     useNavigate: () => mockNavigate,
+    useLocation: () => ({ pathname: '/' }),
   };
 });
 
@@ -49,6 +50,14 @@ describe('Toolbar component', () => {
     const newSession = screen.getByTestId('toolbar.menu.joinSession');
     expect(newSession).toBeInTheDocument();
   });
+  it('should keep supporting pages in the secondary navigation', async () => {
+    renderWithTheme(<Toolbar />);
+
+    await userEvent.click(screen.getByRole('button', { name: 'Mehr' }));
+    await userEvent.click(screen.getByTestId('toolbar.menu.guide'));
+
+    expect(mockNavigate).toHaveBeenCalledWith('/guide');
+  });
   it('should navigate to Home page when New Session button is clicked', async () => {
     renderWithTheme(<Toolbar />);
     const newSession = screen.getByTestId('toolbar.menu.newSession');
@@ -76,10 +85,7 @@ describe('Toolbar component', () => {
   it('should call theme preference change when a theme option is selected', async () => {
     const onThemePreferenceChange = vi.fn();
     renderWithTheme(
-      <Toolbar
-        themePreference='system'
-        onThemePreferenceChange={onThemePreferenceChange}
-      />,
+      <Toolbar themePreference='system' onThemePreferenceChange={onThemePreferenceChange} />,
     );
 
     await userEvent.click(screen.getByTestId('toolbar.theme.button'));

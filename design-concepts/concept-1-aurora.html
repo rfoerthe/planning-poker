@@ -1,0 +1,697 @@
+<!doctype html>
+<html lang="de" data-theme="light">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Concept 1 — Aurora | Planning Poker</title>
+<style>
+/* ============================================================
+   CONCEPT 1 — "AURORA"
+   Ruhig, professionell, produkt-orientiert.
+   Ein Akzent, viel Weißraum, weiche Kanten, keine harten Schatten.
+   Referenz-Gefühl: Linear / Notion / Vercel.
+   ============================================================ */
+
+:root {
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-num: "SF Mono", ui-monospace, "JetBrains Mono", Menlo, monospace;
+
+  --r-sm: 8px;  --r-md: 12px;  --r-lg: 16px;  --r-xl: 22px;  --r-full: 999px;
+  --sp: 4px;
+
+  --ease: cubic-bezier(.32,.72,0,1);
+}
+
+html[data-theme="light"] {
+  --bg:          #fafafa;
+  --bg-elev:     #ffffff;
+  --bg-sunken:   #f2f3f5;
+  --bg-hover:    #f4f4f6;
+  --border:      #e6e6ea;
+  --border-soft: #efeff2;
+  --text:        #16161a;
+  --text-2:      #63636e;
+  --text-3:      #9a9aa5;
+  --accent:      #5b5bd6;
+  --accent-soft: #eeeefc;
+  --accent-text: #4a4ac4;
+  --ok:          #17876a;
+  --ok-soft:     #e5f5ef;
+  --warn:        #b4690e;
+  --warn-soft:   #fdf1e0;
+  --danger:      #c73e3e;
+  --danger-soft: #fdecec;
+  --shadow-sm:   0 1px 2px rgba(16,16,24,.05);
+  --shadow-md:   0 2px 4px rgba(16,16,24,.04), 0 8px 24px rgba(16,16,24,.06);
+  --shadow-lg:   0 4px 8px rgba(16,16,24,.05), 0 24px 48px rgba(16,16,24,.10);
+  --deck-ink:    #16161a;
+}
+
+html[data-theme="dark"] {
+  --bg:          #0a0a0c;
+  --bg-elev:     #141417;
+  --bg-sunken:   #probe;
+  --bg-sunken:   #0f0f12;
+  --bg-hover:    #1c1c21;
+  --border:      #26262c;
+  --border-soft: #1d1d22;
+  --text:        #f2f2f4;
+  --text-2:      #a0a0ac;
+  --text-3:      #6b6b78;
+  --accent:      #8b8bf5;
+  --accent-soft: #1d1d3a;
+  --accent-text: #a5a5fa;
+  --ok:          #4ecfa6;
+  --ok-soft:     #102b23;
+  --warn:        #e0a052;
+  --warn-soft:   #2e2113;
+  --danger:      #f08585;
+  --danger-soft: #331919;
+  --shadow-sm:   0 1px 2px rgba(0,0,0,.4);
+  --shadow-md:   0 2px 4px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.35);
+  --shadow-lg:   0 4px 8px rgba(0,0,0,.3), 0 24px 48px rgba(0,0,0,.5);
+  --deck-ink:    #0d0d10;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  transition: background .25s var(--ease), color .25s var(--ease);
+}
+button { font: inherit; color: inherit; cursor: pointer; }
+
+/* ---------------- App bar ---------------- */
+.appbar {
+  position: sticky; top: 0; z-index: 50;
+  display: flex; align-items: center; gap: 20px;
+  height: 56px; padding: 0 20px;
+  background: color-mix(in srgb, var(--bg) 78%, transparent);
+  backdrop-filter: saturate(180%) blur(20px);
+  border-bottom: 1px solid var(--border-soft);
+}
+.brand { display: flex; align-items: center; gap: 9px; font-weight: 600; letter-spacing: -.01em; }
+.brand-mark {
+  width: 26px; height: 26px; border-radius: 8px;
+  background: linear-gradient(145deg, var(--accent), color-mix(in srgb, var(--accent) 55%, #22d3ee));
+  display: grid; place-items: center; color: #fff; font-size: 13px; font-weight: 700;
+  box-shadow: var(--shadow-sm);
+}
+.brand-ver { font-size: 11px; color: var(--text-3); font-weight: 500; padding-top: 2px; }
+
+.nav { display: flex; gap: 2px; margin-left: 8px; }
+.nav a {
+  padding: 6px 11px; border-radius: var(--r-sm); font-size: 13.5px; font-weight: 500;
+  color: var(--text-2); text-decoration: none; transition: .15s var(--ease);
+}
+.nav a:hover { background: var(--bg-hover); color: var(--text); }
+.nav a.is-active { color: var(--text); background: var(--bg-hover); }
+
+.appbar-right { margin-left: auto; display: flex; align-items: center; gap: 6px; }
+.icon-btn {
+  width: 32px; height: 32px; display: grid; place-items: center;
+  border: 1px solid transparent; border-radius: var(--r-sm); background: transparent;
+  color: var(--text-2); transition: .15s var(--ease);
+}
+.icon-btn:hover { background: var(--bg-hover); color: var(--text); }
+
+/* ---------------- Layout ---------------- */
+.page { max-width: 1160px; margin: 0 auto; padding: 40px 20px 80px; }
+.screen { display: none; }
+.screen.is-on { display: block; animation: rise .4s var(--ease); }
+@keyframes rise { from { opacity: 0; transform: translateY(8px); } }
+
+/* Screen switcher (nur für den Dummy) */
+.switcher {
+  position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%); z-index: 100;
+  display: flex; gap: 3px; padding: 4px;
+  background: var(--bg-elev); border: 1px solid var(--border);
+  border-radius: var(--r-full); box-shadow: var(--shadow-lg);
+}
+.switcher button {
+  border: 0; background: transparent; padding: 7px 15px; border-radius: var(--r-full);
+  font-size: 12.5px; font-weight: 550; color: var(--text-2);
+}
+.switcher button.is-on { background: var(--text); color: var(--bg-elev); }
+
+/* ---------------- Home / Hero ---------------- */
+.hero { display: grid; grid-template-columns: 1fr 420px; gap: 64px; align-items: start; }
+@media (max-width: 900px) { .hero { grid-template-columns: 1fr; gap: 36px; } }
+
+.eyebrow {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 4px 10px 4px 5px; border-radius: var(--r-full);
+  background: var(--accent-soft); color: var(--accent-text);
+  font-size: 12px; font-weight: 550; margin-bottom: 22px;
+}
+.eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; margin-left: 4px; }
+
+h1.display {
+  margin: 0 0 16px; font-size: clamp(34px, 4.6vw, 52px); line-height: 1.05;
+  letter-spacing: -.035em; font-weight: 680;
+}
+h1.display em { font-style: normal; color: var(--text-3); }
+.lede { margin: 0 0 32px; font-size: 17px; line-height: 1.6; color: var(--text-2); max-width: 46ch; }
+
+.feature-list { display: grid; gap: 14px; margin: 0; padding: 0; list-style: none; max-width: 44ch; }
+.feature-list li { display: flex; gap: 11px; font-size: 14px; color: var(--text-2); }
+.feature-list .tick {
+  flex: 0 0 18px; height: 18px; margin-top: 2px; border-radius: 50%;
+  background: var(--ok-soft); color: var(--ok);
+  display: grid; place-items: center; font-size: 10px; font-weight: 700;
+}
+.feature-list b { color: var(--text); font-weight: 570; }
+
+/* ---------------- Panel / Form ---------------- */
+.panel {
+  background: var(--bg-elev); border: 1px solid var(--border);
+  border-radius: var(--r-xl); box-shadow: var(--shadow-md);
+}
+.panel-head { padding: 22px 24px 0; }
+.panel-head h2 { margin: 0 0 4px; font-size: 18px; letter-spacing: -.02em; font-weight: 620; }
+.panel-head p { margin: 0; font-size: 13.5px; color: var(--text-2); }
+.panel-body { padding: 22px 24px 24px; display: grid; gap: 16px; }
+
+.field { display: grid; gap: 6px; }
+.field label { font-size: 12.5px; font-weight: 550; color: var(--text-2); }
+.field input {
+  width: 100%; height: 40px; padding: 0 12px; font: inherit; font-size: 14.5px;
+  color: var(--text); background: var(--bg); border: 1px solid var(--border);
+  border-radius: var(--r-md); outline: none; transition: .15s var(--ease);
+}
+.field input::placeholder { color: var(--text-3); }
+.field input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); background: var(--bg-elev); }
+
+.deck-choice { display: grid; gap: 7px; }
+.deck-opt {
+  display: flex; align-items: center; gap: 11px; padding: 11px 13px;
+  border: 1px solid var(--border); border-radius: var(--r-md);
+  background: var(--bg); cursor: pointer; transition: .15s var(--ease);
+}
+.deck-opt:hover { border-color: color-mix(in srgb, var(--accent) 40%, var(--border)); }
+.deck-opt.is-on { border-color: var(--accent); background: var(--accent-soft); }
+.radio {
+  flex: 0 0 16px; height: 16px; border-radius: 50%; border: 1.5px solid var(--border);
+  background: var(--bg-elev); display: grid; place-items: center; transition: .15s var(--ease);
+}
+.deck-opt.is-on .radio { border-color: var(--accent); }
+.deck-opt.is-on .radio::after { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); }
+.deck-opt .name { font-size: 14px; font-weight: 540; }
+.deck-opt .vals { font-size: 12px; color: var(--text-3); font-family: var(--font-num); margin-left: auto; }
+
+.switch-row { display: flex; align-items: center; gap: 11px; padding: 4px 2px; }
+.switch {
+  position: relative; width: 36px; height: 21px; border-radius: var(--r-full);
+  background: var(--accent); border: 0; padding: 0; transition: .2s var(--ease);
+}
+.switch::after {
+  content: ""; position: absolute; top: 2px; left: 17px; width: 17px; height: 17px;
+  border-radius: 50%; background: #fff; transition: .2s var(--ease);
+  box-shadow: 0 1px 3px rgba(0,0,0,.25);
+}
+.switch[aria-checked="false"] { background: var(--border); }
+.switch[aria-checked="false"]::after { left: 2px; }
+.switch-row .txt { font-size: 13.5px; }
+.switch-row .txt small { display: block; color: var(--text-3); font-size: 12px; }
+
+.btn {
+  height: 42px; padding: 0 18px; border: 1px solid transparent; border-radius: var(--r-md);
+  font-size: 14.5px; font-weight: 560; display: inline-flex; align-items: center;
+  justify-content: center; gap: 8px; transition: .15s var(--ease);
+}
+.btn-primary { background: var(--accent); color: #fff; box-shadow: var(--shadow-sm); }
+.btn-primary:hover { filter: brightness(1.08); transform: translateY(-1px); box-shadow: var(--shadow-md); }
+.btn-ghost { background: transparent; border-color: var(--border); color: var(--text); }
+.btn-ghost:hover { background: var(--bg-hover); }
+.btn-block { width: 100%; }
+
+.recent { margin-top: 72px; }
+.section-label {
+  font-size: 11.5px; font-weight: 620; letter-spacing: .07em; text-transform: uppercase;
+  color: var(--text-3); margin-bottom: 14px;
+}
+.recent-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 10px; }
+.recent-card {
+  display: flex; align-items: center; gap: 12px; padding: 13px 14px;
+  background: var(--bg-elev); border: 1px solid var(--border); border-radius: var(--r-lg);
+  text-decoration: none; color: inherit; transition: .18s var(--ease);
+}
+.recent-card:hover { border-color: color-mix(in srgb, var(--accent) 45%, var(--border)); transform: translateY(-2px); box-shadow: var(--shadow-md); }
+.recent-card .sq {
+  width: 34px; height: 34px; border-radius: 10px; background: var(--bg-sunken);
+  display: grid; place-items: center; font-size: 15px; flex: 0 0 auto;
+}
+.recent-card .t { font-size: 14px; font-weight: 550; }
+.recent-card .s { font-size: 12px; color: var(--text-3); }
+
+/* ---------------- Session screen ---------------- */
+.session-head {
+  display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+  padding-bottom: 20px; margin-bottom: 24px; border-bottom: 1px solid var(--border-soft);
+}
+.session-title { display: flex; align-items: baseline; gap: 12px; }
+.session-title h2 { margin: 0; font-size: 22px; letter-spacing: -.025em; font-weight: 640; }
+.round-chip { font-size: 12px; color: var(--text-3); font-family: var(--font-num); }
+
+.pill {
+  display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 11px;
+  border-radius: var(--r-full); font-size: 12.5px; font-weight: 560;
+}
+.pill .led { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.pill.is-live { background: var(--warn-soft); color: var(--warn); }
+.pill.is-live .led { animation: blink 1.6s infinite; }
+.pill.is-done { background: var(--ok-soft); color: var(--ok); }
+.pill.is-idle { background: var(--bg-sunken); color: var(--text-2); }
+@keyframes blink { 50% { opacity: .3; } }
+
+.session-actions { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+.timer-chip {
+  display: inline-flex; align-items: center; gap: 8px; height: 34px; padding: 0 12px;
+  border: 1px solid var(--border); border-radius: var(--r-md); background: var(--bg-elev);
+  font-family: var(--font-num); font-size: 14px; font-variant-numeric: tabular-nums;
+  font-weight: 550;
+}
+.timer-chip .bar {
+  width: 48px; height: 4px; border-radius: 2px; background: var(--bg-sunken); overflow: hidden;
+}
+.timer-chip .bar i { display: block; height: 100%; width: 38%; background: var(--accent); border-radius: 2px; }
+
+.session-grid { display: grid; grid-template-columns: 1fr 320px; gap: 28px; align-items: start; }
+@media (max-width: 940px) { .session-grid { grid-template-columns: 1fr; } }
+
+/* Participants */
+.seats { display: grid; grid-template-columns: repeat(auto-fill, minmax(132px, 1fr)); gap: 12px; }
+.seat {
+  position: relative; background: var(--bg-elev); border: 1px solid var(--border);
+  border-radius: var(--r-lg); padding: 14px 12px 12px; text-align: center;
+  transition: .2s var(--ease);
+}
+.seat:hover { box-shadow: var(--shadow-md); }
+.seat.is-me { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+.seat.is-outlier { border-color: var(--warn); }
+.seat.is-outlier::after {
+  content: "Ausreißer"; position: absolute; top: -8px; left: 50%; transform: translateX(-50%);
+  background: var(--warn-soft); color: var(--warn); font-size: 10px; font-weight: 620;
+  padding: 1px 7px; border-radius: var(--r-full); white-space: nowrap;
+}
+.seat-face {
+  height: 66px; border-radius: var(--r-md); background: var(--bg-sunken);
+  display: grid; place-items: center; margin-bottom: 10px;
+  font-size: 26px; font-weight: 640; font-family: var(--font-num); letter-spacing: -.02em;
+  transition: .3s var(--ease);
+}
+.seat-face.is-hidden { color: var(--text-3); font-size: 20px; }
+.seat-face.is-waiting {
+  background: repeating-linear-gradient(45deg, var(--bg-sunken) 0 6px, transparent 6px 12px);
+  color: var(--text-3);
+}
+.seat-name {
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  font-size: 13px; font-weight: 540; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.presence { width: 6px; height: 6px; border-radius: 50%; background: var(--ok); flex: 0 0 auto; }
+.presence.is-away { background: var(--text-3); }
+.seat-role { font-size: 11px; color: var(--text-3); margin-top: 1px; }
+
+/* farbige Reveal-Zustände: Farbe nur als dünner Rand + getönter Face-BG */
+.seat-face[data-tone="low"]  { background: color-mix(in srgb, #4c9aff 16%, var(--bg-sunken)); color: color-mix(in srgb, #1d6fd6 88%, var(--text)); }
+.seat-face[data-tone="mid"]  { background: color-mix(in srgb, #23c4a0 16%, var(--bg-sunken)); color: color-mix(in srgb, #0e8f72 88%, var(--text)); }
+.seat-face[data-tone="high"] { background: color-mix(in srgb, #f0a63c 20%, var(--bg-sunken)); color: color-mix(in srgb, #a86a10 88%, var(--text)); }
+.seat-face[data-tone="top"]  { background: color-mix(in srgb, #f4676c 18%, var(--bg-sunken)); color: color-mix(in srgb, #c73e43 88%, var(--text)); }
+html[data-theme="dark"] .seat-face[data-tone="low"]  { color: #8fc4ff; }
+html[data-theme="dark"] .seat-face[data-tone="mid"]  { color: #63e0c0; }
+html[data-theme="dark"] .seat-face[data-tone="high"] { color: #ffc677; }
+html[data-theme="dark"] .seat-face[data-tone="top"]  { color: #ff9ba0; }
+
+/* Progress strip */
+.progress-strip {
+  display: flex; align-items: center; gap: 12px; margin: 20px 0 4px;
+  padding: 12px 14px; background: var(--bg-elev); border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+}
+.progress-strip .track { flex: 1; height: 6px; border-radius: 3px; background: var(--bg-sunken); overflow: hidden; }
+.progress-strip .track i { display: block; height: 100%; width: 71%; background: var(--accent); border-radius: 3px; transition: width .4s var(--ease); }
+.progress-strip .lbl { font-size: 12.5px; color: var(--text-2); font-variant-numeric: tabular-nums; }
+
+/* Stats side panel */
+.stats { display: grid; gap: 14px; }
+.stat-card { padding: 18px; }
+.stat-top { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 14px; }
+.stat-top h3 { margin: 0; font-size: 13px; font-weight: 600; letter-spacing: -.01em; }
+.stat-hero { display: flex; align-items: baseline; gap: 8px; margin-bottom: 2px; }
+.stat-hero .v { font-family: var(--font-num); font-size: 40px; font-weight: 620; letter-spacing: -.04em; line-height: 1; }
+.stat-hero .u { font-size: 12.5px; color: var(--text-3); }
+.stat-sub { font-size: 12.5px; color: var(--text-2); margin-bottom: 16px; }
+
+.kpi-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+.kpi { padding: 10px 11px; background: var(--bg); border: 1px solid var(--border-soft); border-radius: var(--r-md); }
+.kpi .k { font-size: 11px; color: var(--text-3); font-weight: 550; }
+.kpi .v { font-family: var(--font-num); font-size: 17px; font-weight: 600; letter-spacing: -.02em; }
+
+.consensus {
+  display: flex; align-items: center; gap: 10px; padding: 11px 12px;
+  border-radius: var(--r-md); background: var(--ok-soft); margin-bottom: 16px;
+}
+.consensus .badge {
+  width: 30px; height: 30px; border-radius: 9px; background: var(--ok); color: #fff;
+  display: grid; place-items: center; font-size: 13px; font-weight: 700; flex: 0 0 auto;
+}
+.consensus .t { font-size: 13px; font-weight: 560; color: var(--ok); }
+.consensus .s { font-size: 11.5px; color: var(--text-2); }
+
+.dist { display: grid; gap: 7px; }
+.dist-row { display: grid; grid-template-columns: 28px 1fr 20px; align-items: center; gap: 9px; }
+.dist-row .lab { font-family: var(--font-num); font-size: 12.5px; color: var(--text-2); text-align: right; }
+.dist-row .trk { height: 22px; border-radius: 6px; background: var(--bg-sunken); overflow: hidden; }
+.dist-row .trk i { display: block; height: 100%; border-radius: 6px; transition: width .5s var(--ease); }
+.dist-row .cnt { font-family: var(--font-num); font-size: 12px; color: var(--text-3); }
+
+/* Deck */
+.deck-wrap { margin-top: 34px; }
+.deck-head { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+.deck-head .section-label { margin: 0; }
+.deck-head .hint { font-size: 12.5px; color: var(--text-3); margin-left: auto; }
+.deck { display: flex; flex-wrap: wrap; gap: 10px; padding-top: 14px; }
+.card-btn {
+  position: relative; width: 66px; height: 94px; border-radius: var(--r-md);
+  border: 1px solid var(--border); background: var(--bg-elev);
+  display: grid; place-items: center; transition: .18s var(--ease);
+  font-family: var(--font-num); font-size: 22px; font-weight: 600; letter-spacing: -.03em;
+  box-shadow: var(--shadow-sm);
+}
+.card-btn span.corner {
+  position: absolute; top: 6px; left: 7px; font-size: 10px; font-weight: 600;
+  color: var(--text-3); letter-spacing: 0;
+}
+.card-btn:hover { transform: translateY(-6px); box-shadow: var(--shadow-md); border-color: color-mix(in srgb, var(--accent) 45%, var(--border)); }
+.card-btn.is-on {
+  transform: translateY(-12px); border-color: var(--accent); color: #fff;
+  background: var(--accent); box-shadow: 0 12px 28px color-mix(in srgb, var(--accent) 35%, transparent);
+}
+.card-btn.is-on span.corner { color: rgba(255,255,255,.7); }
+.card-btn.is-special { font-size: 24px; color: var(--text-2); }
+
+.control-bar {
+  position: sticky; bottom: 0; margin-top: 34px;
+  display: flex; align-items: center; gap: 10px; padding: 12px 14px;
+  background: color-mix(in srgb, var(--bg-elev) 88%, transparent);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--border); border-radius: var(--r-lg); box-shadow: var(--shadow-lg);
+}
+.control-bar .grow { flex: 1; }
+.control-bar .muted { font-size: 12.5px; color: var(--text-3); }
+</style>
+</head>
+<body>
+
+<header class="appbar">
+  <div class="brand">
+    <div class="brand-mark">♠</div>
+    <span>Planning Poker</span>
+    <span class="brand-ver">2.1</span>
+  </div>
+  <nav class="nav">
+    <a href="#" class="is-active">Neue Session</a>
+    <a href="#">Beitreten</a>
+    <a href="#">Guide</a>
+    <a href="#">Beispiele</a>
+  </nav>
+  <div class="appbar-right">
+    <button class="icon-btn" onclick="toggleTheme()" title="Theme umschalten" id="themeBtn">◐</button>
+    <button class="icon-btn" title="GitHub">⌘</button>
+  </div>
+</header>
+
+<main class="page">
+
+  <!-- ============ HOME ============ -->
+  <section class="screen is-on" id="scr-home">
+    <div class="hero">
+      <div>
+        <div class="eyebrow"><span class="dot"></span> Kostenlos &amp; Open Source</div>
+        <h1 class="display">Schätzen im Team.<br /><em>Ohne Reibung.</em></h1>
+        <p class="lede">
+          Session anlegen, Link teilen, verdeckt abstimmen, gemeinsam aufdecken.
+          Kein Login, keine Installation — in unter zehn Sekunden startklar.
+        </p>
+        <ul class="feature-list">
+          <li><span class="tick">✓</span><span><b>Fünf Kartendecks</b> — Fibonacci, Short Fibonacci, T-Shirt, gemischt oder eigene Werte.</span></li>
+          <li><span class="tick">✓</span><span><b>Runden-Statistik</b> mit Median, Spannweite, Verteilung, Konsens-Bewertung und markierten Ausreißern.</span></li>
+          <li><span class="tick">✓</span><span><b>Optionaler Timer</b> von 0:30 bis 5:00, der die Runde automatisch aufdeckt.</span></li>
+          <li><span class="tick">✓</span><span><b>Präsenz-Anzeige</b> — du siehst sofort, wer wirklich noch dabei ist.</span></li>
+        </ul>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <h2>Neue Session</h2>
+          <p>Du wirst automatisch Moderator:in.</p>
+        </div>
+        <div class="panel-body">
+          <div class="field">
+            <label for="sname">Session-Name</label>
+            <input id="sname" placeholder="Sprint 42 — Refinement" value="Sprint 42 — Refinement" />
+          </div>
+          <div class="field">
+            <label for="pname">Dein Name</label>
+            <input id="pname" placeholder="z. B. Roland" />
+          </div>
+          <div class="field">
+            <label>Kartendeck</label>
+            <div class="deck-choice">
+              <div class="deck-opt is-on" onclick="pickDeck(this)"><span class="radio"></span><span class="name">Short Fibonacci</span><span class="vals">0 · 1 · 2 · 3 · 5 · 8 · 13 · 21 · 40</span></div>
+              <div class="deck-opt" onclick="pickDeck(this)"><span class="radio"></span><span class="name">Fibonacci</span><span class="vals">0 … 89</span></div>
+              <div class="deck-opt" onclick="pickDeck(this)"><span class="radio"></span><span class="name">T-Shirt</span><span class="vals">XXS … XXL</span></div>
+              <div class="deck-opt" onclick="pickDeck(this)"><span class="radio"></span><span class="name">T-Shirt &amp; Zahlen</span><span class="vals">S … 5</span></div>
+              <div class="deck-opt" onclick="pickDeck(this)"><span class="radio"></span><span class="name">Eigene Werte</span><span class="vals">frei</span></div>
+            </div>
+          </div>
+          <div class="switch-row">
+            <button class="switch" role="switch" aria-checked="true" onclick="this.setAttribute('aria-checked', this.getAttribute('aria-checked')==='true'?'false':'true')"></button>
+            <span class="txt">Alle dürfen moderieren<small>Aufdecken, neu starten, Timer setzen</small></span>
+          </div>
+          <button class="btn btn-primary btn-block">Session starten →</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="recent">
+      <div class="section-label">Zuletzt besucht</div>
+      <div class="recent-grid">
+        <a class="recent-card" href="#"><span class="sq">🗂</span><span><span class="t">Sprint 41 — Refinement</span><br /><span class="s">vor 2 Tagen · 7 Teilnehmende</span></span></a>
+        <a class="recent-card" href="#"><span class="sq">🧭</span><span><span class="t">Backlog Grooming</span><br /><span class="s">vor 5 Tagen · 4 Teilnehmende</span></span></a>
+        <a class="recent-card" href="#"><span class="sq">🚀</span><span><span class="t">Release-Planung Q3</span><br /><span class="s">vor 2 Wochen · 9 Teilnehmende</span></span></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SESSION (verdeckt) ============ -->
+  <section class="screen" id="scr-vote">
+    <div class="session-head">
+      <div class="session-title">
+        <h2>Sprint 42 — Refinement</h2>
+        <span class="round-chip">Runde 3</span>
+      </div>
+      <span class="pill is-live"><span class="led"></span> Abstimmung läuft</span>
+      <div class="session-actions">
+        <div class="timer-chip">⏱ 1:12 <span class="bar"><i></i></span></div>
+        <button class="btn btn-ghost" style="height:34px">Einladen</button>
+        <button class="btn btn-primary" style="height:34px">Aufdecken</button>
+      </div>
+    </div>
+
+    <div class="session-grid">
+      <div>
+        <div class="seats">
+          <div class="seat is-me">
+            <div class="seat-face is-hidden">✓</div>
+            <div class="seat-name"><span class="presence"></span> Roland</div>
+            <div class="seat-role">Moderator · du</div>
+          </div>
+          <div class="seat"><div class="seat-face is-hidden">✓</div><div class="seat-name"><span class="presence"></span> Marie</div><div class="seat-role">Abgestimmt</div></div>
+          <div class="seat"><div class="seat-face is-hidden">✓</div><div class="seat-name"><span class="presence"></span> Jonas</div><div class="seat-role">Abgestimmt</div></div>
+          <div class="seat"><div class="seat-face is-waiting">…</div><div class="seat-name"><span class="presence"></span> Aylin</div><div class="seat-role">Überlegt noch</div></div>
+          <div class="seat"><div class="seat-face is-hidden">✓</div><div class="seat-name"><span class="presence"></span> Tim</div><div class="seat-role">Abgestimmt</div></div>
+          <div class="seat"><div class="seat-face is-waiting">…</div><div class="seat-name"><span class="presence is-away"></span> Sofia</div><div class="seat-role">Abwesend</div></div>
+          <div class="seat"><div class="seat-face is-hidden">✓</div><div class="seat-name"><span class="presence"></span> Nils</div><div class="seat-role">Abgestimmt</div></div>
+        </div>
+
+        <div class="progress-strip">
+          <span class="lbl"><b>5 von 7</b> haben abgestimmt</span>
+          <span class="track"><i style="width:71%"></i></span>
+          <span class="lbl">71 %</span>
+        </div>
+
+        <div class="deck-wrap">
+          <div class="deck-head">
+            <div class="section-label">Deine Karte</div>
+            <div class="hint">Klick zum Wählen · nochmal klicken zum Ändern</div>
+          </div>
+          <div class="deck">
+            <button class="card-btn"><span class="corner">0</span>0</button>
+            <button class="card-btn"><span class="corner">1</span>1</button>
+            <button class="card-btn"><span class="corner">2</span>2</button>
+            <button class="card-btn"><span class="corner">3</span>3</button>
+            <button class="card-btn is-on"><span class="corner">5</span>5</button>
+            <button class="card-btn"><span class="corner">8</span>8</button>
+            <button class="card-btn"><span class="corner">13</span>13</button>
+            <button class="card-btn"><span class="corner">21</span>21</button>
+            <button class="card-btn"><span class="corner">40</span>40</button>
+            <button class="card-btn is-special">?</button>
+            <button class="card-btn is-special">☕</button>
+          </div>
+        </div>
+      </div>
+
+      <aside class="stats">
+        <div class="panel stat-card">
+          <div class="stat-top"><h3>Diese Runde</h3><span class="pill is-idle">verdeckt</span></div>
+          <div class="stat-hero"><span class="v">—</span></div>
+          <div class="stat-sub">Ergebnisse erscheinen, sobald aufgedeckt wurde.</div>
+          <div class="kpi-row">
+            <div class="kpi"><div class="k">Stimmen</div><div class="v">5</div></div>
+            <div class="kpi"><div class="k">Offen</div><div class="v">2</div></div>
+          </div>
+          <div class="section-label" style="margin-bottom:9px">Runden-Timer</div>
+          <div class="dist">
+            <div class="dist-row"><span class="lab">1:12</span><span class="trk"><i style="width:38%;background:var(--accent)"></i></span><span class="cnt">/2:00</span></div>
+          </div>
+        </div>
+
+        <div class="panel stat-card">
+          <div class="stat-top"><h3>Vorherige Runde</h3></div>
+          <div class="stat-hero"><span class="v">5</span><span class="u">Median · 7 Stimmen</span></div>
+          <div class="stat-sub">Konsens war stark — Spannweite 3 – 8.</div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ============ SESSION (aufgedeckt) ============ -->
+  <section class="screen" id="scr-result">
+    <div class="session-head">
+      <div class="session-title">
+        <h2>Sprint 42 — Refinement</h2>
+        <span class="round-chip">Runde 3</span>
+      </div>
+      <span class="pill is-done"><span class="led"></span> Aufgedeckt</span>
+      <div class="session-actions">
+        <button class="btn btn-ghost" style="height:34px">Einladen</button>
+        <button class="btn btn-primary" style="height:34px">Neue Runde</button>
+      </div>
+    </div>
+
+    <div class="session-grid">
+      <div>
+        <div class="seats">
+          <div class="seat is-me"><div class="seat-face" data-tone="mid">5</div><div class="seat-name"><span class="presence"></span> Roland</div><div class="seat-role">Moderator · du</div></div>
+          <div class="seat"><div class="seat-face" data-tone="mid">5</div><div class="seat-name"><span class="presence"></span> Marie</div><div class="seat-role">&nbsp;</div></div>
+          <div class="seat"><div class="seat-face" data-tone="low">3</div><div class="seat-name"><span class="presence"></span> Jonas</div><div class="seat-role">&nbsp;</div></div>
+          <div class="seat is-outlier"><div class="seat-face" data-tone="top">21</div><div class="seat-name"><span class="presence"></span> Aylin</div><div class="seat-role">&nbsp;</div></div>
+          <div class="seat"><div class="seat-face" data-tone="mid">8</div><div class="seat-name"><span class="presence"></span> Tim</div><div class="seat-role">&nbsp;</div></div>
+          <div class="seat"><div class="seat-face is-hidden">☕</div><div class="seat-name"><span class="presence is-away"></span> Sofia</div><div class="seat-role">Enthalten</div></div>
+          <div class="seat"><div class="seat-face" data-tone="mid">5</div><div class="seat-name"><span class="presence"></span> Nils</div><div class="seat-role">&nbsp;</div></div>
+        </div>
+
+        <div class="deck-wrap">
+          <div class="deck-head">
+            <div class="section-label">Deck gesperrt</div>
+            <div class="hint">Warte auf „Neue Runde“, um wieder zu wählen</div>
+          </div>
+          <div class="deck" style="opacity:.4;pointer-events:none;filter:grayscale(1)">
+            <button class="card-btn"><span class="corner">0</span>0</button>
+            <button class="card-btn"><span class="corner">1</span>1</button>
+            <button class="card-btn"><span class="corner">2</span>2</button>
+            <button class="card-btn"><span class="corner">3</span>3</button>
+            <button class="card-btn is-on"><span class="corner">5</span>5</button>
+            <button class="card-btn"><span class="corner">8</span>8</button>
+            <button class="card-btn"><span class="corner">13</span>13</button>
+            <button class="card-btn"><span class="corner">21</span>21</button>
+            <button class="card-btn"><span class="corner">40</span>40</button>
+          </div>
+        </div>
+
+        <div class="control-bar">
+          <span class="muted">Moderation</span>
+          <span class="grow"></span>
+          <button class="btn btn-ghost" style="height:34px">Timer</button>
+          <button class="btn btn-ghost" style="height:34px">Verlassen</button>
+          <button class="btn btn-primary" style="height:34px">Neue Runde starten</button>
+        </div>
+      </div>
+
+      <aside class="stats">
+        <div class="panel stat-card">
+          <div class="stat-top"><h3>Ergebnis</h3><span class="pill is-done">6 Stimmen</span></div>
+          <div class="stat-hero"><span class="v">5</span><span class="u">Median</span></div>
+          <div class="stat-sub">Nächstliegende Karte: <b>5</b> · Ø 7,8 · Spannweite 3 – 21</div>
+
+          <div class="kpi-row">
+            <div class="kpi"><div class="k">Durchschnitt</div><div class="v">7,8</div></div>
+            <div class="kpi"><div class="k">σ</div><div class="v">6,4</div></div>
+            <div class="kpi"><div class="k">Spannweite</div><div class="v">3–21</div></div>
+            <div class="kpi"><div class="k">Enthaltungen</div><div class="v">1</div></div>
+          </div>
+
+          <div class="consensus" style="background:var(--warn-soft)">
+            <span class="badge" style="background:var(--warn)">C</span>
+            <span>
+              <span class="t" style="color:var(--warn)">Konsens: mittel</span><br />
+              <span class="s">Ein Ausreißer zieht die Spannweite auseinander — kurz nachfragen.</span>
+            </span>
+          </div>
+
+          <div class="section-label" style="margin-bottom:9px">Verteilung</div>
+          <div class="dist">
+            <div class="dist-row"><span class="lab">3</span><span class="trk"><i style="width:20%;background:#4c9aff"></i></span><span class="cnt">1</span></div>
+            <div class="dist-row"><span class="lab">5</span><span class="trk"><i style="width:60%;background:#23c4a0"></i></span><span class="cnt">3</span></div>
+            <div class="dist-row"><span class="lab">8</span><span class="trk"><i style="width:20%;background:#23c4a0"></i></span><span class="cnt">1</span></div>
+            <div class="dist-row"><span class="lab">21</span><span class="trk"><i style="width:20%;background:#f4676c"></i></span><span class="cnt">1</span></div>
+          </div>
+        </div>
+
+        <div class="panel stat-card">
+          <div class="stat-top"><h3>Ausreißer</h3></div>
+          <div class="stat-sub" style="margin:0">
+            <b>Aylin</b> mit <b>21</b> liegt deutlich über dem Median. Ein kurzer Kontext-Abgleich lohnt sich, bevor ihr weitergeht.
+          </div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+</main>
+
+<div class="switcher">
+  <button class="is-on" onclick="show('scr-home', this)">Startseite</button>
+  <button onclick="show('scr-vote', this)">Abstimmung</button>
+  <button onclick="show('scr-result', this)">Ergebnis</button>
+</div>
+
+<script>
+function show(id, btn) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.toggle('is-on', s.id === id));
+  document.querySelectorAll('.switcher button').forEach(b => b.classList.toggle('is-on', b === btn));
+  window.scrollTo({ top: 0 });
+}
+function toggleTheme() {
+  const html = document.documentElement;
+  html.dataset.theme = html.dataset.theme === 'dark' ? 'light' : 'dark';
+}
+function pickDeck(el) {
+  el.parentElement.querySelectorAll('.deck-opt').forEach(o => o.classList.remove('is-on'));
+  el.classList.add('is-on');
+}
+document.querySelectorAll('.deck .card-btn').forEach(b => b.addEventListener('click', () => {
+  const on = b.classList.contains('is-on');
+  b.closest('.deck').querySelectorAll('.card-btn').forEach(x => x.classList.remove('is-on'));
+  if (!on) b.classList.add('is-on');
+}));
+</script>
+</body>
+</html>

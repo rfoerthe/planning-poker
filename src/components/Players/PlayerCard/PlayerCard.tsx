@@ -1,8 +1,9 @@
-import DeleteForeverIcon from '@mui/icons-material/DeleteForeverTwoTone';
-import EditIcon from '@mui/icons-material/Edit';
-import { Card, CardContent, CardHeader, IconButton, Typography } from '@mui/material';
-import { blue, red } from '@mui/material/colors';
+import CloseIcon from '@mui/icons-material/Close';
+import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
+import HourglassEmptyRoundedIcon from '@mui/icons-material/HourglassEmptyRounded';
+import { IconButton } from '@mui/material';
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { removePlayer, updatePlayerName } from '../../../service/players';
 import { Game } from '../../../types/game';
 import { Player } from '../../../types/player';
@@ -26,6 +27,7 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
   isOutlier,
   isActive,
 }) => {
+  const { t } = useTranslation();
   const [isEditing, setIsEditing] = useState(false);
   const [editName, setEditName] = useState(player.name);
 
@@ -70,101 +72,112 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
     setEditName(player.name);
   };
 
-  const canEditCurrentPlayer = player.id === currentPlayerId;
+  const isCurrentPlayer = player.id === currentPlayerId;
+  const canRemovePlayer =
+    isModerator(game.createdById, currentPlayerId, game.isAllowMembersToManageSession) &&
+    !isCurrentPlayer;
+  const cardColor = getCardColor(game, player.value);
+  const face = getCardFace(player, game);
+
+  const seatClassNames = ['Seat'];
+  if (isCurrentPlayer) {
+    seatClassNames.push('SeatIsMe');
+  }
+  if (isOutlier) {
+    seatClassNames.push('SeatIsOutlier');
+  }
 
   return (
-    <Card
-      variant='outlined'
-      className={isOutlier ? 'PlayerCard PlayerCardOutlier' : 'PlayerCard'}
-      title={isOutlier ? 'Outlier: far away from the team median' : undefined}
+    <article
+      className={seatClassNames.join(' ')}
+      title={isOutlier ? t('playerCard.outlierTitle') : undefined}
       data-testid={isOutlier ? 'outlier-player-card' : undefined}
-      style={{
-        backgroundColor: getCardColor(game, player.value),
-        color: getCardTextColor(getCardColor(game, player.value)),
-      }}
     >
-      <CardHeader
-        className={player.id !== currentPlayerId ? 'PlayerCardTitle' : 'PlayerCardTitle PlayerCardTitleActive'}
-        title={
-          isEditing && canEditCurrentPlayer ? (
+      {isOutlier && <span className='SeatOutlierBadge'>{t('playerCard.outlier')}</span>}
+
+      {canRemovePlayer && (
+        <IconButton
+          title={t('playerCard.remove')}
+          aria-label={t('playerCard.remove')}
+          className='SeatRemove CircleRemove'
+          size='small'
+          onClick={() => removeUser(game.id, player.id)}
+          data-testid='remove-button'
+        >
+          <CloseIcon className='CircleRemoveIcon' />
+        </IconButton>
+      )}
+
+      <div
+        className={getFaceClassName(face)}
+        style={{ backgroundColor: cardColor, color: getCardTextColor(cardColor) }}
+        role={face.status ? 'img' : undefined}
+        aria-label={face.status ? t(`playerCard.${face.status}IconLabel`) : undefined}
+        data-testid={face.status ? `player-status-${face.status}` : undefined}
+      >
+        {face.status === 'thinking' && (
+          <HourglassEmptyRoundedIcon className='SeatStatusIcon SeatStatusThinking' />
+        )}
+        {face.status === 'voted' && (
+          <CheckCircleRoundedIcon className='SeatStatusIcon SeatStatusVoted' />
+        )}
+        {!face.status && face.text}
+      </div>
+
+      <div className='SeatFooter'>
+        <div className='SeatIdentity'>
+          {isActive && (
+            <span
+              className='SeatPresence'
+              role='img'
+              aria-label={t('playerCard.presence')}
+              title={t('playerCard.presence')}
+              data-testid='presence-indicator'
+            />
+          )}
+          {isEditing && isCurrentPlayer ? (
             <input
-              aria-label='Player name'
-              className='PlayerCardTitleInput'
+              aria-label={t('playerCard.nameLabel')}
+              className='SeatNameInput'
               type='text'
               value={editName}
               autoFocus
               maxLength={30}
               onBlur={handleSave}
-              onChange={(e) => setEditName(e.target.value)}
-              onFocus={(e) => e.target.select()}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  e.preventDefault();
+              onChange={(event) => setEditName(event.target.value)}
+              onFocus={(event) => event.target.select()}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter') {
+                  event.preventDefault();
                   handleSave();
                 }
-                if (e.key === 'Escape') {
-                  e.preventDefault();
+                if (event.key === 'Escape') {
+                  event.preventDefault();
                   handleCancel();
                 }
               }}
             />
           ) : (
             <button
-              className={canEditCurrentPlayer ? 'PlayerCardName PlayerCardNameEditable' : 'PlayerCardName'}
-              aria-label={canEditCurrentPlayer ? 'Rename player' : undefined}
-              onClick={canEditCurrentPlayer ? startEditing : undefined}
+              className={isCurrentPlayer ? 'SeatName SeatNameEditable' : 'SeatName'}
+              // The name is the control itself — see SeatNameEditable in the
+              // stylesheet for the affordance that replaces the former icon.
+              title={isCurrentPlayer ? t('playerCard.rename') : undefined}
+              aria-label={
+                isCurrentPlayer ? t('playerCard.renameNamed', { name: player.name }) : undefined
+              }
+              onClick={isCurrentPlayer ? startEditing : undefined}
               type='button'
+              data-testid={isCurrentPlayer ? 'update-button' : undefined}
             >
               {player.name}
             </button>
-          )
-        }
-        slotProps={{ title: { variant: 'subtitle2', noWrap: true } }}
-        action={
-          (isModerator(game.createdById, currentPlayerId, game.isAllowMembersToManageSession) &&
-          player.id !== currentPlayerId && (
-            <IconButton
-              title='Remove'
-              className='RemoveButton'
-              onClick={() => removeUser(game.id, player.id)}
-              data-testid='remove-button'
-              color='primary'
-            >
-              <DeleteForeverIcon fontSize='small' style={{ color: red[300] }} />
-            </IconButton>
-          )) ||
-          (player.id === currentPlayerId && !isEditing &&
-            (
-            <IconButton
-              title='Edit'
-              className='EditButton'
-              onClick={startEditing}
-              data-testid='update-button'
-              color='primary'
-            >
-              <EditIcon fontSize='small' style={{ color: blue[800] }} />
-            </IconButton>
-          ))
-        }
-      />
-      <CardContent className='PlayerCardContent'>
-        <Typography
-          variant={getCardValue(player, game)?.length < 2 ? 'h2' : 'h3'}
-          className='PlayerCardContentMiddle'
-        >
-          {getCardValue(player, game)}
-        </Typography>
-      </CardContent>
-      {isActive && (
-        <span
-          className='PlayerCardPresence'
-          role='img'
-          aria-label='Active in this session'
-          title='Active in this session'
-          data-testid='presence-indicator'
-        />
-      )}
-    </Card>
+          )}
+        </div>
+      </div>
+
+      <div className='SeatRole'>{getRoleLabel(game, player, currentPlayerId, t)}</div>
+    </article>
   );
 };
 
@@ -176,21 +189,38 @@ const getCardColor = (game: Game, value: number | undefined): string => {
   return card ? card.color : 'var(--color-background-secondary)';
 };
 
-const getCardValue = (player: Player, game: Game) => {
+interface CardFace {
+  text?: string;
+  isEmoji?: boolean;
+  status?: 'thinking' | 'voted';
+}
+
+/** What the card shows while estimates are hidden and after they are revealed. */
+const getCardFace = (player: Player, game: Game): CardFace => {
   if (game.gameStatus !== Status.Finished) {
-    return player.status === Status.Finished ? '👍' : '🤔';
+    return { status: player.status === Status.Finished ? 'voted' : 'thinking' };
   }
 
-  if (game.gameStatus === Status.Finished) {
-    if (player.status === Status.Finished) {
-      if (player.value && player.value === -1) {
-        return player.emoji || '☕'; // coffee emoji
-      }
-      return getCardDisplayValue(game, player.value);
+  if (player.status === Status.Finished) {
+    if (player.value && player.value === -1) {
+      return { text: player.emoji || '☕', isEmoji: true };
     }
-    return '🤔';
+    return { text: getCardDisplayValue(game, player.value), isEmoji: false };
   }
-  return '';
+  return { status: 'thinking' };
+};
+
+const getFaceClassName = (face: CardFace): string => {
+  const classNames = ['SeatFace'];
+
+  if (face.isEmoji) {
+    classNames.push('EmojiGlyph');
+  }
+  if (face.status) {
+    classNames.push('SeatFaceStatus', `SeatFaceStatus-${face.status}`);
+  }
+
+  return classNames.join(' ');
 };
 
 const getCardDisplayValue = (game: Game, cardValue: number | undefined): string => {
@@ -198,4 +228,36 @@ const getCardDisplayValue = (game: Game, cardValue: number | undefined): string 
   return (
     cards.find((card) => card.value === cardValue)?.displayValue || cardValue?.toString() || ''
   );
+};
+
+const getRoleLabel = (
+  game: Game,
+  player: Player,
+  currentPlayerId: string,
+  t: (key: string) => string,
+): string => {
+  const parts: string[] = [];
+
+  // Only worth pointing out while moderating is one person's job — once every
+  // participant may reveal and restart, the creator holds no special role.
+  const hasSingleModerator = !game.isAllowMembersToManageSession;
+
+  if (hasSingleModerator && player.id === game.createdById) {
+    parts.push(t('playerCard.moderator'));
+  }
+  if (player.id === currentPlayerId) {
+    parts.push(t('playerCard.you'));
+  }
+
+  if (parts.length > 0) {
+    return parts.join(' · ');
+  }
+
+  if (game.gameStatus === Status.Finished) {
+    return player.status === Status.Finished && player.value === -1
+      ? t('playerCard.abstained')
+      : '';
+  }
+
+  return player.status === Status.Finished ? t('playerCard.voted') : t('playerCard.thinking');
 };

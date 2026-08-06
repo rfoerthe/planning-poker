@@ -1,9 +1,9 @@
-import { IconButton, ListItemText, Menu, MenuItem, Typography } from '@mui/material';
+import { ListItemText, Menu, MenuItem } from '@mui/material';
 import CheckIcon from '@mui/icons-material/Check';
 import TimerIcon from '@mui/icons-material/Timer';
 import TimerOffIcon from '@mui/icons-material/TimerOff';
-import { deepPurple } from '@mui/material/colors';
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { startTimer, stopTimer } from '../../../service/games';
 import { formatClock, getRemainingSeconds, timerDurationsInSeconds } from '../../../service/timer';
 import { Game } from '../../../types/game';
@@ -17,6 +17,7 @@ interface GameTimerProps {
 }
 
 export const GameTimer: React.FC<GameTimerProps> = ({ game, remainingMs, canManageTimer }) => {
+  const { t } = useTranslation();
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
   const isMenuOpen = Boolean(menuAnchorEl);
   const remainingSeconds = getRemainingSeconds(remainingMs);
@@ -43,41 +44,51 @@ export const GameTimer: React.FC<GameTimerProps> = ({ game, remainingMs, canMana
     setMenuAnchorEl(event.currentTarget);
   };
 
-  const label = isRunning ? formatClock(remainingSeconds) : 'Timer';
+  const label = isRunning ? formatClock(remainingSeconds) : t('timer.label');
+  const className = isRunning ? 'SessionAction GameTimerRunning' : 'SessionAction';
 
   return (
-    <div className='GameControllerButtonContainer'>
-      <div className='GameControllerButton'>
-        {canManageTimer ? (
-          <IconButton
-            data-testid='timer-button'
-            onClick={handleClick}
-            disabled={isRevealed}
-            title={isRunning ? 'Stop the round timer' : 'Start a round timer'}
-            aria-haspopup='menu'
-            aria-expanded={isMenuOpen ? 'true' : undefined}
+    <>
+      {canManageTimer ? (
+        <button
+          type='button'
+          className={className}
+          data-testid='timer-button'
+          onClick={handleClick}
+          disabled={isRevealed}
+          title={isRunning ? t('timer.stop') : t('timer.start')}
+          aria-haspopup='menu'
+          aria-expanded={isMenuOpen ? 'true' : undefined}
+        >
+          {isRunning ? <TimerOffIcon fontSize='small' /> : <TimerIcon fontSize='small' />}
+          <span
+            className='SessionActionLabel GameTimerValue TabularNumbers'
+            role={isRunning ? 'timer' : undefined}
+            data-testid='timer-value'
           >
-            {isRunning ? (
-              <TimerOffIcon fontSize='large' style={{ color: deepPurple[300] }} />
-            ) : (
-              <TimerIcon fontSize='large' style={{ color: deepPurple[300] }} />
-            )}
-          </IconButton>
-        ) : (
-          <div className='GameTimerIndicator'>
-            <TimerIcon fontSize='large' style={{ color: deepPurple[300] }} />
-          </div>
-        )}
-      </div>
-      <Typography
-        variant='caption'
-        className={isRunning ? 'GameTimerValue GameTimerValueRunning' : 'GameTimerValue'}
-        role={isRunning ? 'timer' : undefined}
-        data-testid='timer-value'
+            {label}
+          </span>
+        </button>
+      ) : (
+        <div className={`${className} GameTimerIndicator`}>
+          <TimerIcon fontSize='small' />
+          <span
+            className='SessionActionLabel GameTimerValue TabularNumbers'
+            role='timer'
+            data-testid='timer-value'
+          >
+            {label}
+          </span>
+        </div>
+      )}
+
+      <Menu
+        anchorEl={menuAnchorEl}
+        open={isMenuOpen}
+        onClose={closeMenu}
+        id='timer-menu'
+        slotProps={{ list: { 'aria-label': t('timer.menuLabel') } }}
       >
-        {label}
-      </Typography>
-      <Menu anchorEl={menuAnchorEl} open={isMenuOpen} onClose={closeMenu} id='timer-menu'>
         {timerDurationsInSeconds.map((durationSeconds) => (
           <MenuItem
             key={durationSeconds}
@@ -85,13 +96,13 @@ export const GameTimer: React.FC<GameTimerProps> = ({ game, remainingMs, canMana
             onClick={() => handleDurationSelected(durationSeconds)}
             data-testid={`timer-duration-${durationSeconds}`}
           >
-            <ListItemText className='GameTimerMenuLabel'>
+            <ListItemText className='GameTimerMenuLabel TabularNumbers'>
               {formatClock(durationSeconds)}
             </ListItemText>
             {game.timerDurationSeconds === durationSeconds ? <CheckIcon fontSize='small' /> : null}
           </MenuItem>
         ))}
       </Menu>
-    </div>
+    </>
   );
 };

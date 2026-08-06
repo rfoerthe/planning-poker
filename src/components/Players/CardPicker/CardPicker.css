@@ -1,72 +1,207 @@
-.CardPickerTitle {
-  margin-top: 20px;
-  margin-bottom: 20px;
+.CardPickerSection {
+  background-color: color-mix(in srgb, var(--surface) 94%, transparent);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-sm);
+  margin-top: 8px;
+  overflow: hidden;
+  padding: 18px;
 }
 
-.CardPickerContainer {
-  bottom: 0;
-  padding: 20px 50px 10px 50px;
-  width: 100%;
-}
-
-.CardPickerGrid {
+.CardPickerHead {
+  align-items: baseline;
   display: flex;
   flex-wrap: wrap;
-  gap: 32px;
+  gap: 4px 12px;
+  margin-bottom: 14px;
+}
+
+.CardPickerTitle {
+  margin: 0;
+}
+
+.CardPickerHint {
+  color: var(--text-subtle);
+  font-size: 0.78rem;
+  margin: 0 0 0 auto;
+}
+
+.CardPickerDeck {
+  align-items: flex-end;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
   justify-content: center;
+  /* Room for the chosen card to rise into without clipping. */
+  padding-top: 14px;
 }
 
-.CardPickerGridItem {
-  flex: 0 0 auto;
+.CardPickerDeckLocked {
+  filter: grayscale(1);
+  opacity: 0.55;
 }
 
-.CardPicker {
-  min-width: 100px;
-  max-width: 100px;
-  max-height: 140px;
-  min-height: 140px;
-  margin-top: 10px;
+.PickerCard {
+  --card-tilt: 0deg;
+
+  align-items: center;
   appearance: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
   cursor: pointer;
-  background-color: var(--color-background-secondary);
-  font: inherit;
+  display: flex;
+  font-family: var(--font-num);
+  font-weight: 600;
+  height: 94px;
+  justify-content: center;
+  letter-spacing: -0.03em;
   padding: 0;
-  text-align: inherit;
+  position: relative;
   touch-action: manipulation;
+  transition:
+    box-shadow var(--duration-fast) var(--ease),
+    transform var(--duration-fast) var(--ease);
+  transform: rotate(var(--card-tilt));
+  width: 66px;
   -webkit-tap-highlight-color: transparent;
 }
 
-.CardPicker:not(:disabled):hover {
-  box-shadow: 0 0 12px 0 lightgrey;
+.PickerCard:nth-child(6n + 1) {
+  --card-tilt: -1.8deg;
 }
 
-.CardPicker:disabled {
+.PickerCard:nth-child(6n + 2) {
+  --card-tilt: -0.9deg;
+}
+
+.PickerCard:nth-child(6n + 4) {
+  --card-tilt: 0.9deg;
+}
+
+.PickerCard:nth-child(6n + 5) {
+  --card-tilt: 1.8deg;
+}
+
+.PickerCard:not(:disabled):hover {
+  box-shadow: var(--shadow-md);
+  transform: rotate(var(--card-tilt)) translateY(-6px);
+}
+
+.PickerCardSelected {
+  animation: CardPicked 0.28s var(--ease);
+  box-shadow:
+    0 0 0 2px var(--accent),
+    var(--shadow-md);
+  transform: rotate(0deg) translateY(-12px);
+}
+
+.PickerCardSelected:not(:disabled):hover {
+  transform: rotate(0deg) translateY(-12px);
+}
+
+@keyframes CardPicked {
+  50% {
+    transform: rotate(0deg) translateY(-16px) scale(1.03);
+  }
+}
+
+.PickerCard:disabled {
   cursor: default;
 }
 
-.CardContent {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-around;
-  padding-bottom: 20px !important;
+.PickerCardCorner {
+  font-size: 0.7rem;
+  font-weight: 600;
+  left: 7px;
+  letter-spacing: 0;
+  opacity: 0.65;
+  position: absolute;
+  top: 6px;
 }
 
-.CardContentTop {
-  margin-top: -5px;
-  text-align: left;
+.PickerCardValue {
+  font-size: 1.35rem;
 }
 
-.CardContentMiddle {
-  padding: 18px 0 18px 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+.PickerCardSymbol {
+  font-size: 1.45rem;
 }
 
-.CardContentBottom {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  height: 25px;
-  text-align: right;
+/* The standard eleven-card deck fits on one row beside the result sidebar on
+   FHD screens. Custom decks still wrap naturally when they contain more. */
+@media (min-width: 961px) {
+  .GameArea .CardPickerDeck {
+    gap: 8px;
+  }
+
+  .GameArea .PickerCard {
+    height: 86px;
+    width: 58px;
+  }
+}
+
+@media (max-width: 480px) {
+  .CardPickerSection {
+    margin-left: -14px;
+    margin-right: -14px;
+    padding: 16px 14px 18px;
+  }
+
+  .CardPickerDeck {
+    display: grid;
+    gap: 10px 8px;
+    grid-template-columns: repeat(auto-fit, minmax(56px, 1fr));
+    margin-left: -14px;
+    margin-right: -14px;
+    padding: 16px 14px 8px;
+  }
+
+  .PickerCard {
+    --card-tilt: 0deg;
+    height: 80px;
+    justify-self: center;
+    width: 56px;
+  }
+
+  .PickerCardValue {
+    font-size: 1.15rem;
+  }
+
+  .CardPickerHint {
+    margin-left: 0;
+  }
+}
+
+@media (min-width: 481px) and (max-width: 760px) {
+  .CardPickerDeck {
+    display: grid;
+    gap: 10px;
+    grid-template-columns: repeat(auto-fit, minmax(62px, 1fr));
+    padding-bottom: 8px;
+  }
+
+  .PickerCard {
+    --card-tilt: 0deg;
+    height: 88px;
+    justify-self: center;
+    width: 62px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .PickerCard {
+    transition: box-shadow var(--duration-fast) var(--ease);
+    transform: none;
+  }
+
+  .PickerCard:not(:disabled):hover {
+    transform: none;
+  }
+
+  .PickerCardSelected,
+  .PickerCardSelected:not(:disabled):hover {
+    animation: none;
+    transform: translateY(-8px);
+  }
 }

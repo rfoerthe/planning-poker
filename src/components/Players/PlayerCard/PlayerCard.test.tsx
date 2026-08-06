@@ -30,20 +30,24 @@ describe('PlayerCard component', () => {
     expect(screen.getByText(mockPlayer.name)).toBeInTheDocument();
   });
 
-  it('should display thinking emoji when Player has not voted', () => {
+  it('should display the pending icon when Player has not voted', () => {
     render(
       <PlayerCard game={mockGame} player={mockPlayer} currentPlayerId={mockCurrentPlayerId} />,
     );
 
-    expect(screen.getByText('🤔')).toBeInTheDocument();
+    expect(screen.getByRole('img', { name: 'Überlegt noch' })).toHaveClass(
+      'SeatFaceStatus-thinking',
+    );
   });
-  it('should display thumbs up emoji when Player has voted', () => {
+  it('should display the completed icon when Player has voted', () => {
     const votedPlayer = { ...mockPlayer, status: Status.Finished };
     render(
       <PlayerCard game={mockGame} player={votedPlayer} currentPlayerId={mockCurrentPlayerId} />,
     );
 
-    expect(screen.getByText('👍')).toBeInTheDocument();
+    expect(screen.getByRole('img', { name: 'Hat bereits geschätzt' })).toHaveClass(
+      'SeatFaceStatus-voted',
+    );
   });
 
   it('should display coffee up emoji when Player has voted but value is -1 and Game is finished', () => {
@@ -73,7 +77,7 @@ describe('PlayerCard component', () => {
 
     expect(screen.getByText('5')).toBeInTheDocument();
   });
-  it('should display thinking emoji when Player has not voted and Game is finished', () => {
+  it('should display the pending icon when Player has not voted and Game is finished', () => {
     const coffeePlayer = { ...mockPlayer, status: Status.InProgress };
     const finishedGame = { ...mockGame, gameStatus: Status.Finished };
     render(
@@ -84,7 +88,7 @@ describe('PlayerCard component', () => {
       />,
     );
 
-    expect(screen.getByText('🤔')).toBeInTheDocument();
+    expect(screen.getByRole('img', { name: 'Überlegt noch' })).toBeInTheDocument();
   });
   it('should display remove icon for moderator', () => {
     const coffeePlayer = { ...mockPlayer, status: Status.InProgress };
@@ -156,7 +160,7 @@ describe('PlayerCard component', () => {
     );
 
     expect(screen.getByTestId('presence-indicator')).toBeInTheDocument();
-    expect(screen.getByRole('img', { name: 'Active in this session' })).toBeInTheDocument();
+    expect(screen.getByRole('img', { name: 'Gerade in dieser Session aktiv' })).toBeInTheDocument();
   });
 
   it('should not mark a participant that is no longer present', () => {
@@ -167,6 +171,22 @@ describe('PlayerCard component', () => {
     expect(screen.queryByTestId('presence-indicator')).not.toBeInTheDocument();
   });
 
+  it('should mark the creator as moderator when only they may manage the session', () => {
+    const soleModeratorGame = { ...mockGame, isAllowMembersToManageSession: false };
+    const creator = { ...mockPlayer, id: mockGame.createdById };
+    render(<PlayerCard game={soleModeratorGame} player={creator} currentPlayerId='someone-else' />);
+
+    expect(screen.getByText('Moderation')).toBeInTheDocument();
+  });
+
+  it('should not mark anyone as moderator when every member may manage the session', () => {
+    const sharedGame = { ...mockGame, isAllowMembersToManageSession: true };
+    const creator = { ...mockPlayer, id: mockGame.createdById };
+    render(<PlayerCard game={sharedGame} player={creator} currentPlayerId='someone-else' />);
+
+    expect(screen.queryByText('Moderation')).not.toBeInTheDocument();
+  });
+
   it('should rename current player with inline editing', async () => {
     vi.spyOn(playerService, 'updatePlayerName').mockResolvedValue(true);
     render(
@@ -174,7 +194,7 @@ describe('PlayerCard component', () => {
     );
 
     await userEvent.click(screen.getByTestId('update-button'));
-    const nameInput = screen.getByRole('textbox', { name: 'Player name' });
+    const nameInput = screen.getByRole('textbox', { name: 'Name der teilnehmenden Person' });
 
     expect(nameInput).toHaveValue(mockPlayer.name);
 

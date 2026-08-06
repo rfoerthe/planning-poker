@@ -66,7 +66,48 @@ describe('GameArea component', () => {
       <GameArea game={mockGame} players={mockPlayers} currentPlayerId={mockCurrentPlayerId} />,
     );
 
-    expect(screen.queryAllByText('1')).toHaveLength(3);
+    expect(within(screen.getByTestId('card-picker')).queryAllByText('1')).toHaveLength(2);
+  });
+
+  it('should display the result panel when nobody gave an estimate', () => {
+    const revealedGame = {
+      ...mockGame,
+      gameType: GameType.Fibonacci,
+      cards: getCards(GameType.Fibonacci),
+      gameStatus: Status.Finished,
+    };
+    const undecidedPlayers: Player[] = [
+      { id: 'a1', name: 'SpiderMan', status: Status.Finished, value: -2 },
+      { id: 'a2', name: 'IronMan', status: Status.Finished, value: -1 },
+    ];
+
+    renderWithRouter(
+      <GameArea
+        game={revealedGame}
+        players={undecidedPlayers}
+        currentPlayerId={mockCurrentPlayerId}
+      />,
+    );
+
+    const summary = within(screen.getByTestId('numeric-summary'));
+
+    expect(summary.getByText('Ergebnis')).toBeInTheDocument();
+    expect(summary.getByText('Keine Schätzungen zum Auswerten.')).toBeInTheDocument();
+  });
+
+  it('should not display the numeric result panel for a T-Shirt game', () => {
+    const tShirtGame = {
+      ...mockGame,
+      gameType: GameType.TShirt,
+      cards: getCards(GameType.TShirt),
+      gameStatus: Status.Finished,
+    };
+
+    renderWithRouter(
+      <GameArea game={tShirtGame} players={mockPlayers} currentPlayerId={mockCurrentPlayerId} />,
+    );
+
+    expect(screen.queryByTestId('numeric-summary')).not.toBeInTheDocument();
   });
 
   it('should display T-Shirt median summary when the game is finished', () => {
@@ -88,15 +129,16 @@ describe('GameArea component', () => {
 
     const summary = within(screen.getByTestId('tshirt-summary'));
 
-    expect(summary.getByText('T-Shirt Result')).toBeInTheDocument();
-    expect(summary.getByText('Median range')).toBeInTheDocument();
-    expect(summary.getByText('21-50 PD')).toBeInTheDocument();
-    expect(summary.getByText('Total median value')).toBeInTheDocument();
-    expect(summary.getByText('35.5 PD')).toBeInTheDocument();
-    expect(summary.getByText('Consensus status')).toBeInTheDocument();
-    expect(summary.getByText('MODERATE SPREAD')).toBeInTheDocument();
-    expect(summary.getByText('Short clarification recommended.')).toBeInTheDocument();
-    expect(summary.getByText('Spread: 2 | σ: 0.8 | Ratio: 9.1x')).toBeInTheDocument();
+    expect(summary.getByText('T-Shirt-Ergebnis')).toBeInTheDocument();
+    expect(summary.getByText('Median-Größe')).toBeInTheDocument();
+    expect(summary.getByText('Aufwandsspanne: 21-50 PT')).toBeInTheDocument();
+    expect(summary.getByText('Median-Aufwand')).toBeInTheDocument();
+    expect(summary.getByText('35,5 PT')).toBeInTheDocument();
+    expect(summary.getByText('Mittlere Streuung')).toBeInTheDocument();
+    expect(summary.getByText('Kurze Klärung empfohlen.')).toBeInTheDocument();
+    expect(summary.getByText('Abstand: 2 Schritte')).toBeInTheDocument();
+    expect(summary.getByText('σ: 0,8')).toBeInTheDocument();
+    expect(summary.getByText('Verhältnis: 4,9×')).toBeInTheDocument();
   });
 
   it('should display a critical T-Shirt consensus status for extreme spreads', () => {
@@ -118,10 +160,12 @@ describe('GameArea component', () => {
     const summary = within(screen.getByTestId('tshirt-summary'));
 
     expect(summary.getByText('XXS-XL')).toBeInTheDocument();
-    expect(summary.getByText('1-300 PD')).toBeInTheDocument();
-    expect(summary.getByText('CRITICAL SPREAD')).toBeInTheDocument();
-    expect(summary.getByText('Discussion required!')).toBeInTheDocument();
-    expect(summary.getByText('Spread: 5 | σ: 2.5 | Ratio: 300x')).toBeInTheDocument();
+    expect(summary.getByText('Aufwandsspanne: 1-300 PT')).toBeInTheDocument();
+    expect(summary.getByText('Kritische Streuung')).toBeInTheDocument();
+    expect(summary.getByText('Diskussion erforderlich!')).toBeInTheDocument();
+    expect(summary.getByText('Abstand: 5 Schritte')).toBeInTheDocument();
+    expect(summary.getByText('σ: 2,5')).toBeInTheDocument();
+    expect(summary.getByText('Verhältnis: 66,8×')).toBeInTheDocument();
   });
 
   describe('presence indicators', () => {

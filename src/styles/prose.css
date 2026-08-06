@@ -1,0 +1,179 @@
+/* Long-form content pages: about, guide and examples. */
+
+.Prose {
+  margin: 0 auto;
+  max-width: 760px;
+}
+
+.ProseTitle {
+  font-size: clamp(1.6rem, 3.4vw, 2.1rem);
+  font-weight: 660;
+  letter-spacing: -0.03em;
+  margin: 0 0 12px;
+}
+
+.ProseIntro {
+  color: var(--text-muted);
+  font-size: 1.02rem;
+  line-height: 1.65;
+  margin: 0 0 44px;
+}
+
+.ProseSection {
+  align-items: center;
+  display: grid;
+  gap: 44px;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  margin-bottom: 64px;
+}
+
+.ProseSection.IsReversed .ProseSectionMedia {
+  order: -1;
+}
+
+.ProseSectionTitle {
+  font-size: 1.3rem;
+  font-weight: 620;
+  letter-spacing: -0.025em;
+  margin: 0 0 14px;
+}
+
+.ProseSectionBody {
+  color: var(--text-muted);
+  display: grid;
+  font-size: 0.95rem;
+  gap: 12px;
+  line-height: 1.65;
+  margin: 0;
+}
+
+.ProseSectionBody p {
+  margin: 0;
+}
+
+.ProseImage {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  display: block;
+  height: auto;
+  max-width: 100%;
+}
+
+.ProseClosing {
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  line-height: 1.7;
+  margin: 0;
+  padding: 24px;
+}
+
+.ProseList {
+  counter-reset: prose-step;
+  display: grid;
+  gap: 14px;
+  list-style: none;
+  margin: 0 0 44px;
+  padding: 0;
+}
+
+.ProseListItem {
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  display: grid;
+  gap: 4px;
+  padding: 18px 20px;
+}
+
+.ProseListItemTitle {
+  align-items: baseline;
+  display: flex;
+  font-size: 1rem;
+  font-weight: 600;
+  gap: 10px;
+  letter-spacing: -0.015em;
+  margin: 0;
+}
+
+.ProseListItemTitle::before {
+  color: var(--accent);
+  content: counter(prose-step);
+  counter-increment: prose-step;
+  font-family: var(--font-num);
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.ProseListItemText {
+  color: var(--text-muted);
+  font-size: 0.92rem;
+  line-height: 1.6;
+  margin: 0;
+  padding-left: 24px;
+}
+
+.ExampleCard {
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  display: grid;
+  gap: 12px;
+  margin-bottom: 14px;
+  padding: 20px;
+}
+
+.ExampleRow {
+  display: grid;
+  gap: 3px;
+}
+
+.ExampleRowLabel {
+  color: var(--text-subtle);
+  font-size: 0.7rem;
+  font-weight: 620;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.ExampleRowValue {
+  color: var(--text);
+  font-size: 0.94rem;
+  line-height: 1.55;
+  margin: 0;
+}
+
+.ExampleRowValue.IsMuted {
+  color: var(--text-muted);
+}
+
+.ExampleEstimate {
+  align-self: start;
+  background-color: var(--accent-soft);
+  border-radius: var(--radius-full);
+  color: var(--accent-strong);
+  display: inline-block;
+  font-family: var(--font-num);
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 4px 12px;
+}
+
+@media (max-width: 900px) {
+  .ProseSection {
+    gap: 24px;
+    grid-template-columns: 1fr;
+  }
+
+  .ProseSection.IsReversed .ProseSectionMedia {
+    order: 0;
+  }
+}
+
+@media (max-width: 600px) {
+  .ProseSection {
+    margin-bottom: 40px;
+  }
+}

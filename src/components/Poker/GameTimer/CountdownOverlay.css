@@ -1,27 +1,24 @@
 .CountdownOverlay {
-  position: fixed;
-  inset: 0;
-  z-index: 1200;
-  display: flex;
   align-items: center;
+  display: flex;
+  inset: 0;
   justify-content: center;
   /* Voting must stay possible while the countdown runs. */
   pointer-events: none;
+  position: fixed;
+  z-index: 1200;
 }
 
 .CountdownOverlayValue {
-  color: #d64545;
+  animation: CountdownPulse 1s ease-out;
+  color: var(--danger);
+  font-family: var(--font-num);
   font-size: min(40vh, 40vw);
   font-variant-numeric: tabular-nums;
-  font-weight: 800;
+  font-weight: 700;
+  letter-spacing: -0.05em;
   line-height: 1;
-  opacity: 0.85;
-  text-shadow: 0 0 24px rgb(0 0 0 / 25%);
-  animation: CountdownPulse 1s ease-out;
-}
-
-.DarkTheme .CountdownOverlayValue {
-  color: #ff6b6b;
+  opacity: 0.82;
 }
 
 @keyframes CountdownPulse {

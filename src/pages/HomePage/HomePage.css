@@ -1,29 +1,112 @@
-.HomePageContainer {
-  padding: 25px;
-  display: flex;
-  flex-direction: column;
+.Hero {
+  align-items: start;
+  display: grid;
+  gap: 64px;
+  grid-template-columns: minmax(0, 1fr) 420px;
+}
+
+/* The resume bar sits below both hero columns. */
+.HomePage > .ResumeBar {
+  margin-top: 48px;
+}
+
+.HeroBadge {
   align-items: center;
+  background-color: var(--accent-soft);
+  border-radius: var(--radius-full);
+  color: var(--accent-strong);
+  display: inline-flex;
+  font-size: 0.78rem;
+  font-weight: 550;
+  gap: 7px;
+  margin-bottom: 22px;
+  padding: 4px 12px;
+}
+
+.HeroBadgeDot {
+  background-color: currentcolor;
+  border-radius: 50%;
+  height: 6px;
+  width: 6px;
+}
+
+.HeroTitle {
+  font-size: clamp(2.1rem, 4.6vw, 3.25rem);
+  font-weight: 680;
+  letter-spacing: -0.035em;
+  line-height: 1.05;
+  margin: 0 0 16px;
+}
+
+.HeroTitle em {
+  color: var(--text-subtle);
+  font-style: normal;
+}
+
+.HeroLede {
+  color: var(--text-muted);
+  font-size: 1.06rem;
+  line-height: 1.6;
+  margin: 0 0 32px;
+  max-width: 46ch;
+}
+
+.HeroFeatures {
+  display: grid;
+  gap: 14px;
+  list-style: none;
+  margin: 0;
+  max-width: 46ch;
+  padding: 0;
+}
+
+.HeroFeatures li {
+  color: var(--text-muted);
+  display: flex;
+  font-size: 0.9rem;
+  gap: 11px;
+  line-height: 1.55;
+}
+
+.HeroFeatures b {
+  color: var(--text);
+  font-weight: 570;
+}
+
+.HeroFeatureTick {
+  align-items: center;
+  background-color: var(--success-soft);
+  border-radius: 50%;
+  color: var(--success);
+  display: flex;
+  flex: 0 0 18px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  height: 18px;
   justify-content: center;
+  margin-top: 3px;
 }
 
-.SessionImage {
-  margin-top: -10px;
-  height: 'auto';
-  width: 600px;
-  transform: none;
-}
-
-.HomePageImage {
-  width: 500px;
-  height: auto;
-}
-
-@media (max-width: 480px) {
-  .HomePageImage {
-    width: 100%;
+@media (max-width: 900px) {
+  .Hero {
+    gap: 36px;
+    grid-template-columns: 1fr;
   }
 
-  .SessionImage {
-    width: 100%;
+  .HomePage > .ResumeBar {
+    margin-top: 36px;
+  }
+}
+
+@media (max-width: 600px) {
+  .Hero {
+    gap: 28px;
+  }
+}
+
+@media (max-width: 600px) {
+  .HeroLede {
+    font-size: 1rem;
+    margin-bottom: 26px;
   }
 }

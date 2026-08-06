@@ -1,30 +1,22 @@
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  Divider,
-  Fade,
-  Grow,
-  IconButton,
-  Snackbar,
-  Typography,
-} from '@mui/material';
-import { blue, green, grey, orange } from '@mui/material/colors';
+import { Alert, Fade, IconButton, Snackbar } from '@mui/material';
 import RefreshIcon from '@mui/icons-material/Autorenew';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import ExitToApp from '@mui/icons-material/ExitToApp';
 import LinkIcon from '@mui/icons-material/Link';
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import Alert from '@mui/material/Alert';
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import { AlertDialog } from '../../AlertDialog/AlertDialog';
 import { InfoDialog } from '../../InfoDialog/InfoDialog';
 import { finishGame, removeGame, resetGame } from '../../../service/games';
 import { Game } from '../../../types/game';
+import { Status } from '../../../types/status';
 import { isModerator } from '../../../utils/isModerator';
+import { DeckSuit } from '../DeckSuit/DeckSuit';
 import { GameTimer } from '../GameTimer/GameTimer';
 import './GameController.css';
-import { Clear } from '@mui/icons-material';
 
 interface GameControllerProps {
   game: Game;
@@ -38,17 +30,18 @@ export const GameController: React.FC<GameControllerProps> = ({
   remainingMs,
 }) => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [showCopiedMessage, setShowCopiedMessage] = useState(false);
   const [showGameProtected, setShowGameProtected] = useState(false);
-  const copyInviteLink = async () => {
+
+  const copyInviteLink = () => {
     const url = `${window.location.origin}/join/${game.id}`;
 
-    try {
-      await navigator.clipboard.writeText(url);
-      setShowCopiedMessage(true);
-    } catch (err) {
-      console.error('Failed to copy: ', err);
-    }
+    navigator.clipboard
+      .writeText(url)
+      .then(() => setShowCopiedMessage(true))
+      .catch((error) => console.error('Failed to copy: ', error));
+
     return url;
   };
 
@@ -61,183 +54,167 @@ export const GameController: React.FC<GameControllerProps> = ({
     window.location.href = '/';
   };
 
+  const canManageSession = isModerator(
+    game.createdById,
+    currentPlayerId,
+    game.isAllowMembersToManageSession,
+  );
+
   return (
     <>
-      <Grow in={true} timeout={2000}>
-        <div className='GameController'>
-          <Card variant='outlined' className='GameControllerCard'>
-            <CardHeader
-              title={game.name}
-              slotProps={{ title: { variant: 'h6' } }}
-              action={
-                <div
-                  className={
-                    'GameControllerCardHeaderAverageContainer ' +
-                    getGameStatusBackGroundClass(game.gameStatus)
-                  }
-                >
-                  <Typography variant='subtitle1'>
-                    {game.gameStatus} {getGameStatusIcon(game.gameStatus)}
-                  </Typography>
-                  <Divider className='GameControllerDivider' orientation='vertical' flexItem />
-                  {game.isLocked ? (
-                    <div
-                      className='GameControllerDeleteAction'
-                      onClick={() => setShowGameProtected(true)}
-                    >
-                      <IconButton
-                        style={{ padding: '3px', background: 'white' }}
-                        title={'Deleting the game is not allowed'}
-                      >
-                        <Clear fontSize='small' style={{ color: grey[300] }} />
-                      </IconButton>
-                    </div>
-                  ) : (
-                    <div className='GameControllerDeleteAction'>
-                      <AlertDialog
-                        title='Remove this session'
-                        message={`Are you sure? This will delete this session and remove all players.`}
-                        onConfirm={() => handleRemoveGame(game.id)}
-                        data-testid='delete-button-dialog'
-                      >
-                        <IconButton
-                          style={{ padding: '3px', background: 'white' }}
-                          title={'Remove game session'}
-                        >
-                          <Clear fontSize='small' style={{ color: grey[900] }} />
-                        </IconButton>
-                      </AlertDialog>
-                    </div>
-                  )}
-                </div>
-              }
-              className='GameControllerCardTitle'
-            ></CardHeader>
-            <CardContent className='GameControllerCardContentArea'>
-              {isModerator(
-                game.createdById,
-                currentPlayerId,
-                game.isAllowMembersToManageSession,
-              ) && (
-                <>
-                  <div className='GameControllerButtonContainer'>
-                    <div className='GameControllerButton'>
-                      <IconButton
-                        onClick={() => finishGame(game.id)}
-                        title={'Finish game by revealing cards'}
-                        data-testid='reveal-button'
-                        color='primary'
-                        disabled={game.gameStatus === 'Finished' || game.gameStatus === 'Started'}
-                      >
-                        <VisibilityIcon fontSize='large' style={{ color: green[500] }} />
-                      </IconButton>
-                    </div>
-                    <Typography variant='caption'>Reveal</Typography>
-                  </div>
-
-                  <div className='GameControllerButtonContainer'>
-                    <div className='GameControllerButton'>
-                      <IconButton
-                        data-testid='restart-button'
-                        onClick={() => resetGame(game.id)}
-                        title={'Start a new game'}
-                        disabled={game.gameStatus === 'Started'}
-                      >
-                        <RefreshIcon fontSize='large' color='error' />
-                      </IconButton>
-                    </div>
-                    <Typography variant='caption'>Restart</Typography>
-                  </div>
-                </>
-              )}
-              <GameTimer
-                game={game}
-                remainingMs={remainingMs}
-                canManageTimer={isModerator(
-                  game.createdById,
-                  currentPlayerId,
-                  game.isAllowMembersToManageSession,
-                )}
-              />
-              <div className='GameControllerButtonContainer'>
-                <div className='GameControllerButton'>
-                  <IconButton
-                    data-testid='exit-button'
-                    onClick={() => leaveGame()}
-                    title={'Leave game'}
-                  >
-                    <ExitToApp fontSize='large' style={{ color: orange[500] }} />
-                  </IconButton>
-                </div>
-                <Typography variant='caption'>Exit</Typography>
-              </div>
-              <div title='Copy invite link to clipboard' className='GameControllerButtonContainer'>
-                <div className='GameControllerButton'>
-                  <InfoDialog
-                    title='Invite link has been created'
-                    onOpen={(): React.ReactNode => (
-                      <span>
-                        Invite link <b>{copyInviteLink()}</b> was copied to your clipboard.
-                        <br />
-                        <br />
-                        Share it with your friends to invite them to this session.
-                      </span>
-                    )}
-                    data-testid='invite-button-dialog'
-                  >
-                    <IconButton data-testid='invite-button'>
-                      <LinkIcon fontSize='large' style={{ color: blue[500] }} />
-                    </IconButton>
-                  </InfoDialog>
-                </div>
-                <Typography variant='caption'>Invite</Typography>
-              </div>
-            </CardContent>
-          </Card>
+      <header className='SessionBar'>
+        <div className='SessionBarHeading'>
+          <DeckSuit gameType={game.gameType} className='SessionBarSuit' />
+          <h1 className='SessionBarTitle' title={game.name}>
+            {game.name}
+          </h1>
+          <span className={`StatusPill ${getStatusPillClass(game.gameStatus)}`}>
+            <span className='StatusPillDot' aria-hidden='true' />
+            {t(getStatusLabelKey(game.gameStatus))}
+          </span>
         </div>
-      </Grow>
+
+        <div className='SessionBarActions'>
+          <GameTimer game={game} remainingMs={remainingMs} canManageTimer={canManageSession} />
+
+          {canManageSession && (
+            <>
+              <button
+                type='button'
+                className='SessionAction SessionActionPrimary'
+                data-testid='reveal-button'
+                title={t('session.actions.revealTitle')}
+                onClick={() => finishGame(game.id)}
+                disabled={
+                  game.gameStatus === Status.Finished || game.gameStatus === Status.Started
+                }
+              >
+                <VisibilityIcon fontSize='small' />
+                <span className='SessionActionLabel'>{t('session.actions.reveal')}</span>
+              </button>
+
+              <button
+                type='button'
+                className='SessionAction'
+                data-testid='restart-button'
+                title={t('session.actions.restartTitle')}
+                onClick={() => resetGame(game.id)}
+                disabled={game.gameStatus === Status.Started}
+              >
+                <RefreshIcon fontSize='small' />
+                <span className='SessionActionLabel'>{t('session.actions.restart')}</span>
+              </button>
+            </>
+          )}
+
+          <InfoDialog
+            title={t('session.inviteDialogTitle')}
+            onOpen={(): React.ReactNode => (
+              <span>
+                {t('session.inviteDialogBody')}
+                <br />
+                <b className='SessionInviteLink'>{copyInviteLink()}</b>
+                <br />
+                <br />
+                {t('session.inviteDialogHint')}
+              </span>
+            )}
+            data-testid='invite-button-dialog'
+          >
+            <button
+              type='button'
+              className='SessionAction'
+              data-testid='invite-button'
+              title={t('session.actions.inviteTitle')}
+            >
+              <LinkIcon fontSize='small' />
+              <span className='SessionActionLabel'>{t('session.actions.invite')}</span>
+            </button>
+          </InfoDialog>
+
+          <button
+            type='button'
+            className='SessionAction'
+            data-testid='exit-button'
+            title={t('session.actions.exitTitle')}
+            onClick={() => leaveGame()}
+          >
+            <ExitToApp fontSize='small' />
+            <span className='SessionActionLabel'>{t('session.actions.exit')}</span>
+          </button>
+
+          {game.isLocked ? (
+            <IconButton
+              className='SessionDeleteButton'
+              size='small'
+              title={t('session.deleteLockedTitle')}
+              aria-label={t('session.deleteLockedTitle')}
+              onClick={() => setShowGameProtected(true)}
+            >
+              <LockOutlinedIcon fontSize='small' />
+            </IconButton>
+          ) : (
+            <AlertDialog
+              title={t('session.deleteTitle')}
+              message={t('session.deleteMessage')}
+              onConfirm={() => handleRemoveGame(game.id)}
+              data-testid='delete-button-dialog'
+            >
+              <IconButton
+                className='SessionDeleteButton'
+                size='small'
+                title={t('session.deleteTitle')}
+                aria-label={t('session.deleteTitle')}
+              >
+                <DeleteOutlineIcon fontSize='small' />
+              </IconButton>
+            </AlertDialog>
+          )}
+        </div>
+      </header>
+
       <Snackbar
         anchorOrigin={{ horizontal: 'right', vertical: 'top' }}
         open={showCopiedMessage}
         autoHideDuration={5000}
-        slotProps={{ transition: Fade }}
+        slots={{ transition: Fade }}
         transitionDuration={1000}
         onClose={() => setShowCopiedMessage(false)}
       >
-        <Alert severity='success'>Invite Link copied to clipboard!</Alert>
+        <Alert severity='success'>{t('session.inviteCopiedSnackbar')}</Alert>
       </Snackbar>
       <Snackbar
         anchorOrigin={{ horizontal: 'right', vertical: 'top' }}
         open={showGameProtected}
         autoHideDuration={5000}
-        slotProps={{ transition: Fade }}
+        slots={{ transition: Fade }}
         transitionDuration={1000}
         onClose={() => setShowGameProtected(false)}
       >
-        <Alert severity='error'>Deleting the game is not allowed!</Alert>
+        <Alert severity='error'>{t('session.deleteLockedSnackbar')}</Alert>
       </Snackbar>
     </>
   );
 };
 
-const getGameStatusIcon = (gameStatus: string) => {
+const getStatusLabelKey = (gameStatus: Status | string): string => {
   switch (gameStatus) {
-    case 'In Progress':
-      return '⏱️';
-    case 'Finished':
-      return '🎉';
+    case Status.InProgress:
+      return 'session.statusLabel.inProgress';
+    case Status.Finished:
+      return 'session.statusLabel.finished';
     default:
-      return '🚀';
+      return 'session.statusLabel.started';
   }
 };
 
-const getGameStatusBackGroundClass = (gameStatus: string) => {
+const getStatusPillClass = (gameStatus: Status | string): string => {
   switch (gameStatus) {
-    case 'In Progress':
-      return 'InProgress';
-    case 'Finished':
-      return 'Finished';
+    case Status.InProgress:
+      return 'StatusPillRunning';
+    case Status.Finished:
+      return 'StatusPillDone';
     default:
-      return 'Started';
+      return 'StatusPillNeutral';
   }
 };
