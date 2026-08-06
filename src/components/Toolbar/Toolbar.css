@@ -61,7 +61,8 @@
   align-items: center;
   display: flex;
   flex: 1 1 auto;
-  gap: 2px;
+  /* Wide enough that the outlines of neighbouring buttons stay apart. */
+  gap: 8px;
   min-width: 0;
   overflow: hidden;
 }
@@ -70,7 +71,7 @@
   align-items: center;
   appearance: none;
   background: transparent;
-  border: 0;
+  border: 1px solid transparent;
   border-radius: var(--radius-sm);
   color: var(--text-muted);
   cursor: pointer;
@@ -81,8 +82,23 @@
   padding: 6px 11px;
   transition:
     background-color var(--duration-fast) var(--ease),
+    border-color var(--duration-fast) var(--ease),
     color var(--duration-fast) var(--ease);
   white-space: nowrap;
+}
+
+/*
+ * The outline of the quiet buttons used elsewhere in the app. Without a border
+ * at rest these two read as labels and only reveal themselves as controls
+ * under the pointer — which is no help to anyone who does not go looking.
+ */
+.NavLink:not(.NavLinkPrimary) {
+  border-color: var(--border);
+  color: var(--text);
+}
+
+.NavLink:not(.NavLinkPrimary):hover {
+  border-color: color-mix(in srgb, var(--accent) 40%, var(--border));
 }
 
 .NavLinkIcon {
@@ -104,7 +120,6 @@
   background-color: var(--accent);
   box-shadow: var(--shadow-sm);
   color: var(--accent-contrast);
-  margin-left: 4px;
 }
 
 .NavLinkPrimary:hover,
