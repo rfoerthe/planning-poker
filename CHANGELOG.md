@@ -10,6 +10,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 - `public/logo192.png` and `public/logo512.png` carry the brand mark of the favicon — two offset cards on the accent tile — instead of the unrelated logo they had kept since the project was scaffolded. They are the icons the web app manifest hands to Chrome, so an installation under `chrome://apps` had been showing that old mark on the shelf and in the app window while every other surface already showed the new one. Both are rasterised from `public/favicon.svg` and keep a transparent corner outside the rounded tile, which is what Chrome expects for an icon it does not mask itself.
 
+### Fixed
+
+- `public/index.html` is gone. It was the template Create React App had left behind, with the old English title and description and `%PUBLIC_URL%` placeholders that Vite never substitutes — and, having no module script, no way to start the app. The build was never affected: Vite writes the generated `index.html` over the copied one, so `dist/` always held the real entry point, and that is the only thing nginx and Firebase Hosting ever serve. The dev server was, because it answers from the public directory before it reaches the HTML middleware: `/` came out correct while `/index.html` returned the template — same page, blank, depending on how it was addressed.
+
 ## [3.0.3] - 2026-08-06
 
 ### Changed
