@@ -8,7 +8,7 @@ Planning Poker is a free, open-source web application for Scrum and Agile teams 
 
 ![Home page](docs/HomePage.jpg)
 
-![Active session](docs/ActiveSession.jpg)
+![Active session with revealed estimates](docs/ActiveSession.jpg)
 
 ## Highlights
 
