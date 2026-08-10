@@ -4,6 +4,12 @@ All notable changes to this project are documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.0.4] - 2026-08-10
+
+### Changed
+
+- `public/logo192.png` and `public/logo512.png` carry the brand mark of the favicon — two offset cards on the accent tile — instead of the unrelated logo they had kept since the project was scaffolded. They are the icons the web app manifest hands to Chrome, so an installation under `chrome://apps` had been showing that old mark on the shelf and in the app window while every other surface already showed the new one. Both are rasterised from `public/favicon.svg` and keep a transparent corner outside the rounded tile, which is what Chrome expects for an icon it does not mask itself.
+
 ## [3.0.3] - 2026-08-06
 
 ### Changed
