@@ -4,6 +4,18 @@ All notable changes to this project are documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.1.0] - 2026-08-20
+
+### Changed
+
+- Firestore connects through long polling from the start (`experimentalForceLongPolling`, with 10-second poll cycles) instead of the SDK's default streaming transport. The streaming channel is a request that stays open for up to a minute, and corporate proxies and TLS-inspecting firewalls stall exactly that kind of request; the SDK only worked around it after a detection phase that showed up as a 15–30 second hang on the first contact — typically for an invitee opening a join link from a company network. Forcing long polling skips the detection entirely, and the short cycles stay below typical proxy idle timeouts. The price is a little more request overhead for connections that never had the problem, which is negligible at the size of the documents this app moves.
+- Joining a session no longer waits for the server. The join page used to spend four to five sequential round trips before the board appeared: read the session to validate the link, read the own player entry, read the session *again* inside the join call, write the new player and wait for the acknowledgement, then subscribe. Now the two validation reads run in parallel, the join call takes the session the page already loaded instead of reading it a second time, and the write is not awaited — Firestore's latency compensation shows the new player on the board immediately while the write syncs in the background, the same pattern the card click has always relied on. What remains in front of the board is one parallel read.
+- The Firebase SDK moved from 12.13 to 12.18.
+
+### Added
+
+- The join page says what it is doing. While the session behind the link is being checked it shows "Session wird geprüft …", and if the check runs longer than eight seconds the text changes to a note that corporate networks (VPN/proxy) can slow down the first connection — the situation described above, where users had been staring at a form that looked finished but did not react.
+
 ## [3.0.4] - 2026-08-10
 
 ### Changed

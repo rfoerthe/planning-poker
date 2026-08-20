@@ -102,6 +102,9 @@ export const de = {
     yourNamePlaceholder: 'Wie sollen dich die anderen sehen?',
     submit: 'Beitreten',
     submitting: 'Beitritt läuft …',
+    checkingSession: 'Session wird geprüft …',
+    slowConnectionHint:
+      'Die Verbindung dauert ungewöhnlich lange — in Firmennetzen (VPN/Proxy) kann der erste Aufbau etwas brauchen. Wir versuchen es weiter.',
     deletedSnackbar: 'Diese Session wurde gelöscht und existiert nicht mehr.',
   },
 

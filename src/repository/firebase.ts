@@ -5,7 +5,7 @@ import {
   doc,
   getDoc,
   getDocs,
-  getFirestore,
+  initializeFirestore,
   query,
   setDoc,
   updateDoc,
@@ -26,7 +26,18 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+
+/*
+ * Corporate proxies and TLS-inspecting firewalls stall Firestore's default
+ * streaming transport; the SDK only falls back to long polling after a
+ * detection phase that shows up as a 10-30s hang on first contact. Forcing
+ * long polling skips that phase entirely. Short poll cycles keep the requests
+ * below typical proxy idle timeouts and surface dropped connections quickly.
+ */
+const db = initializeFirestore(app, {
+  experimentalForceLongPolling: true,
+  experimentalLongPollingOptions: { timeoutSeconds: 10 },
+});
 
 const gamesCollectionName = 'games';
 const playersCollectionName = 'players';
