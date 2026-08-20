@@ -393,12 +393,14 @@ describe('Players service', () => {
   });
 
   describe('add a player to the given game', () => {
-    it('should return false if the game does not exist', async () => {
-      vi.spyOn(fb, 'getGameFromStore').mockResolvedValueOnce(undefined);
+    it('should log instead of throw when the store write fails', async () => {
+      vi.spyOn(fb, 'addPlayerToGameInStore').mockRejectedValueOnce(new Error('offline'));
+      vi.spyOn(storage, 'getPlayerGamesFromCache').mockReturnValueOnce([]);
+      const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
-      const res = await addPlayerToGame('foo', 'bar');
+      addPlayerToGame(mockGame as Game, 'bar');
 
-      expect(res).toBe(false);
+      await vi.waitFor(() => expect(errorSpy).toHaveBeenCalled());
     });
 
     it('should update the cache and DB with the new game for the player', async () => {
@@ -422,16 +424,16 @@ describe('Players service', () => {
       const newList = [mockGames[0], newPlayerGame];
       const fakeName = 'peach';
       const expected = { id: fakeUlid, name: fakeName, status: Status.NotStarted };
-      vi.spyOn(fb, 'getGameFromStore').mockResolvedValueOnce(newGame);
       vi.spyOn(storage, 'getPlayerGamesFromCache').mockReturnValueOnce(mockGames);
       const cacheSpy = vi.spyOn(storage, 'updatePlayerGamesInCache');
-      const dbSpy = vi.spyOn(fb, 'addPlayerToGameInStore');
+      const dbSpy = vi.spyOn(fb, 'addPlayerToGameInStore').mockResolvedValueOnce(true);
 
-      const res = await addPlayerToGame(newGame.id, fakeName);
+      addPlayerToGame(newGame, fakeName);
 
       expect(cacheSpy).toHaveBeenCalledWith(newList);
       expect(dbSpy).toHaveBeenCalledWith(newGame.id, expect.objectContaining(expected));
-      expect(res).toBe(true);
+      // The game arrives from the caller — joining must not read it again.
+      expect(fb.getGameFromStore).not.toHaveBeenCalled();
     });
   });
 

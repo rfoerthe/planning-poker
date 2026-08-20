@@ -133,6 +133,7 @@ vi.mock('firebase/firestore', () => {
   }
 
   const getFirestore = (_app?: any) => ({ __db: true });
+  const initializeFirestore = (_app?: any, _settings?: any) => ({ __db: true });
   const initializeApp = (cfg: any) => ({ __app: true, cfg });
 
   const collection = (_db: any, ...segments: string[]) => ({ __collection: true, segments });
@@ -192,6 +193,7 @@ vi.mock('firebase/firestore', () => {
 
   return {
     getFirestore,
+    initializeFirestore,
     initializeApp,
     collection,
     doc,

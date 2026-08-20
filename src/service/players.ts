@@ -10,6 +10,7 @@ import {
   updatePlayerInStore,
 } from '../repository/firebase';
 import { getPlayerGamesFromCache, updatePlayerGamesInCache } from '../repository/localStorage';
+import { Game } from '../types/game';
 import { Player, PlayerGame } from '../types/player';
 import { Status } from '../types/status';
 import { isModerator } from '../utils/isModerator';
@@ -140,19 +141,27 @@ export const removeGameFromCache = (gameId: string) => {
   updatePlayerGamesInCache(playerGames.filter((playerGame) => playerGame.id !== gameId));
 };
 
-export const addPlayerToGame = async (gameId: string, playerName: string): Promise<boolean> => {
-  const joiningGame = await getGameFromStore(gameId);
-
-  if (!joiningGame) {
-    console.log('Game not found');
-    return false;
-  }
+/**
+ * Registers the player in the given game.
+ *
+ * Takes the game the caller has already loaded instead of reading it again —
+ * the join page fetched it to validate the invite link, and on high-latency
+ * connections a second read of the same document is a full round trip spent
+ * on nothing.
+ *
+ * The write is deliberately not awaited. Firestore's latency compensation
+ * serves the new player to the local listeners immediately, so the caller can
+ * navigate to the board right away while the write syncs in the background —
+ * the same pattern updatePlayerValue relies on. The SDK retries the write
+ * across transient network failures on its own.
+ */
+export const addPlayerToGame = (game: Game, playerName: string): void => {
   const newPlayer = { name: playerName, id: ulid(), status: Status.NotStarted };
 
-  updatePlayerGames(joiningGame.id, joiningGame.name, joiningGame.createdBy, joiningGame.createdById, newPlayer.id);
-  await addPlayerToGameInStore(gameId, newPlayer);
-
-  return true;
+  updatePlayerGames(game.id, game.name, game.createdBy, game.createdById, newPlayer.id);
+  addPlayerToGameInStore(game.id, newPlayer).catch((error) => {
+    console.error('Failed to persist new player', error);
+  });
 };
 
 export const resetPlayers = async (gameId: string) => {

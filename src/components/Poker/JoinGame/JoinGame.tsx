@@ -8,7 +8,15 @@ import {
   isCurrentPlayerInGame,
   removeGameFromCache,
 } from '../../../service/players';
+import { Game } from '../../../types/game';
 import './JoinGame.css';
+
+/*
+ * Threshold after which the session check is called out as unusually slow.
+ * On corporate networks the first Firestore contact can take this long even
+ * though nothing is broken — the hint keeps users from giving up or reloading.
+ */
+const SLOW_CONNECTION_HINT_MS = 8000;
 
 export const JoinGame = () => {
   const navigate = useNavigate();
@@ -20,39 +28,78 @@ export const JoinGame = () => {
   const [gameFound, setIsGameFound] = useState(true);
   const [showNotExistMessage, setShowNotExistMessage] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [loadedGame, setLoadedGame] = useState<Game | undefined>(undefined);
+  const [checking, setChecking] = useState(false);
+  const [showSlowHint, setShowSlowHint] = useState(false);
 
   useEffect(() => {
+    let active = true;
+
     async function fetchData() {
-      if (joinGameId) {
-        if (await getGame(joinGameId)) {
-          setIsGameFound(true);
-          if (await isCurrentPlayerInGame(joinGameId)) {
-            navigate(`/game/${joinGameId}`);
-          }
-        } else {
-          removeGameFromCache(joinGameId);
-          setShowNotExistMessage(true);
-          setTimeout(() => {
-            navigate('/');
-          }, 5000);
+      if (!joinGameId) {
+        return;
+      }
+      setChecking(true);
+      setShowSlowHint(false);
+      const slowHintTimer = setTimeout(() => setShowSlowHint(true), SLOW_CONNECTION_HINT_MS);
+
+      // Both reads only share the session id, so they run in parallel — on a
+      // slow connection two sequential round trips would double the wait.
+      const [game, alreadyInGame] = await Promise.all([
+        getGame(joinGameId),
+        isCurrentPlayerInGame(joinGameId),
+      ]);
+
+      clearTimeout(slowHintTimer);
+      if (!active) {
+        return;
+      }
+      setChecking(false);
+      setShowSlowHint(false);
+
+      if (game) {
+        setLoadedGame(game);
+        setIsGameFound(true);
+        if (alreadyInGame) {
+          navigate(`/game/${joinGameId}`);
         }
+      } else {
+        setLoadedGame(undefined);
+        removeGameFromCache(joinGameId);
+        setShowNotExistMessage(true);
+        setTimeout(() => {
+          navigate('/');
+        }, 5000);
       }
     }
     fetchData();
-  }, [joinGameId, history]);
+
+    return () => {
+      active = false;
+    };
+  }, [joinGameId, navigate]);
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
-    setLoading(true);
-    if (joinGameId) {
-      const res = await addPlayerToGame(joinGameId, playerName);
-
-      setIsGameFound(res);
-      setLoading(false);
-      if (res) {
-        navigate(`/game/${joinGameId}`);
-      }
+    if (!joinGameId) {
+      return;
     }
+    setLoading(true);
+
+    // The effect usually has the game already; fetching here only covers the
+    // case where the user submits before the check for a re-typed id finished.
+    const game = loadedGame?.id === joinGameId ? loadedGame : await getGame(joinGameId);
+
+    if (!game) {
+      setIsGameFound(false);
+      setLoading(false);
+      return;
+    }
+
+    // Not awaited inside: navigate immediately, the write syncs in the
+    // background and latency compensation shows the player on the board.
+    addPlayerToGame(game, playerName);
+    navigate(`/game/${joinGameId}`);
   };
 
   return (
@@ -81,6 +128,11 @@ export const JoinGame = () => {
             {!gameFound && (
               <p className='FormError' id='sessionIdError'>
                 {t('joinGame.sessionNotFound')}
+              </p>
+            )}
+            {checking && (
+              <p className='FormHint' role='status'>
+                {showSlowHint ? t('joinGame.slowConnectionHint') : t('joinGame.checkingSession')}
               </p>
             )}
           </div>
