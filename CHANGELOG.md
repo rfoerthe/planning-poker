@@ -4,6 +4,13 @@ All notable changes to this project are documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.1.1] - 2026-08-20
+
+### Added
+
+- Three maintenance scripts for the Firestore `games` collection, run from the command line against the project in `.env`: `pnpm games:list` prints every session with its document ID, name, deck, creation date, creator, lock flag and participant count (`--json` adds the participant names); `pnpm games:lock <id>` sets `isLocked: true` on a session; `pnpm games:delete <id> [<id> ...]` removes sessions together with their `players` subcollection. Until now the only way to see or clean up the stored sessions was the Firebase console, and the only way to protect one from the six-month cleanup was to edit the document by hand.
+- The delete script refuses to touch a locked session and says so, lists what it is about to delete and asks for confirmation before writing — `--yes` skips the prompt, and without a terminal it aborts rather than assuming consent. The list script puts locked sessions at the end, so what is kept on purpose does not sit between the sessions that are candidates for deletion.
+
 ## [3.1.0] - 2026-08-20
 
 ### Changed
