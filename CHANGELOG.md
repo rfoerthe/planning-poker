@@ -4,6 +4,16 @@ All notable changes to this project are documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.1.3] - 2026-08-29
+
+### Changed
+
+- The production build is split into chunks instead of shipping as one file. Everything the app imports had been landing in a single 1,120 kB bundle — Firebase 462 kB, MUI 260 kB, React 217 kB, the remaining libraries 85 kB and the application itself 94 kB — which Vite flagged on every build as being over its 1,000 kB warning threshold. `build.rolldownOptions.output.codeSplitting` now groups the three large libraries and a catch-all `vendor` into chunks of their own. They change only when a dependency is bumped, so a release that touches nothing but application code no longer invalidates the 1,024 kB of third-party code the browser already holds.
+- Every page is loaded on demand through `React.lazy`, behind one `Suspense` boundary in `App.tsx`. This is what makes the vendor split pay off rather than merely rearrange the same download: the entry chunk is 36 kB, and the content pages — `/about-planning-poker`, `/guide`, `/examples` — no longer reach the Firestore chunk at all, because nothing in their import graph touches the repository module. They had been downloading 462 kB of real-time database to render static prose. Firestore now loads only on the routes that talk to it: `/`, `/join/:id`, `/game/:id` and `/delete-old-games`.
+- The stylesheet is split along the same lines. `index.css` drops from 38.5 kB to 15.6 kB as the session board's 17.5 kB moves into the game route and the prose styles into the three content pages, so the first paint of any route parses only the rules it uses.
+- While a route's chunk is in flight the app shows the spinner and "Wird geladen …" that the session board already used. The placeholder reserves the same minimum height a rendered page has, so the footer keeps its position instead of jumping up and back down on every navigation.
+- The split stops at the build. `src/repository/firebase.ts` still initialises Firestore at module load, so the home route pulls the Firebase chunk on first paint even though it only writes on submit. Taking it off that path as well means turning the repository into a lazily imported singleton and making `streamData` and `streamPlayersFromStore` async — a change to the data layer rather than to the bundling, and left for its own release.
+
 ## [3.1.2] - 2026-08-29
 
 ### Security
