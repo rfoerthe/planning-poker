@@ -14,6 +14,11 @@ export default defineConfig({
   },
   publicDir: 'public',
   test: {
+    // Only pick up tests from src. Git worktrees live under .claude/worktrees
+    // and would otherwise be collected too, running foreign branches' tests
+    // against this checkout's config.
+    include: ['src/**/*.{test,spec}.{ts,tsx}'],
+    exclude: ['**/node_modules/**', '**/dist/**', '.claude/**'],
     environment: 'jsdom',
     setupFiles: './src/setupTests.ts',
     globals: true,
