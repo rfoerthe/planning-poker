@@ -23,6 +23,7 @@
     "unique-names-generator": "^4.7.1"
   },
   "engines": {
+    "node": ">=22",
     "pnpm": ">=9.0.0"
   },
   "packageManager": "pnpm@11.1.1",

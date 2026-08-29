@@ -6,7 +6,7 @@ allowBuilds:
 overrides:
   # Security: gaxios@6 pins uuid@^9, which is affected by GHSA-w5hq-g745-h8pq.
   uuid@9: ^11.1.1
-  # Security: @google-cloud/pubsub@5 pins @opentelemetry/core@^1, which is
-  # affected by GHSA-8988-4f7v-96qf. It uses a single export from it,
-  # W3CTraceContextPropagator, which v2 still provides unchanged.
-  '@opentelemetry/core': ^2.8.0
+  # Security: firebase-tools depends on @google-cloud/pubsub@^5, whose 5.x line
+  # pins @opentelemetry/core@^1 and is therefore stuck on GHSA-8988-4f7v-96qf.
+  # Pubsub 6 is the release that moves to @opentelemetry/core@^2.
+  '@google-cloud/pubsub': ^6.0.1
