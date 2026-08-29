@@ -191,6 +191,11 @@ describe('Poker component', () => {
   });
 
   it('should display a message when Firebase updates fail', async () => {
+    // Poker reports the snapshot failure on the console. Capture the call
+    // instead of letting it print, so an expected error does not read like a
+    // real one in the test output.
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
+
     onSnapshot
       .mockImplementationOnce((ref: any, cb: (snap: any) => void, errorCb: (error: Error) => void) => {
         errorCb(new Error('permission denied'));
@@ -209,6 +214,10 @@ describe('Poker component', () => {
 
     await screen.findByText(
       'Aktualisierungen können gerade nicht empfangen werden. Bitte später erneut versuchen.',
+    );
+    expect(consoleError).toHaveBeenCalledWith(
+      'Failed to receive Firebase updates',
+      expect.any(Error),
     );
   });
 });
