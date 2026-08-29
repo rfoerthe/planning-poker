@@ -4,6 +4,22 @@ All notable changes to this project are documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.1.2] - 2026-08-29
+
+### Security
+
+- Closed all 53 open Dependabot alerts (17 high, 31 moderate, 5 low) and one advisory that only `pnpm audit` reported. Every one of them sat in a transitive dependency, and all but `js-cookie` — pulled in by `react-cookie-consent` — were reachable only through `firebase-tools`, so nothing in the shipped bundle was affected. Bumping `firebase-tools` to 15.28.2 and `react-cookie-consent` to 10.0.2 brought fixed versions of `re2`, `tar`, `morgan`, `form-data`, `hono`, `@hono/node-server`, `ip-address`, `fast-uri`, `js-yaml` and `js-cookie`; refreshing the rest of the tree within the ranges their parents already allow moved `undici` to 7.29.0 and 6.28.0 and `brace-expansion` to 1.1.18 and 5.0.9. The direct dependency ranges came along to their current patch and minor releases; no major versions changed.
+- Two advisories had no release that an update could reach, so `pnpm-workspace.yaml` now pins them. `gaxios@6` pins `uuid@^9` and never moved off it (GHSA-w5hq-g745-h8pq); it calls only `v4`, which v11 provides unchanged. `@google-cloud/pubsub@5` pins `@opentelemetry/core@^1` and is therefore stuck on GHSA-8988-4f7v-96qf; pubsub 6 is the release that moves to v2, and `firebase-tools` asks for `^5.2.0`, so the override raises it.
+
+### Changed
+
+- The project now requires Node 22 or newer. `@google-cloud/pubsub` 6 sets that floor where `firebase-tools` alone would still accept Node 20. CI already runs 22.x. Pubsub 6 also replaces `google-gax` 5, `google-auth-library` 10 and four smaller Google packages, all of them below `firebase-tools` and none of them in the app.
+
+### Fixed
+
+- `vite.config.ts` imports `package.json` with `with { type: 'json' }`. The bundled config loader had been rewriting that import; Vite 8 warns on every build that its native loader, which is planned to become the default, cannot, because Node refuses a JSON import without the attribute.
+- `pnpm test` no longer prints a stack trace on a green run. Two tests drive an error path on purpose — a failing Firestore subscription and a failing presence heartbeat — and the production code reports both on the console, which Vitest forwards to the terminal. An expected `permission denied` trace reaching ten frames into react-dom reads like a real failure and buries an actual one. Both tests now capture the call and assert it, which keeps the output clean and turns the log into part of the contract.
+
 ## [3.1.1] - 2026-08-20
 
 ### Added
