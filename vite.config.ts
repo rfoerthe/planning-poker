@@ -11,6 +11,31 @@ export default defineConfig({
   },
   build: {
     chunkSizeWarningLimit: 1000, // Set limit to 1000 kBs (default is 500)
+    rolldownOptions: {
+      output: {
+        /*
+         * Keep the big third-party libraries in their own chunks. They change
+         * only when a dependency is bumped, so browsers can reuse them across
+         * releases instead of re-downloading them with every app change — and
+         * a route that never touches Firestore never fetches it.
+         *
+         * Higher priority wins, so the specific groups are matched before the
+         * catch-all `vendor` group.
+         */
+        codeSplitting: {
+          groups: [
+            { name: 'firebase', test: /node_modules[\\/]@?firebase/, priority: 30 },
+            { name: 'mui', test: /node_modules[\\/](@mui|@emotion)[\\/]/, priority: 20 },
+            {
+              name: 'react',
+              test: /node_modules[\\/](react|react-dom|react-router|scheduler)[\\/]/,
+              priority: 10,
+            },
+            { name: 'vendor', test: /node_modules/, priority: 1 },
+          ],
+        },
+      },
+    },
   },
   publicDir: 'public',
   test: {

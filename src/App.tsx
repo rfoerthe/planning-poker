@@ -1,18 +1,11 @@
-import { CssBaseline, useMediaQuery } from '@mui/material';
+import { CircularProgress, CssBaseline, useMediaQuery } from '@mui/material';
 import { StyledEngineProvider, ThemeProvider } from '@mui/material/styles';
-import { useEffect, useMemo, useState } from 'react';
+import { lazy, Suspense, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import CookieConsent from 'react-cookie-consent';
 import { Route, BrowserRouter as Router, Routes } from 'react-router';
 import { Footer } from './components/Footer/Footer';
 import { Toolbar } from './components/Toolbar/Toolbar';
-import { AboutPage } from './pages/AboutPage/AboutPage';
-import DeleteOldGames from './pages/DeleteOldGames/DeleteOldGames';
-import { ExamplesPage } from './pages/ExamplesPage/ExamplesPage';
-import { GamePage } from './pages/GamePage/GamePage';
-import { GuidePage } from './pages/GuidePage/GuidePage';
-import HomePage from './pages/HomePage/HomePage';
-import JoinPage from './pages/JoinPage/JoinPage';
 import {
   createAppTheme,
   getStoredThemePreference,
@@ -20,6 +13,42 @@ import {
   storeThemePreference,
   ThemePreference,
 } from './service/theme';
+import './App.css';
+
+/*
+ * Every page is loaded on demand so a route only pays for what it renders.
+ * Without this the whole app — the Firestore client included — sits in the
+ * entry chunk, and the static content pages download a real-time database
+ * they never talk to.
+ */
+const AboutPage = lazy(() =>
+  import('./pages/AboutPage/AboutPage').then((m) => ({ default: m.AboutPage })),
+);
+const DeleteOldGames = lazy(() => import('./pages/DeleteOldGames/DeleteOldGames'));
+const ExamplesPage = lazy(() =>
+  import('./pages/ExamplesPage/ExamplesPage').then((m) => ({ default: m.ExamplesPage })),
+);
+const GamePage = lazy(() =>
+  import('./pages/GamePage/GamePage').then((m) => ({ default: m.GamePage })),
+);
+const GuidePage = lazy(() =>
+  import('./pages/GuidePage/GuidePage').then((m) => ({ default: m.GuidePage })),
+);
+const HomePage = lazy(() => import('./pages/HomePage/HomePage'));
+const JoinPage = lazy(() => import('./pages/JoinPage/JoinPage'));
+
+/*
+ * Holds the page's vertical space while its chunk arrives, so the footer does
+ * not jump up and back down on every navigation.
+ */
+function RouteFallback({ label }: { label: string }) {
+  return (
+    <div className='RouteFallback' role='status' aria-live='polite'>
+      <CircularProgress size={26} />
+      <span className='RouteFallbackText'>{label}</span>
+    </div>
+  );
+}
 
 function App() {
   const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
@@ -52,15 +81,17 @@ function App() {
               themePreference={themePreference}
               onThemePreferenceChange={handleThemePreferenceChange}
             />
-            <Routes>
-              <Route path='/game/:id' element={<GamePage />} />
-              <Route path='/delete-old-games' element={<DeleteOldGames />} />
-              <Route path='/join/:id' element={<JoinPage />} />
-              <Route path='/about-planning-poker' element={<AboutPage />} />
-              <Route path='/examples' element={<ExamplesPage />} />
-              <Route path='/guide' element={<GuidePage />} />
-              <Route path='/*' element={<HomePage />} />
-            </Routes>
+            <Suspense fallback={<RouteFallback label={t('common.loading')} />}>
+              <Routes>
+                <Route path='/game/:id' element={<GamePage />} />
+                <Route path='/delete-old-games' element={<DeleteOldGames />} />
+                <Route path='/join/:id' element={<JoinPage />} />
+                <Route path='/about-planning-poker' element={<AboutPage />} />
+                <Route path='/examples' element={<ExamplesPage />} />
+                <Route path='/guide' element={<GuidePage />} />
+                <Route path='/*' element={<HomePage />} />
+              </Routes>
+            </Suspense>
             <Footer />
             <CookieConsent
               location='bottom'
