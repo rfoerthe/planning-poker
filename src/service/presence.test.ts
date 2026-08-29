@@ -84,9 +84,13 @@ describe('presence service', () => {
     });
 
     it('should swallow a failed refresh', async () => {
+      // The swallowed failure is still logged. Capture the call instead of
+      // letting it print, so an expected log does not read like a real one.
+      const debug = vi.spyOn(console, 'debug').mockImplementation(() => {});
       vi.spyOn(fb, 'updatePlayerPresenceInStore').mockRejectedValueOnce(new Error('offline'));
 
       await expect(updatePresence('game-1', 'a1')).resolves.toBeUndefined();
+      expect(debug).toHaveBeenCalledWith('Failed to refresh presence', expect.any(Error));
     });
   });
 });
