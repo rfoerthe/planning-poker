@@ -37,6 +37,7 @@
     "clean": "rimraf dist",
     "games:list": "node --env-file=.env scripts/list-games.mjs",
     "games:lock": "node --env-file=.env scripts/lock-game.mjs",
+    "games:unlock": "node --env-file=.env scripts/unlock-game.mjs",
     "games:delete": "node --env-file=.env scripts/delete-games.mjs",
     "test": "vitest run",
     "lint": "eslint .",
