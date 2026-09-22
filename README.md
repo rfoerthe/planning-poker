@@ -23,7 +23,7 @@ Planning Poker is a free, open-source web application for Scrum and Agile teams 
 - Reset sessions for additional rounds.
 - Remove participants and delete completed sessions.
 - Support multiple locales through translation files.
-- Administer stored sessions from the command line: list, lock, and delete them.
+- Administer stored sessions from the command line: list, lock, unlock, and delete them.
 
 ## Tech Stack
 
@@ -82,6 +82,7 @@ These scripts talk to the Firestore project configured in `.env`, using the same
 ```bash
 pnpm games:list                  # List all sessions (locked ones last); --json for machine-readable output
 pnpm games:lock <document-id>    # Protect a session against deletion (isLocked: true)
+pnpm games:unlock <document-id>  # Allow a session to be deleted again (isLocked: false)
 pnpm games:delete <id> [<id>...] # Delete sessions and their participants; asks for confirmation, skips locked ones
 ```
 
