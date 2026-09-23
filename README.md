@@ -22,7 +22,7 @@ Planning Poker is a free, open-source web application for Scrum and Agile teams 
 - See who is currently taking part through a presence indicator on each participant card.
 - Reset sessions for additional rounds.
 - Remove participants and delete completed sessions.
-- Support multiple locales through translation files.
+- Use the German UI with bundled translations and light, dark, or system theme preferences.
 - Administer stored sessions from the command line: list, lock, unlock, and delete them.
 
 ## Tech Stack
@@ -37,6 +37,8 @@ Planning Poker is a free, open-source web application for Scrum and Agile teams 
 - Firebase Hosting and optional Docker/Nginx runtime
 
 ## Quick Start
+
+Use a current Node 22.x release (at least 22.13.0) and the pinned `pnpm@11.1.1`; see the setup guide for requirements.
 
 ```bash
 pnpm install
@@ -77,7 +79,7 @@ pnpm preview      # Preview the production build on port 5000
 
 ### Maintenance Scripts
 
-These scripts talk to the Firestore project configured in `.env`, using the same credentials as the app.
+These scripts talk to the Firestore project configured in `.env`, using the Firebase web SDK and the same project configuration and Firestore rules as the app. They do not use a service account or bypass access rules.
 
 ```bash
 pnpm games:list                  # List all sessions (locked ones last); --json for machine-readable output
@@ -86,9 +88,11 @@ pnpm games:unlock <document-id>  # Allow a session to be deleted again (isLocked
 pnpm games:delete <id> [<id>...] # Delete sessions and their participants; asks for confirmation, skips locked ones
 ```
 
+The lock protects against the normal app deletion flow and `games:delete`. Sessions are not automatically deleted based on age; see [Session Data Maintenance](docs/standard-operating-procedures.md#sop-session-data-maintenance).
+
 ## Contributing
 
-Planning Poker welcomes focused improvements, bug fixes, documentation updates, and feature work aligned with the project scope. Before opening a pull request, run linting, tests, and a production build.
+Planning Poker welcomes focused improvements, bug fixes, documentation updates, and feature work aligned with the project scope. Before opening a pull request, run linting, type checking, tests, and a production build.
 
 For the full workflow, see [Standard Operating Procedures](docs/standard-operating-procedures.md).
 

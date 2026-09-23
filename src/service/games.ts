@@ -4,7 +4,6 @@ import {
   addPlayerToGameInStore,
   getGameFromStore,
   removeGameFromStore,
-  removeOldGameFromStore,
   streamData,
   streamPlayersFromStore,
   updateGameDataInStore,
@@ -102,8 +101,4 @@ export const removeGame = async (gameId: string) => {
   }
   await removeGameFromStore(gameId);
   removeGameFromCache(gameId);
-};
-
-export const deleteOldGames = async () => {
-  await removeOldGameFromStore();
 };

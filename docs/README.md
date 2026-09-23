@@ -11,6 +11,7 @@ This folder contains the working documentation set for Planning Poker, a free an
 | [Setup & Installation](./setup-installation.md) | Provides local setup, environment configuration, build, test, and Docker instructions. | Developers, QA, release engineers |
 | [Standard Operating Procedures](./standard-operating-procedures.md) | Defines repeatable workflows for testing, contribution, deployment, releases, and maintenance. | Developers, maintainers, project managers |
 | [User & Admin Manual](./user-admin-manual.md) | Explains how end users and moderators create, join, manage, and delete sessions. | Users, moderators, support teams |
+| [Architecture Overview](../arch.md) | Provides a short introduction to the architecture. | New contributors |
 | [Changelog](../CHANGELOG.md) | Lists released versions and their user-facing changes. | All audiences |
 
 ## Project Snapshot
@@ -20,10 +21,11 @@ This folder contains the working documentation set for Planning Poker, a free an
 - **Primary tech stack:** React, TypeScript, Vite, Material UI, Firebase Firestore
 - **Hosting target:** Firebase Hosting and/or Docker-hosted Nginx container
 - **Repository package manager:** pnpm
-- **Primary branch:** `[Placeholder: confirm default branch, currently referenced as master in CI]`
+- **Primary branch:** `master` (the branch targeted by CI)
 
 ## Documentation Standards
 
+- Keep all Markdown documentation in English, including when the application UI is German.
 - Keep docs in Markdown.
 - Prefer repo-relative links for files in this repository.
 - Update related documentation in the same pull request as code changes.

@@ -6,10 +6,8 @@ import {
   getDoc,
   getDocs,
   initializeFirestore,
-  query,
   setDoc,
   updateDoc,
-  where,
 } from 'firebase/firestore';
 import { Game } from '../types/game';
 import { Player } from '../types/player';
@@ -144,38 +142,5 @@ export const removeGameFromStore = async (gameId: string) => {
   });
 
   await Promise.all(deletePromises);
-  return true;
-};
-
-export const removeOldGameFromStore = async () => {
-  const monthsToDelete = 6;
-  const dateObj = new Date();
-  const requiredDate = new Date(dateObj.setMonth(dateObj.getMonth() - monthsToDelete));
-
-  const q = query(collection(db, gamesCollectionName), where('createdAt', '<', requiredDate));
-  const games = await getDocs(q);
-
-  console.log('Games length', games.docs.length);
-  if (games.docs.length > 0) {
-    const data = games.docs[0].data();
-    console.log(data);
-    console.log(games.docs[games.docs.length - 1].data());
-    // Note: toDate() works if the data is a Firestore Timestamp
-    console.log(data.createdAt.toDate().toString());
-    console.log(games.docs[games.docs.length - 1].data().createdAt.toDate().toString());
-
-    for (const gameDoc of games.docs) {
-      console.log('Deleting:', gameDoc.data().name);
-      const playersRef = collection(db, gamesCollectionName, gameDoc.id, playersCollectionName);
-      const playersSnap = await getDocs(playersRef);
-
-      for (const playerDoc of playersSnap.docs) {
-        await deleteDoc(playerDoc.ref);
-      }
-      await deleteDoc(gameDoc.ref);
-      console.log('deleted');
-    }
-  }
-
   return true;
 };

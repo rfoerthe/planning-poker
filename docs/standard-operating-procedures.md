@@ -17,7 +17,7 @@ This document defines repeatable operational workflows for Planning Poker. Use i
 ## SOP: Contribution Workflow
 
 1. Sync with the default branch.
-2. Create a feature branch.
+2. Create a dedicated Git worktree with a feature branch.
 3. Install dependencies with `pnpm install`.
 4. Make the smallest coherent change.
 5. Add or update tests for behavior changes.
@@ -86,11 +86,12 @@ This document defines repeatable operational workflows for Planning Poker. Use i
    - Votes can be revealed.
    - The session can be reset.
    - A player can be removed.
-   - Locale switching still works.
+   - German UI text renders without untranslated keys.
+   - Light, dark, and system theme preferences work.
 
 ### CI Test Procedure
 
-GitHub Actions runs on pushes and pull requests targeting `master`.
+GitHub Actions runs on pushes and pull requests targeting `master`, and can be started manually with `workflow_dispatch`. It uploads a build artifact; it does not deploy the app.
 
 The workflow:
 
@@ -122,6 +123,8 @@ The workflow:
 
 ### Deployment Steps
 
+The default project in `.firebaserc` is `planning-poker-1d6fd`. Confirm both the Hosting target and the database project in the build environment. For the configured default, `pnpm run deploy` combines a clean build and deploy; `pnpm run preview-deploy` publishes to a 14-day preview channel. See [Firebase Hosting Setup](setup-installation.md#firebase-hosting-setup).
+
 1. Check out the target release branch.
 2. Install dependencies:
 
@@ -138,7 +141,7 @@ The workflow:
 4. Deploy:
 
    ```bash
-   firebase deploy
+   pnpm exec firebase deploy --only hosting --project YOUR_FIREBASE_PROJECT_ID
    ```
 
 5. Validate production:
@@ -169,32 +172,40 @@ Open `http://localhost:8080` and verify the app loads.
 
 ### Push
 
-Use the repository helper script if configured:
+The helper `push-image.sh [version]` tags the local `planning-poker:latest` image as `ghcr.io/rfoerthe/planning-poker:[version]` and pushes it; the default version is `latest`. When using the versioned build above, first add the local tag it expects:
 
 ```bash
-./push-image.sh
+docker tag planning-poker:[version] planning-poker:latest
+./push-image.sh [version]
 ```
 
-`[Placeholder: Document container registry, image naming convention, and credentials.]`
+Authenticate to GHCR with an account permitted to push that package, or tag and push to your own registry. `run-image.sh` runs `planning-poker:latest` on port 3000. `build-image.sh` pulls the current branch, removes local dependencies/build output, and builds without passing the `.env` secret; use the explicit build command above for a configured image.
 
 ## SOP: Session Data Maintenance
 
-The application includes `deleteOldGames`, which removes games older than six months from Firestore.
+### Command-Line Maintenance
 
-### Preconditions
+All commands use the Firebase web SDK with `.env` configuration and the same Firestore access rules as the browser. No service account or admin authentication is added.
 
-- Confirm the retention period is still six months.
-- Confirm the target Firebase project.
-- Confirm backup or rollback expectations.
-- Confirm the requester and approval.
+```bash
+pnpm games:list
+pnpm games:list --json
+pnpm games:lock <document-id>
+pnpm games:unlock <document-id>
+pnpm games:delete <document-id> [<document-id>...]
+```
 
-### Procedure
+Listing orders sessions by creation date, newest first, with locked sessions last. JSON output includes participant names. Lock and unlock change only `isLocked`; they do not stop voting or freeze a session. Deletion removes the players subcollection and then the game, skips locked documents, and prompts for confirmation. Comma-separated IDs are also accepted. `--yes` (or `-y`) skips confirmation and is required in a non-interactive terminal. Missing IDs are reported and produce a nonzero exit status.
 
-1. Validate Firestore access.
-2. Run the old-game deletion path in a non-production project first.
-3. Inspect logs for deleted game count and examples.
-4. Run in production only after approval.
-5. Record completion in `[Placeholder: operations log location]`.
+### Cleanup Procedure
+
+There is no automatic age-based cleanup. Sessions remain until explicitly deleted through the app or the CLI.
+
+1. Confirm the target Firebase project in `.env` and the sessions approved for deletion.
+2. Run `pnpm games:list` (or `pnpm games:list --json`) and review creation dates, participant counts, and lock flags.
+3. Protect sessions that must be retained with `pnpm games:lock <document-id>`.
+4. Run `pnpm games:delete <document-id> [<document-id>...]` for the selected sessions and review the confirmation prompt. Locked sessions are skipped.
+5. Check the output and list sessions again to verify the result. Record the cleanup in `[Placeholder: operations log location]`.
 
 ### Caution
 
@@ -233,7 +244,7 @@ Update docs when changing:
 - Test or release process.
 - Moderator/admin capabilities.
 
-Every documentation update should prefer concrete instructions over tribal knowledge. Use placeholders only when a detail is unknown and should be explicitly resolved later.
+Keep all Markdown documentation in English. Every documentation update should prefer concrete instructions over tribal knowledge. Use placeholders only when a detail is unknown and should be explicitly resolved later.
 
 ## Definition Of Done
 

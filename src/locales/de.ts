@@ -399,11 +399,6 @@ export const de = {
     version: 'v{{version}}',
   },
 
-  deleteOldGames: {
-    inProgress: 'Alte Sessions werden gelöscht …',
-    done: 'Löschen abgeschlossen.',
-  },
-
   cookieConsent: {
     accept: 'Verstanden',
     title: 'Datenschutzhinweise und Datenverwendung',

@@ -1,42 +1,12 @@
 # Architecture Overview
 
-## Introduction
+Planning Poker is a client-side React 19 application built with TypeScript, Vite, and Material UI. Firebase Firestore stores sessions and participants and synchronizes them between browsers. There is no separate application server or user authentication.
 
-This project is a free, open-source Scrum/Agile Planning Poker web application designed to help Agile teams estimate user stories efficiently. It features session management, real-time voting, and a modern, intuitive UI.
+- **UI and routing:** React Router loads pages on demand with `React.lazy` and `Suspense`. Vite splits Firebase, Material UI/Emotion, React, and other vendor dependencies into separate chunks.
+- **State and persistence:** React state and Firestore snapshots drive the session UI. Browser local storage remembers recent sessions, player IDs, and the theme preference; it is not a complete offline session store.
+- **Services:** `src/service/` contains session, player, statistics, timer, presence, and theme logic. `src/repository/` wraps Firestore and local storage access. Components attach Firestore snapshot listeners to references returned by the services.
+- **Language and appearance:** The UI is German only. i18next resources from `src/locales/de.ts` are bundled at build time. CSS design tokens and the Material UI theme support light, dark, and system preferences.
+- **Operations:** Firebase Hosting and Docker/Nginx serve the static build. GitHub Actions checks lint, types, tests, and the build; deployment is separate. `scripts/` contains the session maintenance commands.
+- **Access and privacy:** Firestore holds session names, participant names, votes, and presence timestamps. Vote hiding and moderator controls are client UI behavior; access control depends on the deployed Firestore rules, which are not included in this repository.
 
-## High-Level Architecture
-
-- **Frontend:** Built with React 19 and Material-UI 7, providing a responsive and interactive user interface.
-- **State Management:** Utilizes React's built-in state and context, with some data cached in browser local storage for performance and offline support.
-- **Routing:** Uses React Router for client-side navigation between pages (Home, Game, Join, About, Guide, etc.).
-- **Internationalization:** Supports multiple languages using i18next.
-- **Backend/Database:** Integrates with Google Firestore for real-time data storage and synchronization of game sessions and players.
-
-## Main Components
-
-- **App Entry (`src/index.tsx`, `src/App.tsx`):** Bootstraps the React app, sets up theming, routing, and global providers.
-- **Pages:** Each major view (Home, Game, Join, About, Guide, Examples, DeleteOldGames) is a separate page component under `src/pages/`.
-- **Components:** Reusable UI elements (Toolbar, Players, Poker, Dialogs, etc.) are organized under `src/components/`.
-- **Services:** Business logic for games, players, theming, and vote statistics is encapsulated in `src/service/`.
-- **Repository Layer:** All Firestore and local storage interactions are abstracted in `src/repository/`.
-- **Types:** Shared TypeScript types for games, players, and status are defined in `src/types/`.
-
-## Data Flow
-
-1. **User Interaction:** Users interact with the UI, triggering state changes and service calls.
-2. **Service Layer:** Services handle business logic and call repository functions for data persistence.
-3. **Repository Layer:** Repository modules abstract Firestore and local storage operations, returning data to services/components.
-4. **Real-Time Updates:** Firestore streams are used for real-time updates to game sessions and player lists.
-
-## Build & Deployment
-
-- **Build Tool:** Vite is used for fast development and production builds.
-- **Testing:** Vitest is configured for unit and integration tests.
-- **Deployment:** The app is designed for deployment on Firebase Hosting.
-
-## Security & Privacy
-
-- No sensitive data is stored on the server; user data is kept in Firestore and local storage. Cookie consent and privacy information are provided to users.
-
----
-For more details, see the README.md and source code directories.
+See [Technical Architecture](docs/technical-architecture.md) for the data model, routes, service APIs, and operational limitations, and [Setup & Installation](docs/setup-installation.md) for build and deployment instructions.
