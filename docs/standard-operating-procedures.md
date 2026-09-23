@@ -102,7 +102,7 @@ The workflow:
 5. Runs `pnpm install --frozen-lockfile`.
 6. Runs `pnpm lint`.
 7. Runs `pnpm typecheck`.
-8. Runs `pnpm test`.
+8. Runs `pnpm test` (Vitest and isolated Node.js deploy-script tests).
 9. Runs `pnpm build`.
 10. Uploads `dist` as a build artifact.
 
@@ -123,7 +123,7 @@ The workflow:
 
 ### Deployment Steps
 
-The default project in `.firebaserc` is `planning-poker-1d6fd`. Confirm both the Hosting target and the database project in the build environment. For the configured default, `pnpm run deploy` combines a clean build and deploy; `pnpm run preview-deploy` publishes to a 14-day preview channel. See [Firebase Hosting Setup](setup-installation.md#firebase-hosting-setup).
+Confirm `VITE_FB_PROJECT_ID` and the other Firebase settings in `.env`, including any overrides exported in the shell or CI environment. Both deploy scripts load `.env` and explicitly use the resulting project ID for the build and Hosting target. `pnpm run deploy` combines a clean build and Hosting deployment; `pnpm run preview-deploy` publishes to a 14-day preview channel in the same project. See [Firebase Hosting Setup](setup-installation.md#firebase-hosting-setup).
 
 1. Check out the target release branch.
 2. Install dependencies:
@@ -132,17 +132,19 @@ The default project in `.firebaserc` is `planning-poker-1d6fd`. Confirm both the
    pnpm install --frozen-lockfile
    ```
 
-3. Build:
+3. Authenticate if needed:
 
    ```bash
-   pnpm build
+   pnpm exec firebase login
    ```
 
-4. Deploy:
+4. Build and deploy:
 
    ```bash
-   pnpm exec firebase deploy --only hosting --project YOUR_FIREBASE_PROJECT_ID
+   pnpm run deploy
    ```
+
+   The script stops if `.env` or the project ID is missing, the build fails, or Firebase reports an error.
 
 5. Validate production:
 

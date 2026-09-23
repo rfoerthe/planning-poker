@@ -77,7 +77,7 @@ Vite opens the default browser automatically. Setting `PORT` selects a different
 pnpm test
 ```
 
-Tests use Vitest and Testing Library.
+The test command runs the Vitest/Testing Library suite followed by Node.js integration tests for the deploy scripts. The deploy tests use fake local CLI binaries and never contact Firebase.
 
 ## Run Linting
 
@@ -167,22 +167,28 @@ The repository includes `firebase.json` configured for a single-page application
 }
 ```
 
-The Firebase CLI is installed as a development dependency. `.firebaserc` selects `planning-poker-1d6fd` as the default project. Use an explicit project ID when deploying your own instance; this target is independent of `VITE_FB_PROJECT_ID`, which selects the app's database.
+The Firebase CLI is installed as a development dependency. The deploy scripts load `.env` using Node's `--env-file` option and pass `VITE_FB_PROJECT_ID` explicitly to the CLI as `--project`. There is no `.firebaserc` or repository-specific default project.
+
+Set `VITE_FB_PROJECT_ID` and the other Firebase settings in `.env` to your target project, then log in and deploy:
 
 ```bash
 pnpm exec firebase login
-pnpm build
-pnpm exec firebase deploy --only hosting --project YOUR_FIREBASE_PROJECT_ID
+pnpm run deploy
 ```
 
-For maintainers with access to the configured default project, `pnpm run deploy` cleans `dist`, builds, and runs `firebase deploy`. `pnpm run preview-deploy` does the same build and deploys to the `preview` Hosting channel with a 14-day expiry. Both use `.firebaserc` unless a project override is passed. A preview build still uses the Firebase database configured at build time; a preview channel does not isolate session data.
+`pnpm run deploy` validates the project ID is present, cleans `dist`, builds the app, and deploys only Firebase Hosting. A missing `.env` or empty project ID stops the command before cleanup or deployment. A failed build prevents deployment; Firebase failures return a nonzero exit status.
 
-For a preview of your own project:
+For a preview:
 
 ```bash
-pnpm build
-pnpm exec firebase hosting:channel:deploy preview --expires 14d --project YOUR_FIREBASE_PROJECT_ID
+pnpm run preview-deploy
 ```
+
+This uses the same configuration and build steps, then deploys to the `preview` Hosting channel with a 14-day expiry. A preview build still uses the database configured in `.env`; a preview channel does not isolate session data.
+
+Both scripts share `scripts/deploy.mjs`. Values already exported in the calling environment take precedence over `.env`, as with the maintenance scripts. The resulting `VITE_FB_PROJECT_ID` is passed to both the build and the Firebase CLI, so Vite's mode-specific environment files cannot select a different database project for this deployment. Keep the other Firebase configuration values consistent with that project. Change `.env` (or the exported environment) to select a target; the wrapper does not accept additional CLI arguments.
+
+Direct Firebase CLI commands do not read `VITE_FB_PROJECT_ID` automatically and must still receive `--project YOUR_FIREBASE_PROJECT_ID`. `firebase.json` remains required for Hosting configuration.
 
 ## Localization Setup
 

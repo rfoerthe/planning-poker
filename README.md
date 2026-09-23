@@ -70,12 +70,16 @@ Update `.env` with Firebase project values before testing real Firestore-backed 
 
 ```bash
 pnpm run dev      # Start the Vite development server
-pnpm test         # Run tests
+pnpm test         # Run application and deploy-script tests
 pnpm lint         # Run ESLint
 pnpm typecheck    # Run the TypeScript compiler without emitting output
 pnpm build        # Build production assets
 pnpm preview      # Preview the production build on port 5000
 ```
+
+### Firebase Deployment
+
+Configure `.env` and authenticate with `pnpm exec firebase login`, then run `pnpm run deploy` for Hosting or `pnpm run preview-deploy` for a 14-day preview channel. Both commands clean and build the app, then deploy to `VITE_FB_PROJECT_ID` from the loaded environment. No `.firebaserc` is needed. See [Firebase Hosting Setup](docs/setup-installation.md#firebase-hosting-setup) for environment precedence and preview behavior.
 
 ### Maintenance Scripts
 

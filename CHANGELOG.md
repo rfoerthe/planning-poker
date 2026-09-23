@@ -10,8 +10,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 - `pnpm games:unlock <document-id>` clears a session's deletion lock without changing other fields.
 
+### Changed
+
+- Hosting deployment commands now load `.env` and explicitly pass `VITE_FB_PROJECT_ID` to Firebase. A shared Node.js wrapper validates that the project ID is present, cleans and builds the app, and stops on build or deployment failures. Production deploys only Hosting; preview deployments keep the `preview` channel and 14-day expiry. Exported environment values take precedence over `.env` and are shared by the build and deploy.
+- The test command now includes isolated deploy-script integration tests with fake CLI binaries, covering target selection, missing configuration, and failure propagation without contacting Firebase.
+
 ### Removed
 
+- Removed `.firebaserc` and its hard-coded default project. Deployments select their target from the loaded environment.
 - The unlinked `/delete-old-games` route, its page, age-based Firestore deletion functions, and unused translations have been removed. Opening the old URL now shows the home page without deleting sessions. Use the existing app controls or maintenance CLI for explicit deletion; there is no automatic six-month cleanup.
 
 ### Documentation

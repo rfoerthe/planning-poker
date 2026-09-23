@@ -49,7 +49,7 @@ flowchart LR
 | `src/config/i18n.ts` | Localization configuration. |
 | `src/locales/de.ts` | Bundled German translation resource. |
 | `src/utils/` | Shared hooks, timestamp conversion, and client moderator checks. |
-| `scripts/` | Firestore session listing, locking, unlocking, and deletion commands. |
+| `scripts/` | Firestore maintenance commands and the shared Hosting deploy wrapper with isolated integration tests. |
 | `docs/` | Product, technical, operational, and user documentation. |
 
 ## Major Pages
@@ -375,7 +375,7 @@ VITE_FB_APP_ID
 VITE_FB_MEASUREMENT_ID
 ```
 
-Use `.env.example` as the local template.
+Use `.env.example` as the local template. The deploy scripts load `.env` with Node's `--env-file` option, then `scripts/deploy.mjs` uses the effective `VITE_FB_PROJECT_ID` for both the Vite build and an explicit Firebase CLI `--project` argument. Exported environment values take precedence. Hosting configuration remains in `firebase.json`; project aliases in `.firebaserc` are not used.
 
 ## Security And Privacy Notes
 
