@@ -8,6 +8,7 @@ WORKDIR /app
 
 # Copy package files and pnpm settings to install dependencies first (caching optimization)
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY patches/ ./patches/
 
 # Install pnpm and dependencies
 RUN npm install -g pnpm && pnpm install --frozen-lockfile

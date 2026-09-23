@@ -10,3 +10,13 @@ overrides:
   # pins @opentelemetry/core@^1 and is therefore stuck on GHSA-8988-4f7v-96qf.
   # Pubsub 6 is the release that moves to @opentelemetry/core@^2.
   '@google-cloud/pubsub': ^6.0.1
+  # Security: GHSA-8cw4-87c7-c6xx; Firebase still requests vulnerable csv-parse 5.
+  'firebase-tools>csv-parse': 7.0.2
+  # Security: GHSA-528h-pc64-c93x; the Firebase patch adapts its v1 stream API
+  # usage to the fixed v3 Node stream adapters.
+  'firebase-tools>stream-json': 3.5.0
+  # Security: GHSA-x5fp-wj9c-mxmx and GHSA-4mjr-xmp4-gh2g. Some Express
+  # dependencies pin qs exactly, so updating the lockfile alone is insufficient.
+  qs@<6.16.0: 6.16.0
+patchedDependencies:
+  firebase-tools@15.28.2: patches/firebase-tools@15.28.2.patch
