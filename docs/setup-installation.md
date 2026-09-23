@@ -6,10 +6,10 @@ Install the following tools before working on Planning Poker:
 
 | Tool | Required Version | Notes |
 | --- | --- | --- |
-| Node.js | `22.0.0` or higher | CI uses Node 22.x. |
-| pnpm | `9.0.0` or higher | Repository package manager is `pnpm@11.1.1`. |
-| Git | `[Placeholder: supported version]` | Required for source control. |
-| Firebase project | `[Placeholder: project name/id]` | Required for real Firestore-backed local testing. |
+| Node.js | Current 22.x, at least `22.13.0`, or a compatible newer LTS release | `package.json` declares `>=22`, but the locked ESLint and jsdom versions require at least 22.13.0 on Node 22. CI uses 22.x. |
+| pnpm | `11.1.1` | Use the version pinned in `packageManager`; the declared engine floor is `>=9.0.0`. |
+| Git | A version with worktree support | Required for source control and isolated feature work. |
+| Firebase project | Your development project with Firestore enabled | Required for real sessions; `.env.example` contains dummy values. |
 | Docker | Optional | Required only for container builds. |
 
 ## Clone The Repository
@@ -53,7 +53,9 @@ VITE_FB_APP_ID=[Placeholder: Firebase app ID]
 VITE_FB_MEASUREMENT_ID=[Placeholder: Firebase measurement ID]
 ```
 
-Do not commit `.env` files containing real credentials.
+Keep local environment files out of version control. Vite embeds `VITE_*` values in the browser build, so these variables must not contain private server secrets. Firebase access protection depends on Firestore rules, not on hiding the web configuration.
+
+The app does not sign users in or connect to a Firestore emulator automatically. Configure rules for your target project separately; no Firestore rules file is shipped in this repository.
 
 ## Start Local Development
 
@@ -67,13 +69,15 @@ Open the local app:
 http://localhost:5173
 ```
 
+Vite opens the default browser automatically. Setting `PORT` selects a different port and disables automatic browser opening.
+
 ## Run Tests
 
 ```bash
 pnpm test
 ```
 
-Tests use Vitest and Testing Library.
+The test command runs the Vitest/Testing Library suite followed by Node.js integration tests for the deploy scripts. The deploy tests use fake local CLI binaries and never contact Firebase.
 
 ## Run Linting
 
@@ -163,42 +167,41 @@ The repository includes `firebase.json` configured for a single-page application
 }
 ```
 
-Deployment requires Firebase CLI access and project permissions.
+The Firebase CLI is installed as a development dependency. The deploy scripts load `.env` using Node's `--env-file` option and pass `VITE_FB_PROJECT_ID` explicitly to the CLI as `--project`. There is no `.firebaserc` or repository-specific default project.
+
+Set `VITE_FB_PROJECT_ID` and the other Firebase settings in `.env` to your target project, then log in and deploy:
 
 ```bash
-pnpm build
-firebase deploy
+pnpm exec firebase login
+pnpm run deploy
 ```
 
-`[Placeholder: Add exact Firebase project alias, required CLI login method, and deployment owner.]`
+`pnpm run deploy` validates the project ID is present, cleans `dist`, builds the app, and deploys only Firebase Hosting. A missing `.env` or empty project ID stops the command before cleanup or deployment. A failed build prevents deployment; Firebase failures return a nonzero exit status.
+
+For a preview:
+
+```bash
+pnpm run preview-deploy
+```
+
+This uses the same configuration and build steps, then deploys to the `preview` Hosting channel with a 14-day expiry. A preview build still uses the database configured in `.env`; a preview channel does not isolate session data.
+
+Both scripts share `scripts/deploy.mjs`. Values already exported in the calling environment take precedence over `.env`, as with the maintenance scripts. The resulting `VITE_FB_PROJECT_ID` is passed to both the build and the Firebase CLI, so Vite's mode-specific environment files cannot select a different database project for this deployment. Keep the other Firebase configuration values consistent with that project. Change `.env` (or the exported environment) to select a target; the wrapper does not accept additional CLI arguments.
+
+Direct Firebase CLI commands do not read `VITE_FB_PROJECT_ID` automatically and must still receive `--project YOUR_FIREBASE_PROJECT_ID`. `firebase.json` remains required for Hosting configuration.
 
 ## Localization Setup
 
-Translation files live under:
+The application currently ships in German only. `src/locales/de.ts` contains the translations, and `src/config/i18n.ts` imports them into the bundle with `de` as the active, fallback, and only supported language. There is no language switch or runtime locale-file fetch.
 
-```text
-public/locales/
-```
-
-Current locale folders include:
-
-- `en`
-- `pt-BR`
-- `zh-Hant`
-
-When adding a new language:
-
-1. Create `public/locales/[locale]/translation.json`.
-2. Add all keys from the English translation file.
-3. Update language selection behavior if needed.
-4. Test the UI for layout overflow and missing translations.
+To add a language, create a resource alongside `de.ts`, register it in `resources` and `supportedLngs`, and implement language selection. Check all translation keys and UI layouts. Markdown documentation remains English.
 
 ## Troubleshooting
 
 | Issue | Likely Cause | Resolution |
 | --- | --- | --- |
 | App starts but Firestore calls fail | Missing or invalid `.env` values | Confirm Firebase variables and restart Vite. |
-| Build fails with dependency mismatch | pnpm lockfile or Node version drift | Use Node 22 and run `pnpm install --frozen-lockfile`. |
+| Build fails with dependency mismatch | pnpm lockfile or Node version drift | Use a current Node 22.x release and run `pnpm install --frozen-lockfile`. |
 | Tests fail in CI but pass locally | Environment or dependency version mismatch | Match CI Node version and run clean install. |
 | Docker build cannot find Firebase config | Build secret missing | Pass `--secret id=myenv,src=.env`. |
 | Routes 404 after deploy | SPA rewrites missing | Confirm `firebase.json` rewrite to `/index.html`. |

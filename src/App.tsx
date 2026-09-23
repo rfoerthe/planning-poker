@@ -24,7 +24,6 @@ import './App.css';
 const AboutPage = lazy(() =>
   import('./pages/AboutPage/AboutPage').then((m) => ({ default: m.AboutPage })),
 );
-const DeleteOldGames = lazy(() => import('./pages/DeleteOldGames/DeleteOldGames'));
 const ExamplesPage = lazy(() =>
   import('./pages/ExamplesPage/ExamplesPage').then((m) => ({ default: m.ExamplesPage })),
 );
@@ -84,7 +83,6 @@ function App() {
             <Suspense fallback={<RouteFallback label={t('common.loading')} />}>
               <Routes>
                 <Route path='/game/:id' element={<GamePage />} />
-                <Route path='/delete-old-games' element={<DeleteOldGames />} />
                 <Route path='/join/:id' element={<JoinPage />} />
                 <Route path='/about-planning-poker' element={<AboutPage />} />
                 <Route path='/examples' element={<ExamplesPage />} />

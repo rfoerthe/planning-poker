@@ -2,7 +2,7 @@
 
 ## Audience
 
-This manual is for Planning Poker participants, session moderators, and support/admin users who help manage estimation sessions.
+This manual is for Planning Poker participants, session moderators, and support/admin users who help manage estimation sessions. The application UI is German; this manual describes its workflows in English.
 
 ## User Roles
 
@@ -16,8 +16,8 @@ This manual is for Planning Poker participants, session moderators, and support/
 
 1. Open the Planning Poker application.
 2. Choose the join option or open an invite link from the moderator.
-3. Enter your display name.
-4. Join the session.
+3. Enter the session ID if you did not follow an invite link, then enter your display name.
+4. Join the session. The invite check shows a loading message and a slow-connection hint after eight seconds. A browser with an existing participant identity returns directly to the session.
 5. Wait for the moderator to introduce the story or estimation item.
 6. Select the card that represents your estimate.
 7. Wait for the moderator to reveal all votes.
@@ -39,11 +39,11 @@ This manual is for Planning Poker participants, session moderators, and support/
 
    Each deck carries one suit of a Skat deck as its mark, all four in the accent colour rather than the red and black of a real deck. The mark appears on the deck buttons, next to the session name during the round, and on the session's entry in the resume bar, so sessions with different decks can be told apart at a glance.
 
-6. Choose whether members may manage the session.
+6. Choose whether members may manage the session (enabled by default).
 7. Create the session.
 8. Share the invite link with participants.
 
-`[Placeholder: Add exact UI labels after product copy is finalized.]`
+The default deck is Short Fibonacci. Custom decks accept up to 15 entries and require at least two distinct whole numbers; duplicate values prevent creation.
 
 ## Voting Workflow
 
@@ -63,7 +63,7 @@ A small green dot in the lower right corner of a participant card means that thi
 - The dot appears within moments of somebody joining.
 - It disappears about two minutes after a participant closes the session.
 - Your own card always shows the dot.
-- A card without a dot is an entry whose browser is gone. Moderators can remove such entries.
+- A card without a dot has no recent heartbeat. The participant may have left, or their browser or connection may have delayed updates. Moderators can remove stale entries.
 
 The two-minute delay is deliberate. Browsers slow down background tabs, and a participant reading the story in another window is still taking part.
 
@@ -82,31 +82,31 @@ Notes:
 - The moderator can stop the timer at any time by selecting the timer control again. Stopping does not reveal the votes.
 - Revealing or restarting the round also ends a running timer.
 - If nobody voted when the timer expires, the round is not revealed; the timer simply stops. This matches the Reveal button, which is unavailable for a round without votes.
-- Participants who are still listed but whose browser is closed do not hold up the reveal. Any participant who is still connected performs it, within about four seconds of the timer expiring.
-- The remaining time may differ by a few seconds between participants when their device clocks differ. The reveal itself happens once, for everybody at the same time.
+- Open session browsers take turns attempting the reveal, with delays of up to four seconds after their local countdown expires. Closed browsers do not prevent another participant from acting, but at least one open browser must be able to reach Firestore.
+- Device clock differences can shift both the countdown and the reveal attempt. Network delivery determines when other participants see the revealed state; simultaneous display is not guaranteed.
 
 ### Reveal
 
 When the moderator reveals the session:
 
-- Submitted cards become visible.
+- Submitted cards become visible, and the card picker stays disabled until the round is reset.
 - Numeric decks get a result card with average, median, and spread.
 - A round in which nobody gave an estimate still gets its result card, stating that there is nothing to evaluate.
 - The team can discuss differences and decide on a final estimate.
 
 ### Estimate Result
 
-For numeric decks (Short Fibonacci, Fibonacci), a result card appears below the moderator controls after the reveal. It answers the three questions a team usually asks next.
+For numeric decks (Short Fibonacci, Fibonacci, and current custom decks), a result card appears in the results area after reveal. Tap or hover over a statistic to see its calculation. Legacy custom decks whose labels do not match their stored numeric values are not evaluated.
 
 | Value | Meaning | How to use it |
 | --- | --- | --- |
-| Average | Mean of all submitted estimates, with one decimal. | Read together with the nearest card; the raw mean is often not a card of the deck. |
+| Average | Mean of submitted numeric estimates, with at most one decimal (a comma in the German UI). | Read together with the nearest card; the raw mean is often not a card of the deck. |
 | Nearest card | The deck card closest to the average. Ties go to the higher card. | Use it as the proposal for the final estimate. |
 | Median | Middle estimate of the round. | More robust than the average when single votes are extreme. |
 | Range | Lowest and highest submitted card. | Shows how far apart the team is. |
 | Consensus status | Rating of the spread across card positions. | See the table below. |
 | Distribution | How often each card was chosen, plus participants who voted without an estimate. | Shows whether the team splits into camps or has one clear favourite. |
-| Outliers | Participants whose card is at least two positions away from the median card. | Ask these participants first; they usually know something the others do not. |
+| Outliers | Participants whose numeric card is at least two positions away from the median rank, when at least three numeric estimates exist. | Ask these participants first; they usually know something the others do not. |
 
 Outlier cards are also framed in red in the participant list.
 
@@ -126,15 +126,19 @@ When the moderator resets the session:
 - Player statuses return to not started.
 - The session is ready for the next story or another vote.
 
-## Moderator Controls
+## Session Controls
 
 | Control | Purpose | Recommended Use |
 | --- | --- | --- |
 | Reveal | Shows all votes and completes the round. | Use after all or most participants have voted. |
 | Timer | Starts or stops an optional round timer that reveals the votes when it expires. | Use to timebox discussion-heavy rounds; leave it unused otherwise. |
 | Reset | Clears votes for another round. | Use after discussion or before estimating the next story. |
-| Remove player | Removes a participant from the session. | Use for duplicate, inactive, or incorrect entries. |
-| Delete session | Removes the session. | Use when the session is complete and no longer needed. |
+| Remove player | Removes another participant from the session. | Use for duplicate, inactive, or incorrect entries. |
+| Delete session | Removes an unlocked session and its players after confirmation. | Available to every participant on the active session page. |
+| Invite | Shows and copies the join link. | Available to every participant. |
+| Leave | Returns to the home page. | Keeps the player document and recent-session reference so the browser can return. |
+
+Reveal, timer management, reset, and removal of other players require moderator or member-management permission. Deletion on the active session page is controlled by the lock flag, not by moderator status.
 
 ## Managing Participants
 
@@ -154,13 +158,14 @@ Important notes:
 - Recent games are stored locally in the browser.
 - Clearing browser storage may remove recent game history.
 - Recent games do not create user accounts.
-- If a game no longer exists in Firestore, it may appear as unavailable or stale.
+- Stale entries can remain until revisited or removed; following a missing session clears its cached reference.
+- The close control on an unlocked recent session asks to delete the shared session and its players; it is not just a local history removal. This control is shown for entries marked as moderator-accessible. Locked sessions show a lock indicator.
 
 ## Session Management Options
 
 ### Moderator-Only Management
 
-The creator controls reveal, reset, player removal, and deletion.
+The creator controls reveal, reset, timer management, and removal of other players. An unlocked session can still be deleted by any participant from the active session page. These UI permissions are not a server-side authorization boundary.
 
 Use this mode when:
 
@@ -180,18 +185,23 @@ Use this mode when:
 
 ## Admin And Maintenance Tasks
 
-### Delete Old Games
+### Command-Line Maintenance
 
-The app includes a maintenance path for removing games older than six months.
+With dependencies installed and `.env` configured, operators can run:
 
-Recommended admin procedure:
+```bash
+pnpm games:list
+pnpm games:list --json
+pnpm games:lock <document-id>
+pnpm games:unlock <document-id>
+pnpm games:delete <document-id> [<document-id>...]
+```
 
-1. Confirm the Firebase project.
-2. Confirm deletion approval.
-3. Run in a non-production environment first.
-4. Verify the deletion count.
-5. Run in production if approved.
-6. Record the cleanup.
+The commands use the app's Firebase web configuration and Firestore rules. Listing provides document IDs; JSON also includes player names. Locking prevents the normal app deletion flow and CLI deletion but leaves voting and moderation available. Unlocking permits deletion again. Deletion prompts for confirmation and skips locked sessions. See [Session Data Maintenance](standard-operating-procedures.md#sop-session-data-maintenance) for batch and non-interactive usage.
+
+### Session Retention
+
+Sessions are not automatically deleted based on age. Use the session delete control or the CLI commands above to remove selected sessions. Both respect deletion locks. Review the target project and selected sessions before confirming deletion.
 
 ### Deployment Validation
 
@@ -203,7 +213,8 @@ After deployment, an admin should verify:
 - Voting works.
 - Reveal works.
 - Reset works.
-- Localization still loads.
+- German UI text renders correctly.
+- Light, dark, and system theme preferences work.
 
 ## Troubleshooting For Users
 
@@ -215,10 +226,14 @@ After deployment, an admin should verify:
 | Recent session is missing | Browser storage may have been cleared; use the invite link again. |
 | Cards are not visible | Refresh the page and confirm the session is active. |
 | Moderator controls are missing | Confirm you are the session creator or that member management is enabled. |
-| The timer shows a different time than on another screen | Device clocks differ. The automatic reveal is still triggered once for the whole session. |
+| The timer shows a different time than on another screen | Device clocks differ, which can also shift when a browser triggers the shared reveal. Check the system clocks. |
 | The timer expired but nothing was revealed | Nobody had voted. Start the round again or reveal manually after the first vote. |
-| Stale participants clutter the session | Cards without a green dot are entries whose browser is gone. Remove them as a moderator. They do not block the automatic reveal. |
+| Stale participants clutter the session | A missing dot means no recent heartbeat. Confirm who has left, then remove their entries as a moderator. |
 | A participant is present but has no green dot | Ask them to reload the session. The dot returns within moments. |
+
+## Appearance
+
+Use the theme menu in the toolbar to choose light, dark, or system mode. System mode follows the device setting and is the default. The choice is saved in this browser.
 
 ## Accessibility And Usability Notes
 

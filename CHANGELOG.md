@@ -4,6 +4,26 @@ All notable changes to this project are documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.1.4] - 2026-09-23
+
+### Added
+
+- `pnpm games:unlock <document-id>` clears a session's deletion lock without changing other fields.
+
+### Changed
+
+- Hosting deployment commands now load `.env` and explicitly pass `VITE_FB_PROJECT_ID` to Firebase. A shared Node.js wrapper validates that the project ID is present, cleans and builds the app, and stops on build or deployment failures. Production deploys only Hosting; preview deployments keep the `preview` channel and 14-day expiry. Exported environment values take precedence over `.env` and are shared by the build and deploy.
+- The test command now includes isolated deploy-script integration tests with fake CLI binaries, covering target selection, missing configuration, and failure propagation without contacting Firebase.
+
+### Removed
+
+- Removed `.firebaserc` and its hard-coded default project. Deployments select their target from the loaded environment.
+- The unlinked `/delete-old-games` route, its page, age-based Firestore deletion functions, and unused translations have been removed. Opening the old URL now shows the home page without deleting sessions. Use the existing app controls or maintenance CLI for explicit deletion; there is no automatic six-month cleanup.
+
+### Documentation
+
+- Updated setup, architecture, user, and operations guides to match the German-only UI, current service APIs, deployment commands, and deletion behavior. Documented explicit session cleanup through the app and CLI after removal of the legacy age-based cleanup route.
+
 ## [3.1.3] - 2026-08-29
 
 ### Changed
@@ -34,7 +54,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Added
 
-- Three maintenance scripts for the Firestore `games` collection, run from the command line against the project in `.env`: `pnpm games:list` prints every session with its document ID, name, deck, creation date, creator, lock flag and participant count (`--json` adds the participant names); `pnpm games:lock <id>` sets `isLocked: true` on a session; `pnpm games:delete <id> [<id> ...]` removes sessions together with their `players` subcollection. Until now the only way to see or clean up the stored sessions was the Firebase console, and the only way to protect one from the six-month cleanup was to edit the document by hand.
+- Three maintenance scripts for the Firestore `games` collection, run from the command line against the project in `.env`: `pnpm games:list` prints every session with its document ID, name, deck, creation date, creator, lock flag and participant count (`--json` adds the participant names); `pnpm games:lock <id>` sets `isLocked: true` on a session; `pnpm games:delete <id> [<id> ...]` removes sessions together with their `players` subcollection. The scripts provide command-line inspection and selective cleanup alongside the Firebase console and the legacy age-based cleanup route. The lock is respected by the normal app deletion flow and the delete script; the six-month cleanup does not check it.
 - The delete script refuses to touch a locked session and says so, lists what it is about to delete and asks for confirmation before writing — `--yes` skips the prompt, and without a terminal it aborts rather than assuming consent. The list script puts locked sessions at the end, so what is kept on purpose does not sit between the sessions that are candidates for deletion.
 
 ## [3.1.0] - 2026-08-20

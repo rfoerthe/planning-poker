@@ -2,7 +2,7 @@
 
 ## Executive Summary
 
-Planning Poker is a free, open-source web application that helps Agile and Scrum teams estimate user stories collaboratively. A moderator creates an estimation session, shares an invite link, and team members vote using configurable card decks. Votes stay hidden until the moderator reveals them, helping reduce anchoring bias and encouraging independent estimation.
+Planning Poker is a free, open-source web application that helps Agile and Scrum teams estimate user stories collaboratively. A moderator creates an estimation session, shares an invite link, and team members vote using configurable card decks. Votes stay hidden in the UI until the moderator or the round timer reveals them, helping reduce anchoring bias and encouraging independent estimation.
 
 ## Why This Project Exists
 
@@ -41,7 +41,8 @@ Planning Poker allows users to:
 - Browser-based Scrum planning poker sessions.
 - Real-time session and player updates through Firestore.
 - Moderator and optional member-managed session controls.
-- Multi-language UI through i18n locale files.
+- German UI with bundled i18next resources.
+- Light, dark, and system theme preferences.
 - Local browser cache of recently joined games.
 - Firebase Hosting deployment.
 - Docker image build and Nginx serving path.
@@ -101,13 +102,13 @@ Project sponsors, open-source users, and evaluators who need to understand the p
 | Reset | The moderator action that clears player votes for the next estimation round. |
 | Consensus status | A rating of how far apart the submitted cards of a revealed round are. |
 | Round timer | An optional countdown started by a moderator that reveals the round when it expires. |
-| Presence | Whether a participant currently has the session open, shown as a green dot on the participant card. |
-| Outlier | A vote at least two card positions away from the median card of the round. |
+| Presence | A recent browser heartbeat, shown as a green dot on the participant card; the current browser always marks its own card active. |
+| Outlier | A numeric vote at least two card positions away from the median rank, reported when at least three numeric estimates exist. |
 
 ## Open Questions
 
 - `[Placeholder: Confirm whether "game" or "session" should be the preferred product term in user-facing copy.]`
-- `[Placeholder: Define long-term data retention expectations beyond the current old-game cleanup utility.]`
+- `[Placeholder: Define a data retention policy; sessions currently remain until explicitly deleted.]`
 - `[Placeholder: Confirm supported browsers and minimum device requirements.]`
 - `[Placeholder: Confirm stakeholder reporting needs, if any.]`
 
