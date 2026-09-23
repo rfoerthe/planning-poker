@@ -1,0 +1,93 @@
+diff --git a/lib/commands/auth-import.js b/lib/commands/auth-import.js
+index baf37f7902d761661dfd86a2d54e025344998891..ff3bbb30d95afd34df6533bfd02997f7f87323da 100644
+--- a/lib/commands/auth-import.js
++++ b/lib/commands/auth-import.js
+@@ -5,8 +5,8 @@ const csv_parse_1 = require("csv-parse");
+ const Chain = require("stream-chain");
+ const clc = require("colorette");
+ const fs = require("fs-extra");
+-const Pick = require("stream-json/filters/Pick");
+-const StreamArray = require("stream-json/streamers/StreamArray");
++const Pick = require("stream-json/filters/pick.js").pick;
++const StreamArray = require("stream-json/streamers/stream-array.js").streamArray;
+ const command_1 = require("../command");
+ const error_1 = require("../error");
+ const logger_1 = require("../logger");
+@@ -81,8 +81,8 @@ exports.command = new command_1.Command("auth:import [dataFile]")
+     else {
+         userListArr = await new Promise((resolve, reject) => {
+             const pipeline = new Chain([
+-                Pick.withParser({ filter: /^users$/ }),
+-                StreamArray.streamArray(),
++                Pick.withParserAsStream({ filter: /^users$/ }),
++                StreamArray.asStream(),
+                 ({ value }) => {
+                     counter++;
+                     const user = (0, accountImporter_1.validateUserJson)(value);
+@@ -97,7 +97,7 @@ exports.command = new command_1.Command("auth:import [dataFile]")
+                     }
+                 },
+             ]);
+-            pipeline.once("error", reject);
++            pipeline.on("error", reject);
+             pipeline.on("finish", () => {
+                 if (currentBatch.length) {
+                     batches.push(currentBatch);
+diff --git a/lib/database/import.js b/lib/database/import.js
+index 696ec7a2d7f5add8c52abf4d87acc8993c95072b..14b4f38375bff99336543dd0fab0b845d13ebf46 100644
+--- a/lib/database/import.js
++++ b/lib/database/import.js
+@@ -2,9 +2,9 @@
+ Object.defineProperty(exports, "__esModule", { value: true });
+ const Chain = require("stream-chain");
+ const clc = require("colorette");
+-const Filter = require("stream-json/filters/Filter");
++const Filter = require("stream-json/filters/filter.js").filter;
+ const stream = require("stream");
+-const StreamObject = require("stream-json/streamers/StreamObject");
++const StreamObject = require("stream-json/streamers/stream-object.js").streamObject;
+ const apiv2_1 = require("../apiv2");
+ const error_1 = require("../error");
+ const utils_1 = require("../utils");
+@@ -134,11 +134,11 @@ class DatabaseImporter {
+             const responses = [];
+             const pipeline = new Chain([
+                 this.inStream,
+-                Filter.withParser({
++                Filter.withParserAsStream({
+                     filter: this.computeFilterString(this.dataPath) || (() => true),
+                     pathSeparator: "/",
+                 }),
+-                StreamObject.streamObject(),
++                StreamObject.asStream(),
+             ]);
+             pipeline
+                 .on("error", (err) => reject(new error_1.FirebaseError(`Invalid data; couldn't parse JSON object, array, or value. ${err.message}`, {
+diff --git a/lib/frameworks/next/index.js b/lib/frameworks/next/index.js
+index 5df554c7d166658031badf77b8d2edc579e69f54..f04b43b707a3cb9c979705720dfe968c0c3c77a4 100644
+--- a/lib/frameworks/next/index.js
++++ b/lib/frameworks/next/index.js
+@@ -17,8 +17,8 @@ const semver_1 = require("semver");
+ const clc = require("colorette");
+ const stream_chain_1 = require("stream-chain");
+ const stream_json_1 = require("stream-json");
+-const Pick_1 = require("stream-json/filters/Pick");
+-const StreamObject_1 = require("stream-json/streamers/StreamObject");
++const Pick_1 = require("stream-json/filters/pick.js");
++const StreamObject_1 = require("stream-json/streamers/stream-object.js");
+ const fsutils_1 = require("../../fsutils");
+ const prompt_1 = require("../../prompt");
+ const error_1 = require("../../error");
+@@ -403,9 +403,9 @@ async function ɵcodegenFunctionsDirectory(sourceDir, destDir, target, context)
+                 });
+                 const pipeline = (0, stream_chain_1.chain)([
+                     npmLs.stdout,
+-                    (0, stream_json_1.parser)({ packValues: false, packKeys: true, streamValues: false }),
+-                    (0, Pick_1.pick)({ filter: "dependencies" }),
+-                    (0, StreamObject_1.streamObject)(),
++                    stream_json_1.parser.asStream({ packValues: false, packKeys: true, streamValues: false }),
++                    Pick_1.pick.asStream({ filter: "dependencies" }),
++                    StreamObject_1.streamObject.asStream(),
+                     ({ key, value }) => [
+                         key,
+                         ...(0, utils_2.allDependencyNames)(value),
