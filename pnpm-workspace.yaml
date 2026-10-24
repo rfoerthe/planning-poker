@@ -18,5 +18,31 @@ overrides:
   # Security: GHSA-x5fp-wj9c-mxmx and GHSA-4mjr-xmp4-gh2g. Some Express
   # dependencies pin qs exactly, so updating the lockfile alone is insufficient.
   qs@<6.16.0: 6.16.0
+  # Security: GHSA-2gqq-gqf2-x968 and six more undici advisories. The 7.x copy
+  # comes in through jsdom/vitest, the 8.x copy through node-gyp in firebase-tools.
+  undici@7: ^7.29.1
+  undici@8: ^8.10.2
+  # Security: GHSA-6qxp-vccf-f47h and three more; firebase-tools pins the MCP SDK at 1.30.
+  '@modelcontextprotocol/sdk': ^1.32.0
+  # Security: GHSA-5r4p-p66f-jhc7 and GHSA-hxh3-vqpv-xpqv; hono arrives via the MCP SDK.
+  hono: ^4.13.11
+  # Security: GHSA-f596-whhp-79r4 and GHSA-m9gg-hp2v-232j. @firebase/firestore still
+  # requests grpc-js 1.9; the override also dedupes google-gax onto the fixed release.
+  '@grpc/grpc-js': ^1.14.5
+  # Security: GHSA-2vr4-cq9g-pvrc and GHSA-j6r3-76f7-8jcv.
+  ip-address: ^10.7.1
+  # Security: GHSA-q2hr-2g5m-vwhr; both legacy brace-expansion lines are affected.
+  brace-expansion@1: ^1.1.21
+  brace-expansion@2: ^2.1.7
+  # Security: GHSA-68fv-2mgg-jv7q.
+  source-map-js: ^1.2.2
+  # Security: GHSA-jqcg-44mw-7w3h; Express 4 and 5 both pin proxy-addr 2.0.7.
+  proxy-addr: ^2.0.8
+  # Security: GHSA-9f6g-j8ch-79g4.
+  morgan: ^1.12.1
+  # Security: GHSA-58mr-gqgx-xq4g; fast-uri comes in through ajv.
+  fast-uri: ^3.1.7
+  # Security: GHSA-vc2v-76pw-4v95; compression comes in through superstatic.
+  compression: ^1.8.2
 patchedDependencies:
   firebase-tools@15.28.2: patches/firebase-tools@15.28.2.patch
