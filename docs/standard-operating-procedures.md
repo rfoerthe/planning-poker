@@ -6,13 +6,13 @@ This document defines repeatable operational workflows for Planning Poker. Use i
 
 ## Roles And Responsibilities
 
-| Role | Responsibilities |
-| --- | --- |
-| Contributor | Implements changes, adds tests, updates docs, opens pull requests. |
-| Reviewer | Reviews correctness, maintainability, accessibility, tests, and documentation. |
-| Maintainer | Merges approved changes, manages releases, deployment access, and production configuration. |
-| Project Manager | Tracks scope, priorities, roadmap, stakeholder communication, and release readiness. |
-| Moderator/User Support | Reports issues, validates user workflows, and contributes usability feedback. |
+| Role                   | Responsibilities                                                                            |
+| ---------------------- | ------------------------------------------------------------------------------------------- |
+| Contributor            | Implements changes, adds tests, updates docs, opens pull requests.                          |
+| Reviewer               | Reviews correctness, maintainability, accessibility, tests, and documentation.              |
+| Maintainer             | Merges approved changes, manages releases, deployment access, and production configuration. |
+| Project Manager        | Tracks scope, priorities, roadmap, stakeholder communication, and release readiness.        |
+| Moderator/User Support | Reports issues, validates user workflows, and contributes usability feedback.               |
 
 ## SOP: Contribution Workflow
 
@@ -217,12 +217,12 @@ Deleting Firestore documents and subcollection documents is destructive. Product
 
 ### Severity Levels
 
-| Severity | Definition | Response Target |
-| --- | --- | --- |
-| Sev 1 | App unavailable or data writes failing for all users. | `[Placeholder: response target]` |
-| Sev 2 | Core game workflows broken for many users. | `[Placeholder: response target]` |
-| Sev 3 | Localized bug with workaround. | `[Placeholder: response target]` |
-| Sev 4 | Cosmetic, documentation, or minor usability issue. | `[Placeholder: response target]` |
+| Severity | Definition                                            | Response Target                  |
+| -------- | ----------------------------------------------------- | -------------------------------- |
+| Sev 1    | App unavailable or data writes failing for all users. | `[Placeholder: response target]` |
+| Sev 2    | Core game workflows broken for many users.            | `[Placeholder: response target]` |
+| Sev 3    | Localized bug with workaround.                        | `[Placeholder: response target]` |
+| Sev 4    | Cosmetic, documentation, or minor usability issue.    | `[Placeholder: response target]` |
 
 ### Response Steps
 
@@ -259,4 +259,3 @@ A change is done when:
 - User-facing behavior is manually checked when relevant.
 - Review feedback is addressed.
 - Deployment or release notes are recorded when relevant.
-

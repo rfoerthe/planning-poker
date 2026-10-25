@@ -48,7 +48,10 @@ describe('statistics service', () => {
     });
 
     it('should evaluate a custom deck of whole numbers like any numeric deck', () => {
-      const game = buildGame({ gameType: GameType.Custom, cards: getCustomCards(['1', '5', '20']) });
+      const game = buildGame({
+        gameType: GameType.Custom,
+        cards: getCustomCards(['1', '5', '20']),
+      });
       const players = [buildPlayer('a', 1), buildPlayer('b', 5), buildPlayer('c', 20)];
 
       const summary = getNumericSummary(game, players);
@@ -110,10 +113,7 @@ describe('statistics service', () => {
 
     it('should not summarize when nobody submitted an estimate', () => {
       const game = buildGame();
-      const players = [
-        buildPlayer('a', -1),
-        { ...buildPlayer('b', 5), status: Status.NotStarted },
-      ];
+      const players = [buildPlayer('a', -1), { ...buildPlayer('b', 5), status: Status.NotStarted }];
 
       expect(getNumericSummary(game, players)).toBeUndefined();
     });

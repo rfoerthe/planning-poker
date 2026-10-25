@@ -6,19 +6,19 @@ Planning Poker is a client-side React application built with Vite and TypeScript
 
 ## Technology Stack
 
-| Layer | Technology | Purpose |
-| --- | --- | --- |
-| Application framework | React 19 | Component-based web UI |
-| Language | TypeScript | Typed application code |
-| Build tool | Vite | Local development server and production builds |
-| UI library | Material UI | Shared UI components and styling primitives |
-| Routing | React Router | Client-side page navigation |
-| Data store | Firebase Firestore | Real-time game and player persistence |
-| Local cache | Browser localStorage | Recent games and player identity per game |
-| Localization | i18next, react-i18next | German resources compiled into the bundle |
-| Testing | Vitest, Testing Library | Unit and component tests |
-| Hosting | Firebase Hosting | Static site hosting with SPA rewrites |
-| Container runtime | Docker, Nginx | Optional containerized production serving |
+| Layer                 | Technology              | Purpose                                        |
+| --------------------- | ----------------------- | ---------------------------------------------- |
+| Application framework | React 19                | Component-based web UI                         |
+| Language              | TypeScript              | Typed application code                         |
+| Build tool            | Vite                    | Local development server and production builds |
+| UI library            | Material UI             | Shared UI components and styling primitives    |
+| Routing               | React Router            | Client-side page navigation                    |
+| Data store            | Firebase Firestore      | Real-time game and player persistence          |
+| Local cache           | Browser localStorage    | Recent games and player identity per game      |
+| Localization          | i18next, react-i18next  | German resources compiled into the bundle      |
+| Testing               | Vitest, Testing Library | Unit and component tests                       |
+| Hosting               | Firebase Hosting        | Static site hosting with SPA rewrites          |
+| Container runtime     | Docker, Nginx           | Optional containerized production serving      |
 
 ## System Context
 
@@ -37,31 +37,31 @@ flowchart LR
 
 ## Application Structure
 
-| Path | Responsibility |
-| --- | --- |
-| `src/index.tsx` | React application bootstrap. |
-| `src/App.tsx` | Top-level application routing and global composition. |
-| `src/pages/` | Page-level views such as Home, Game, Join, Guide, About, and Examples. |
-| `src/components/` | Reusable UI components and Planning Poker feature components. |
-| `src/service/` | Business logic for games, players, statistics, timers, presence, and theming. |
-| `src/repository/` | Persistence adapters for Firebase Firestore and browser local storage. |
-| `src/types/` | Shared TypeScript interfaces and enums. |
-| `src/config/i18n.ts` | Localization configuration. |
-| `src/locales/de.ts` | Bundled German translation resource. |
-| `src/utils/` | Shared hooks, timestamp conversion, and client moderator checks. |
-| `scripts/` | Firestore maintenance commands and the shared Hosting deploy wrapper with isolated integration tests. |
-| `docs/` | Product, technical, operational, and user documentation. |
+| Path                 | Responsibility                                                                                        |
+| -------------------- | ----------------------------------------------------------------------------------------------------- |
+| `src/index.tsx`      | React application bootstrap.                                                                          |
+| `src/App.tsx`        | Top-level application routing and global composition.                                                 |
+| `src/pages/`         | Page-level views such as Home, Game, Join, Guide, About, and Examples.                                |
+| `src/components/`    | Reusable UI components and Planning Poker feature components.                                         |
+| `src/service/`       | Business logic for games, players, statistics, timers, presence, and theming.                         |
+| `src/repository/`    | Persistence adapters for Firebase Firestore and browser local storage.                                |
+| `src/types/`         | Shared TypeScript interfaces and enums.                                                               |
+| `src/config/i18n.ts` | Localization configuration.                                                                           |
+| `src/locales/de.ts`  | Bundled German translation resource.                                                                  |
+| `src/utils/`         | Shared hooks, timestamp conversion, and client moderator checks.                                      |
+| `scripts/`           | Firestore maintenance commands and the shared Hosting deploy wrapper with isolated integration tests. |
+| `docs/`              | Product, technical, operational, and user documentation.                                              |
 
 ## Major Pages
 
-| Page | File | Purpose |
-| --- | --- | --- |
-| Home | `src/pages/HomePage/HomePage.tsx` | Landing and entry point for creating or joining games. |
-| Game | `src/pages/GamePage/GamePage.tsx` | Active session experience for voting and moderation. |
-| Join | `src/pages/JoinPage/JoinPage.tsx` | Flow for entering an existing game. |
-| Guide | `src/pages/GuidePage/GuidePage.tsx` | User guidance and product education. |
-| Examples | `src/pages/ExamplesPage/ExamplesPage.tsx` | Example content. |
-| About | `src/pages/AboutPage/AboutPage.tsx` | Project/about information. |
+| Page     | File                                      | Purpose                                                |
+| -------- | ----------------------------------------- | ------------------------------------------------------ |
+| Home     | `src/pages/HomePage/HomePage.tsx`         | Landing and entry point for creating or joining games. |
+| Game     | `src/pages/GamePage/GamePage.tsx`         | Active session experience for voting and moderation.   |
+| Join     | `src/pages/JoinPage/JoinPage.tsx`         | Flow for entering an existing game.                    |
+| Guide    | `src/pages/GuidePage/GuidePage.tsx`       | User guidance and product education.                   |
+| Examples | `src/pages/ExamplesPage/ExamplesPage.tsx` | Example content.                                       |
+| About    | `src/pages/AboutPage/AboutPage.tsx`       | Project/about information.                             |
 
 All page modules are lazy-loaded through `React.lazy` and one `Suspense` boundary in `App.tsx`. Routes are `/` (create), `/join` (join form on the home page), `/join/:id`, `/game/:id`, `/guide`, `/examples`, and `/about-planning-poker`. The wildcard route renders `HomePage`.
 
@@ -69,22 +69,22 @@ Vite groups Firebase, Material UI/Emotion, React, and remaining vendor code into
 
 ## Core Components
 
-| Component Area | Responsibility |
-| --- | --- |
-| `Poker` | Main planning poker workflow composition. |
-| `CreateGame` | Collects new session details and card configuration. |
-| `JoinGame` | Adds a participant to an existing session. |
-| `RecentGames` | Displays locally cached recent sessions. |
-| `GameArea` | Coordinates active session UI. |
-| `GameController` | Moderator controls such as reveal, reset, and delete. |
-| `Players` and `PlayerCard` | Displays participants, voting state, revealed values, presence indicators, and outlier markers. |
-| `CardPicker` | Allows a participant to select an estimate. |
-| `NumericSummary` | Shows statistics of a revealed round for numeric decks. |
-| `GameTimer` and `CountdownOverlay` | Optional round timer control and the full-screen countdown for the last ten seconds. |
-| `TshirtSummary` and `TshirtLegend` | Support T-shirt estimation workflows. |
-| `RoundStatus` and `VotingProgress` | Show vote counts and remaining time before reveal. |
-| `ConsensusVerdict`, `DeviationKpi`, `StatExplainer` | Explain result figures and consensus thresholds. |
-| `Toolbar` and `Footer` | Navigation, light/dark/system theme selection, and application information. |
+| Component Area                                      | Responsibility                                                                                  |
+| --------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| `Poker`                                             | Main planning poker workflow composition.                                                       |
+| `CreateGame`                                        | Collects new session details and card configuration.                                            |
+| `JoinGame`                                          | Adds a participant to an existing session.                                                      |
+| `RecentGames`                                       | Displays locally cached recent sessions.                                                        |
+| `GameArea`                                          | Coordinates active session UI.                                                                  |
+| `GameController`                                    | Moderator controls such as reveal, reset, and delete.                                           |
+| `Players` and `PlayerCard`                          | Displays participants, voting state, revealed values, presence indicators, and outlier markers. |
+| `CardPicker`                                        | Allows a participant to select an estimate.                                                     |
+| `NumericSummary`                                    | Shows statistics of a revealed round for numeric decks.                                         |
+| `GameTimer` and `CountdownOverlay`                  | Optional round timer control and the full-screen countdown for the last ten seconds.            |
+| `TshirtSummary` and `TshirtLegend`                  | Support T-shirt estimation workflows.                                                           |
+| `RoundStatus` and `VotingProgress`                  | Show vote counts and remaining time before reveal.                                              |
+| `ConsensusVerdict`, `DeviationKpi`, `StatExplainer` | Explain result figures and consensus thresholds.                                                |
+| `Toolbar` and `Footer`                              | Navigation, light/dark/system theme selection, and application information.                     |
 
 ## Data Model
 
@@ -152,12 +152,12 @@ interface PlayerGame {
 
 ### Status Values
 
-| Status | Meaning |
-| --- | --- |
-| `Not Started` | A player has not voted in the current round. |
-| `Started` | A game has started and is ready for votes. |
-| `In Progress` | At least one player has voted. |
-| `Finished` | A player has voted, or a game has been revealed. |
+| Status        | Meaning                                          |
+| ------------- | ------------------------------------------------ |
+| `Not Started` | A player has not voted in the current round.     |
+| `Started`     | A game has started and is ready for votes.       |
+| `In Progress` | At least one player has voted.                   |
+| `Finished`    | A player has voted, or a game has been revealed. |
 
 ## Firestore Structure
 
@@ -188,10 +188,10 @@ games/{gameId}/players/{playerId}
 
 ## Local Storage Structure
 
-| Key | Stored Value | Purpose |
-| --- | --- | --- |
-| `playerGames` | JSON array of `PlayerGame` objects | Lets a browser remember sessions and its player IDs. |
-| `planning-poker-theme` | `light`, `dark`, or `system` | Persists the theme preference; defaults to `system`. |
+| Key                    | Stored Value                       | Purpose                                              |
+| ---------------------- | ---------------------------------- | ---------------------------------------------------- |
+| `playerGames`          | JSON array of `PlayerGame` objects | Lets a browser remember sessions and its player IDs. |
+| `planning-poker-theme` | `light`, `dark`, or `system`       | Persists the theme preference; defaults to `system`. |
 
 The privacy consent is stored separately in the `planning-poker-privacy` cookie for 90 days. Recent-session storage does not implement offline session persistence.
 
@@ -280,54 +280,54 @@ The app does not expose a REST API. The service layer acts as the internal appli
 
 ### Game Service
 
-| Function | Purpose | Notes |
-| --- | --- | --- |
-| `addNewGame(newGame)` | Creates a game and creator player. | Generates ULIDs for game and player. |
-| `streamGame(id)` | Returns Firestore document reference for real-time game data. | Consumed by UI listeners. |
-| `streamPlayers(id)` | Returns Firestore collection reference for real-time player data. | Consumed by UI listeners. |
-| `getGame(id)` | Fetches one game. | Returns `undefined` when missing. |
-| `updateGame(gameId, updatedGame)` | Updates selected game fields. | Delegates to Firestore `updateDoc`. |
-| `resetGame(gameId)` | Resets game status and player statuses. | Used between estimation rounds, clears a running timer. |
-| `finishGame(gameId)` | Reveals the round. | Sets the status to `Finished` and clears a running timer. Results are derived, not stored. |
-| `startTimer(gameId, durationSeconds)` | Starts the optional round timer. | Stores the shared end time and the chosen duration. |
-| `stopTimer(gameId)` | Stops a running round timer. | Clears the shared end time without revealing. |
-| `removeGame(gameId)` | Deletes an unlocked game and local cache reference. | Does nothing when `isLocked` is true. |
+| Function                              | Purpose                                                           | Notes                                                                                      |
+| ------------------------------------- | ----------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| `addNewGame(newGame)`                 | Creates a game and creator player.                                | Generates ULIDs for game and player.                                                       |
+| `streamGame(id)`                      | Returns Firestore document reference for real-time game data.     | Consumed by UI listeners.                                                                  |
+| `streamPlayers(id)`                   | Returns Firestore collection reference for real-time player data. | Consumed by UI listeners.                                                                  |
+| `getGame(id)`                         | Fetches one game.                                                 | Returns `undefined` when missing.                                                          |
+| `updateGame(gameId, updatedGame)`     | Updates selected game fields.                                     | Delegates to Firestore `updateDoc`.                                                        |
+| `resetGame(gameId)`                   | Resets game status and player statuses.                           | Used between estimation rounds, clears a running timer.                                    |
+| `finishGame(gameId)`                  | Reveals the round.                                                | Sets the status to `Finished` and clears a running timer. Results are derived, not stored. |
+| `startTimer(gameId, durationSeconds)` | Starts the optional round timer.                                  | Stores the shared end time and the chosen duration.                                        |
+| `stopTimer(gameId)`                   | Stops a running round timer.                                      | Clears the shared end time without revealing.                                              |
+| `removeGame(gameId)`                  | Deletes an unlocked game and local cache reference.               | Does nothing when `isLocked` is true.                                                      |
 
 ### Player Service
 
-| Function | Purpose | Notes |
-| --- | --- | --- |
-| `addPlayer(gameId, player)` | Adds a player when the game exists. | Lower-level add helper. |
-| `addPlayerToGame(game, playerName)` | Registers a player using an already loaded game. | Returns `void`; updates local cache and starts a background write, logging failures. |
-| `removePlayer(gameId, playerId)` | Removes a player from a game. | Requires game to exist. |
-| `updatePlayerValue(gameId, playerId, value, randomEmoji, gameStatus)` | Stores a vote directly and marks the player as finished. | Changes a `Started` game to `In Progress` using the caller's snapshot. |
-| `updatePlayerName(gameId, playerId, name)` | Renames a player. | Updates Firestore player document. |
-| `getPlayerRecentGames()` | Reads local games and validates them against Firestore. | Adds existence, lock, and moderator metadata. |
-| `getCurrentPlayerId(gameId)` | Finds current browser's player ID for a game. | Reads local cache. |
-| `isCurrentPlayerInGame(gameId)` | Checks whether cached player still exists. | Removes stale cache entries. |
-| `resetPlayers(gameId)` | Clears player votes for a new round. | Sets `value` to `-3` and status to `Not Started`. |
+| Function                                                              | Purpose                                                  | Notes                                                                                |
+| --------------------------------------------------------------------- | -------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| `addPlayer(gameId, player)`                                           | Adds a player when the game exists.                      | Lower-level add helper.                                                              |
+| `addPlayerToGame(game, playerName)`                                   | Registers a player using an already loaded game.         | Returns `void`; updates local cache and starts a background write, logging failures. |
+| `removePlayer(gameId, playerId)`                                      | Removes a player from a game.                            | Requires game to exist.                                                              |
+| `updatePlayerValue(gameId, playerId, value, randomEmoji, gameStatus)` | Stores a vote directly and marks the player as finished. | Changes a `Started` game to `In Progress` using the caller's snapshot.               |
+| `updatePlayerName(gameId, playerId, name)`                            | Renames a player.                                        | Updates Firestore player document.                                                   |
+| `getPlayerRecentGames()`                                              | Reads local games and validates them against Firestore.  | Adds existence, lock, and moderator metadata.                                        |
+| `getCurrentPlayerId(gameId)`                                          | Finds current browser's player ID for a game.            | Reads local cache.                                                                   |
+| `isCurrentPlayerInGame(gameId)`                                       | Checks whether cached player still exists.               | Removes stale cache entries.                                                         |
+| `resetPlayers(gameId)`                                                | Clears player votes for a new round.                     | Sets `value` to `-3` and status to `Not Started`.                                    |
 
 ### Statistics Service
 
 `src/service/statistics.ts` derives read-only round statistics for numeric decks. It has no persistence and no side effects.
 
-| Function | Purpose | Notes |
-| --- | --- | --- |
-| `isNumericGameType(gameType)` | Marks decks whose card values are real estimates. | Accepts Fibonacci variants, custom, and an absent type for legacy default decks. Unknown or removed types are excluded; `getNumericSummary` separately validates card labels. |
-| `getNumericSummary(game, players)` | Full statistics of a revealed round. | Returns `undefined` before reveal, without valid numeric votes, or when card labels do not match their values. The UI shows an empty result state when no summary is available. |
-| `getNearestCard(numericCards, value)` | Card closest to a value. | Ties resolve to the higher card to avoid systematic under-estimation. |
-| `isCriticalSpread(rankSpread, standardDeviation, voteCount)` | Shared critical-consensus rule. | Used by numeric and T-shirt summaries. |
-| `getMedianIndexes(length)` | Index pair used for the median. | Shared with the calculation explanations. |
-| `getMedian(sortedValues)` | Median of an ascending list. | Averages both middle values for even counts. |
-| `formatNumber(value)` | Display helper. | Integers stay plain; other values get one decimal with a German decimal comma. |
+| Function                                                     | Purpose                                           | Notes                                                                                                                                                                           |
+| ------------------------------------------------------------ | ------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `isNumericGameType(gameType)`                                | Marks decks whose card values are real estimates. | Accepts Fibonacci variants, custom, and an absent type for legacy default decks. Unknown or removed types are excluded; `getNumericSummary` separately validates card labels.   |
+| `getNumericSummary(game, players)`                           | Full statistics of a revealed round.              | Returns `undefined` before reveal, without valid numeric votes, or when card labels do not match their values. The UI shows an empty result state when no summary is available. |
+| `getNearestCard(numericCards, value)`                        | Card closest to a value.                          | Ties resolve to the higher card to avoid systematic under-estimation.                                                                                                           |
+| `isCriticalSpread(rankSpread, standardDeviation, voteCount)` | Shared critical-consensus rule.                   | Used by numeric and T-shirt summaries.                                                                                                                                          |
+| `getMedianIndexes(length)`                                   | Index pair used for the median.                   | Shared with the calculation explanations.                                                                                                                                       |
+| `getMedian(sortedValues)`                                    | Median of an ascending list.                      | Averages both middle values for even counts.                                                                                                                                    |
+| `formatNumber(value)`                                        | Display helper.                                   | Integers stay plain; other values get one decimal with a German decimal comma.                                                                                                  |
 
 Spread, consensus, and outliers are calculated on **card ranks**, not on raw values, because the distance between two Fibonacci values grows with their size.
 
-| Consensus status | Condition | Meaning |
-| --- | --- | --- |
-| `consensus` | Rank spread of 0 or 1 | Estimate plausible. |
-| `moderate-spread` | Rank spread of 2 | Short clarification recommended. |
-| `critical-spread` | Rank spread of 3 or more, or more than two votes with a rank standard deviation above 1.5 | Discussion required. |
+| Consensus status  | Condition                                                                                 | Meaning                          |
+| ----------------- | ----------------------------------------------------------------------------------------- | -------------------------------- |
+| `consensus`       | Rank spread of 0 or 1                                                                     | Estimate plausible.              |
+| `moderate-spread` | Rank spread of 2                                                                          | Short clarification recommended. |
+| `critical-spread` | Rank spread of 3 or more, or more than two votes with a rank standard deviation above 1.5 | Discussion required.             |
 
 A vote is reported as an outlier when its rank is at least two positions away from the median rank and at least three valid numeric estimates were submitted.
 
@@ -335,14 +335,14 @@ A vote is reported as an outlier when its rank is at least two positions away fr
 
 `src/service/presence.ts` decides which participants are currently taking part; `src/utils/usePresenceHeartbeat.ts` keeps the own entry current.
 
-| Function or constant | Purpose | Notes |
-| --- | --- | --- |
-| `presenceHeartbeatMs` | Refresh interval of the own entry. | 30 s. One small write per open session every 30 s, plus mount/visibility refreshes. |
-| `presenceTimeoutMs` | How long an entry stays active without a refresh. | 120 s. Generous, because browsers throttle timers in background tabs. |
-| `isPlayerActive(player, nowMs, currentPlayerId)` | Whether one participant is present. | The own entry always counts as active; this browser is rendering the session. |
-| `getActivePlayerIds(players, nowMs, currentPlayerId)` | Present participants of a session. | Consumed by `PlayerCard` for the presence indicator. |
-| `updatePresence(gameId, playerId)` | Writes `lastSeenAt`. | Failures are swallowed; the next heartbeat corrects them. |
-| `usePresenceHeartbeat(gameId, playerId)` | Runs the heartbeat for the open session. | Beats on mount, on the interval, and when the tab becomes visible again. |
+| Function or constant                                  | Purpose                                           | Notes                                                                               |
+| ----------------------------------------------------- | ------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| `presenceHeartbeatMs`                                 | Refresh interval of the own entry.                | 30 s. One small write per open session every 30 s, plus mount/visibility refreshes. |
+| `presenceTimeoutMs`                                   | How long an entry stays active without a refresh. | 120 s. Generous, because browsers throttle timers in background tabs.               |
+| `isPlayerActive(player, nowMs, currentPlayerId)`      | Whether one participant is present.               | The own entry always counts as active; this browser is rendering the session.       |
+| `getActivePlayerIds(players, nowMs, currentPlayerId)` | Present participants of a session.                | Consumed by `PlayerCard` for the presence indicator.                                |
+| `updatePresence(gameId, playerId)`                    | Writes `lastSeenAt`.                              | Failures are swallowed; the next heartbeat corrects them.                           |
+| `usePresenceHeartbeat(gameId, playerId)`              | Runs the heartbeat for the open session.          | Beats on mount, on the interval, and when the tab becomes visible again.            |
 
 Entries written before presence tracking existed have no `lastSeenAt` and are therefore shown as inactive until their browser refreshes them.
 
@@ -350,16 +350,16 @@ Entries written before presence tracking existed have no `lastSeenAt` and are th
 
 `src/service/timer.ts` holds the shared timer rules; `src/utils/useCountdown.ts` provides the ticking React hook.
 
-| Function or constant | Purpose | Notes |
-| --- | --- | --- |
-| `timerDurationsInSeconds` | Selectable round durations. | `30, 60, 90, 120, 180, 300`. |
-| `countdownThresholdSeconds` | Start of the prominent countdown. | Ten seconds. |
-| `toDate(value)` | Shared timestamp helper in `src/utils/toDate.ts`. | Accepts `Date`, Firestore `Timestamp`, number, and string. |
-| `getTimerEndsAt(game)` | Reads the running timer end from a game. | `undefined` when no timer runs. |
-| `getRemainingSeconds(remainingMs)` | Whole seconds left. | Rounds up, never below zero. |
-| `formatClock(totalSeconds)` | `m:ss` display format. | Used for the menu and the running timer. |
+| Function or constant                         | Purpose                                                        | Notes                                                                                      |
+| -------------------------------------------- | -------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| `timerDurationsInSeconds`                    | Selectable round durations.                                    | `30, 60, 90, 120, 180, 300`.                                                               |
+| `countdownThresholdSeconds`                  | Start of the prominent countdown.                              | Ten seconds.                                                                               |
+| `toDate(value)`                              | Shared timestamp helper in `src/utils/toDate.ts`.              | Accepts `Date`, Firestore `Timestamp`, number, and string.                                 |
+| `getTimerEndsAt(game)`                       | Reads the running timer end from a game.                       | `undefined` when no timer runs.                                                            |
+| `getRemainingSeconds(remainingMs)`           | Whole seconds left.                                            | Rounds up, never below zero.                                                               |
+| `formatClock(totalSeconds)`                  | `m:ss` display format.                                         | Used for the menu and the running timer.                                                   |
 | `getTimerTakeoverDelayMs(players, playerId)` | How long this browser waits before acting on an expired timer. | Voters first, then by player ID; 750 ms per turn, capped at 4 s. Unknown players act last. |
-| `useCountdown(endsAt)` | Milliseconds left, ticking four times per second. | Returns `undefined` without a running timer. |
+| `useCountdown(endsAt)`                       | Milliseconds left, ticking four times per second.              | Returns `undefined` without a running timer.                                               |
 
 ## Configuration
 
@@ -395,4 +395,3 @@ Use `.env.example` as the local template. The deploy scripts load `.env` with No
 - Timer expiry depends on open clients, local clocks, and network delivery; no server-side scheduled reveal or transaction enforces exactly-once execution.
 - Moderator authorization is enforced in the client experience; Firestore security rules should enforce any required server-side constraints.
 - Historical reporting and export workflows are not yet implemented.
-

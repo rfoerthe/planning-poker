@@ -105,8 +105,7 @@ export const CreateGame = () => {
     navigate(`/game/${newGameId}`);
   };
 
-  const selectedDeck =
-    deckOptions.find((option) => option.gameType === gameType) ?? deckOptions[0];
+  const selectedDeck = deckOptions.find((option) => option.gameType === gameType) ?? deckOptions[0];
 
   const handleCustomOptionChange = (index: number, value: string) => {
     const newCustomOptions = [...customOptions];

@@ -8,9 +8,14 @@ describe('AlertDialog component', () => {
 
   beforeEach(() => {
     render(
-      <AlertDialog title='title test' message='message test' onConfirm={onConfirmFunction} onCancel={onCancelFunction}>
+      <AlertDialog
+        title='title test'
+        message='message test'
+        onConfirm={onConfirmFunction}
+        onCancel={onCancelFunction}
+      >
         <button data-testid='alert-dialog-button'>AlertDialog button</button>
-      </AlertDialog>
+      </AlertDialog>,
     );
     const button = screen.getByTestId('alert-dialog-button');
     fireEvent.click(button);

@@ -58,7 +58,11 @@ export const ConsensusVerdict: React.FC<ConsensusVerdictProps> = ({
         <span className='VerdictText'>{t(`consensus.${status}.message`)}</span>
         <span className='VerdictText VerdictDetails'>
           <StatExplainer content={explanations.spread}>
-            <button type='button' className='StatTrigger VerdictFigure' data-testid='verdict-spread'>
+            <button
+              type='button'
+              className='StatTrigger VerdictFigure'
+              data-testid='verdict-spread'
+            >
               {t('consensus.spread', { count: rankSpread })}
             </button>
           </StatExplainer>

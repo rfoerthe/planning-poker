@@ -4,13 +4,13 @@
 
 Install the following tools before working on Planning Poker:
 
-| Tool | Required Version | Notes |
-| --- | --- | --- |
-| Node.js | Current 22.x, at least `22.13.0`, or a compatible newer LTS release | `package.json` declares `>=22`, but the locked ESLint and jsdom versions require at least 22.13.0 on Node 22. CI uses 22.x. |
-| pnpm | `11.1.1` | Use the version pinned in `packageManager`; the declared engine floor is `>=9.0.0`. |
-| Git | A version with worktree support | Required for source control and isolated feature work. |
-| Firebase project | Your development project with Firestore enabled | Required for real sessions; `.env.example` contains dummy values. |
-| Docker | Optional | Required only for container builds. |
+| Tool             | Required Version                                                    | Notes                                                                                                                       |
+| ---------------- | ------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| Node.js          | Current 22.x, at least `22.13.0`, or a compatible newer LTS release | `package.json` declares `>=22`, but the locked ESLint and jsdom versions require at least 22.13.0 on Node 22. CI uses 22.x. |
+| pnpm             | `11.1.1`                                                            | Use the version pinned in `packageManager`; the declared engine floor is `>=9.0.0`.                                         |
+| Git              | A version with worktree support                                     | Required for source control and isolated feature work.                                                                      |
+| Firebase project | Your development project with Firestore enabled                     | Required for real sessions; `.env.example` contains dummy values.                                                           |
+| Docker           | Optional                                                            | Required only for container builds.                                                                                         |
 
 ## Clone The Repository
 
@@ -198,11 +198,10 @@ To add a language, create a resource alongside `de.ts`, register it in `resource
 
 ## Troubleshooting
 
-| Issue | Likely Cause | Resolution |
-| --- | --- | --- |
-| App starts but Firestore calls fail | Missing or invalid `.env` values | Confirm Firebase variables and restart Vite. |
-| Build fails with dependency mismatch | pnpm lockfile or Node version drift | Use a current Node 22.x release and run `pnpm install --frozen-lockfile`. |
-| Tests fail in CI but pass locally | Environment or dependency version mismatch | Match CI Node version and run clean install. |
-| Docker build cannot find Firebase config | Build secret missing | Pass `--secret id=myenv,src=.env`. |
-| Routes 404 after deploy | SPA rewrites missing | Confirm `firebase.json` rewrite to `/index.html`. |
-
+| Issue                                    | Likely Cause                               | Resolution                                                                |
+| ---------------------------------------- | ------------------------------------------ | ------------------------------------------------------------------------- |
+| App starts but Firestore calls fail      | Missing or invalid `.env` values           | Confirm Firebase variables and restart Vite.                              |
+| Build fails with dependency mismatch     | pnpm lockfile or Node version drift        | Use a current Node 22.x release and run `pnpm install --frozen-lockfile`. |
+| Tests fail in CI but pass locally        | Environment or dependency version mismatch | Match CI Node version and run clean install.                              |
+| Docker build cannot find Firebase config | Build secret missing                       | Pass `--secret id=myenv,src=.env`.                                        |
+| Routes 404 after deploy                  | SPA rewrites missing                       | Confirm `firebase.json` rewrite to `/index.html`.                         |

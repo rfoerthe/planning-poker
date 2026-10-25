@@ -163,7 +163,11 @@ const NumericSummaryBody: React.FC<{ summary: NumericSummaryResult }> = ({ summa
             hint: t('numericSummary.abstentionsHelp.hint'),
           }}
         >
-          <button type='button' className='StatTrigger KpiTrigger' data-testid='summary-abstentions'>
+          <button
+            type='button'
+            className='StatTrigger KpiTrigger'
+            data-testid='summary-abstentions'
+          >
             <div className='KpiLabel'>{t('numericSummary.abstentions')}</div>
             <div className='KpiValue'>{summary.abstentionCount}</div>
           </button>
@@ -326,9 +330,7 @@ const getOutlierContent = (summary: NumericSummaryResult, t: Translate): Explain
       {
         label: t('numericSummary.outlierHelp.stepDistances'),
         calc: summary.votes
-          .map(
-            (vote) => `${vote.displayValue} → ${formatNumber(Math.abs(vote.rank - medianRank))}`,
-          )
+          .map((vote) => `${vote.displayValue} → ${formatNumber(Math.abs(vote.rank - medianRank))}`)
           .join(' · '),
       },
       {

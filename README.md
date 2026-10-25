@@ -56,15 +56,15 @@ Update `.env` with Firebase project values before testing real Firestore-backed 
 
 ## Documentation
 
-| Document | Description |
-| --- | --- |
-| [Changelog](CHANGELOG.md) | Released versions and their user-facing changes. |
-| [Documentation Index](docs/README.md) | Map of the documentation set and documentation standards. |
-| [Project Overview](docs/project-overview.md) | Product purpose, scope, audiences, goals, and key terms. |
-| [Technical Architecture](docs/technical-architecture.md) | Components, data flow, Firestore structure, and internal service APIs. |
-| [Setup & Installation](docs/setup-installation.md) | Local setup, environment variables, testing, builds, Docker, and Firebase Hosting. |
-| [Standard Operating Procedures](docs/standard-operating-procedures.md) | Contribution, testing, deployment, release, maintenance, and incident workflows. |
-| [User & Admin Manual](docs/user-admin-manual.md) | User, moderator, and admin workflows for Planning Poker sessions. |
+| Document                                                               | Description                                                                        |
+| ---------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| [Changelog](CHANGELOG.md)                                              | Released versions and their user-facing changes.                                   |
+| [Documentation Index](docs/README.md)                                  | Map of the documentation set and documentation standards.                          |
+| [Project Overview](docs/project-overview.md)                           | Product purpose, scope, audiences, goals, and key terms.                           |
+| [Technical Architecture](docs/technical-architecture.md)               | Components, data flow, Firestore structure, and internal service APIs.             |
+| [Setup & Installation](docs/setup-installation.md)                     | Local setup, environment variables, testing, builds, Docker, and Firebase Hosting. |
+| [Standard Operating Procedures](docs/standard-operating-procedures.md) | Contribution, testing, deployment, release, maintenance, and incident workflows.   |
+| [User & Admin Manual](docs/user-admin-manual.md)                       | User, moderator, and admin workflows for Planning Poker sessions.                  |
 
 ## Common Commands
 

@@ -82,28 +82,28 @@ Project sponsors, open-source users, and evaluators who need to understand the p
 
 ## Goals And Success Criteria
 
-| Goal | Success Criteria | Measurement |
-| --- | --- | --- |
-| Fast session startup | A moderator can create and share a session in under one minute. | Manual UX check, user feedback |
-| Clear voting workflow | Participants understand when to vote, wait, and review revealed cards. | User feedback, support issues |
-| Reliable real-time sync | Session and player state updates appear without manual refresh. | Functional testing, Firestore stream behavior |
-| Contributor-friendly codebase | New developers can install, test, and build locally using documented steps. | Onboarding feedback, CI pass rate |
-| Maintainable releases | Pull requests run lint, test, and build checks before merge. | GitHub Actions results |
+| Goal                          | Success Criteria                                                            | Measurement                                   |
+| ----------------------------- | --------------------------------------------------------------------------- | --------------------------------------------- |
+| Fast session startup          | A moderator can create and share a session in under one minute.             | Manual UX check, user feedback                |
+| Clear voting workflow         | Participants understand when to vote, wait, and review revealed cards.      | User feedback, support issues                 |
+| Reliable real-time sync       | Session and player state updates appear without manual refresh.             | Functional testing, Firestore stream behavior |
+| Contributor-friendly codebase | New developers can install, test, and build locally using documented steps. | Onboarding feedback, CI pass rate             |
+| Maintainable releases         | Pull requests run lint, test, and build checks before merge.                | GitHub Actions results                        |
 
 ## Key Terms
 
-| Term | Definition |
-| --- | --- |
-| Game | A Planning Poker estimation session stored as a Firestore `games` document. |
-| Player | A participant stored under a game's `players` subcollection. |
-| Moderator | The user who created the session, or another participant if member management is enabled. |
-| Card deck | The configured set of estimation values available in a game. |
-| Reveal | The moderator action that exposes all submitted votes. |
-| Reset | The moderator action that clears player votes for the next estimation round. |
-| Consensus status | A rating of how far apart the submitted cards of a revealed round are. |
-| Round timer | An optional countdown started by a moderator that reveals the round when it expires. |
-| Presence | A recent browser heartbeat, shown as a green dot on the participant card; the current browser always marks its own card active. |
-| Outlier | A numeric vote at least two card positions away from the median rank, reported when at least three numeric estimates exist. |
+| Term             | Definition                                                                                                                      |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| Game             | A Planning Poker estimation session stored as a Firestore `games` document.                                                     |
+| Player           | A participant stored under a game's `players` subcollection.                                                                    |
+| Moderator        | The user who created the session, or another participant if member management is enabled.                                       |
+| Card deck        | The configured set of estimation values available in a game.                                                                    |
+| Reveal           | The moderator action that exposes all submitted votes.                                                                          |
+| Reset            | The moderator action that clears player votes for the next estimation round.                                                    |
+| Consensus status | A rating of how far apart the submitted cards of a revealed round are.                                                          |
+| Round timer      | An optional countdown started by a moderator that reveals the round when it expires.                                            |
+| Presence         | A recent browser heartbeat, shown as a green dot on the participant card; the current browser always marks its own card active. |
+| Outlier          | A numeric vote at least two card positions away from the median rank, reported when at least three numeric estimates exist.     |
 
 ## Open Questions
 
@@ -111,4 +111,3 @@ Project sponsors, open-source users, and evaluators who need to understand the p
 - `[Placeholder: Define a data retention policy; sessions currently remain until explicitly deleted.]`
 - `[Placeholder: Confirm supported browsers and minimum device requirements.]`
 - `[Placeholder: Confirm stakeholder reporting needs, if any.]`
-

@@ -103,7 +103,9 @@ describe('NumericSummary component', () => {
     expect(tooltip.getByText(/Der Median ist die mittlere Stimme/)).toBeInTheDocument();
     expect(tooltip.getByText('1 · 8 · 55')).toBeInTheDocument();
     expect(tooltip.getByText('Mittlere Stimme nehmen (2. von 3):')).toBeInTheDocument();
-    expect(tooltip.getByText(/Empfehlung darunter geht dagegen vom Durchschnitt aus/)).toBeInTheDocument();
+    expect(
+      tooltip.getByText(/Empfehlung darunter geht dagegen vom Durchschnitt aus/),
+    ).toBeInTheDocument();
   });
 
   it('should average the two middle votes when there is no single middle', async () => {
@@ -148,9 +150,7 @@ describe('NumericSummary component', () => {
 
     const tooltip = await screen.findByRole('tooltip');
 
-    expect(
-      within(tooltip).getByText(/nicht gleich groß sein müssen/),
-    ).toBeInTheDocument();
+    expect(within(tooltip).getByText(/nicht gleich groß sein müssen/)).toBeInTheDocument();
     expect(within(tooltip).queryByText(/Fibonacci/)).not.toBeInTheDocument();
   });
 
@@ -254,7 +254,9 @@ describe('NumericSummary component', () => {
 
     expect(tooltip.getByText('8 Schritte — kritisch ab 3')).toBeInTheDocument();
     expect(tooltip.getByText('3,3 — kritisch über 1,5')).toBeInTheDocument();
-    expect(tooltip.getByText('Beide Grenzen überschritten → kritische Streuung')).toBeInTheDocument();
+    expect(
+      tooltip.getByText('Beide Grenzen überschritten → kritische Streuung'),
+    ).toBeInTheDocument();
   });
 
   it('should say that the deviation rule needs a third vote', async () => {

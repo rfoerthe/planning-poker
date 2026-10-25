@@ -48,7 +48,9 @@ export const DeckSuit: React.FC<DeckSuitProps> = ({ gameType, decorative = false
   return (
     <span
       className={className ? `DeckSuit ${className}` : 'DeckSuit'}
-      {...(decorative ? { 'aria-hidden': true } : { role: 'img', 'aria-label': label, title: label })}
+      {...(decorative
+        ? { 'aria-hidden': true }
+        : { role: 'img', 'aria-label': label, title: label })}
     >
       {suit.symbol}
     </span>

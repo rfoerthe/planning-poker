@@ -193,7 +193,6 @@ describe('games service', () => {
     });
   });
 
-
   describe('round timer', () => {
     it('should store the end time and the chosen duration', async () => {
       vi.useFakeTimers();

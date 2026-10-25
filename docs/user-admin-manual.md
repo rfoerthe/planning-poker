@@ -6,11 +6,11 @@ This manual is for Planning Poker participants, session moderators, and support/
 
 ## User Roles
 
-| Role | Description | Common Actions |
-| --- | --- | --- |
-| Participant | A user who joins a Planning Poker session to vote. | Join session, choose a card, wait for reveal. |
-| Moderator | The creator of a session, or a member with management permission. | Reveal votes, reset session, remove players, delete session. |
-| Admin/Maintainer | A technical operator with repository or Firebase access. | Deploy app, manage old sessions, investigate production issues. |
+| Role             | Description                                                       | Common Actions                                                  |
+| ---------------- | ----------------------------------------------------------------- | --------------------------------------------------------------- |
+| Participant      | A user who joins a Planning Poker session to vote.                | Join session, choose a card, wait for reveal.                   |
+| Moderator        | The creator of a session, or a member with management permission. | Reveal votes, reset session, remove players, delete session.    |
+| Admin/Maintainer | A technical operator with repository or Firebase access.          | Deploy app, manage old sessions, investigate production issues. |
 
 ## Getting Started As A Participant
 
@@ -98,23 +98,23 @@ When the moderator reveals the session:
 
 For numeric decks (Short Fibonacci, Fibonacci, and current custom decks), a result card appears in the results area after reveal. Tap or hover over a statistic to see its calculation. Legacy custom decks whose labels do not match their stored numeric values are not evaluated.
 
-| Value | Meaning | How to use it |
-| --- | --- | --- |
-| Average | Mean of submitted numeric estimates, with at most one decimal (a comma in the German UI). | Read together with the nearest card; the raw mean is often not a card of the deck. |
-| Nearest card | The deck card closest to the average. Ties go to the higher card. | Use it as the proposal for the final estimate. |
-| Median | Middle estimate of the round. | More robust than the average when single votes are extreme. |
-| Range | Lowest and highest submitted card. | Shows how far apart the team is. |
-| Consensus status | Rating of the spread across card positions. | See the table below. |
-| Distribution | How often each card was chosen, plus participants who voted without an estimate. | Shows whether the team splits into camps or has one clear favourite. |
-| Outliers | Participants whose numeric card is at least two positions away from the median rank, when at least three numeric estimates exist. | Ask these participants first; they usually know something the others do not. |
+| Value            | Meaning                                                                                                                           | How to use it                                                                      |
+| ---------------- | --------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| Average          | Mean of submitted numeric estimates, with at most one decimal (a comma in the German UI).                                         | Read together with the nearest card; the raw mean is often not a card of the deck. |
+| Nearest card     | The deck card closest to the average. Ties go to the higher card.                                                                 | Use it as the proposal for the final estimate.                                     |
+| Median           | Middle estimate of the round.                                                                                                     | More robust than the average when single votes are extreme.                        |
+| Range            | Lowest and highest submitted card.                                                                                                | Shows how far apart the team is.                                                   |
+| Consensus status | Rating of the spread across card positions.                                                                                       | See the table below.                                                               |
+| Distribution     | How often each card was chosen, plus participants who voted without an estimate.                                                  | Shows whether the team splits into camps or has one clear favourite.               |
+| Outliers         | Participants whose numeric card is at least two positions away from the median rank, when at least three numeric estimates exist. | Ask these participants first; they usually know something the others do not.       |
 
 Outlier cards are also framed in red in the participant list.
 
-| Consensus status | Meaning | Recommended action |
-| --- | --- | --- |
-| CONSENSUS | The team agrees, or is one card apart. | Accept the nearest card and move on. |
-| MODERATE SPREAD | The estimates are two card positions apart. | Ask for a short clarification, then decide. |
-| CRITICAL SPREAD | The estimates are three or more card positions apart, or scatter widely. | Discuss the story, then revote. |
+| Consensus status | Meaning                                                                  | Recommended action                          |
+| ---------------- | ------------------------------------------------------------------------ | ------------------------------------------- |
+| CONSENSUS        | The team agrees, or is one card apart.                                   | Accept the nearest card and move on.        |
+| MODERATE SPREAD  | The estimates are two card positions apart.                              | Ask for a short clarification, then decide. |
+| CRITICAL SPREAD  | The estimates are three or more card positions apart, or scatter widely. | Discuss the story, then revote.             |
 
 The result card is calculated in the browser after each reveal and is not stored. T-shirt sessions keep their own T-shirt result card; the coffee and question cards count as "without estimate" and never influence the numbers.
 
@@ -128,15 +128,15 @@ When the moderator resets the session:
 
 ## Session Controls
 
-| Control | Purpose | Recommended Use |
-| --- | --- | --- |
-| Reveal | Shows all votes and completes the round. | Use after all or most participants have voted. |
-| Timer | Starts or stops an optional round timer that reveals the votes when it expires. | Use to timebox discussion-heavy rounds; leave it unused otherwise. |
-| Reset | Clears votes for another round. | Use after discussion or before estimating the next story. |
-| Remove player | Removes another participant from the session. | Use for duplicate, inactive, or incorrect entries. |
-| Delete session | Removes an unlocked session and its players after confirmation. | Available to every participant on the active session page. |
-| Invite | Shows and copies the join link. | Available to every participant. |
-| Leave | Returns to the home page. | Keeps the player document and recent-session reference so the browser can return. |
+| Control        | Purpose                                                                         | Recommended Use                                                                   |
+| -------------- | ------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| Reveal         | Shows all votes and completes the round.                                        | Use after all or most participants have voted.                                    |
+| Timer          | Starts or stops an optional round timer that reveals the votes when it expires. | Use to timebox discussion-heavy rounds; leave it unused otherwise.                |
+| Reset          | Clears votes for another round.                                                 | Use after discussion or before estimating the next story.                         |
+| Remove player  | Removes another participant from the session.                                   | Use for duplicate, inactive, or incorrect entries.                                |
+| Delete session | Removes an unlocked session and its players after confirmation.                 | Available to every participant on the active session page.                        |
+| Invite         | Shows and copies the join link.                                                 | Available to every participant.                                                   |
+| Leave          | Returns to the home page.                                                       | Keeps the player document and recent-session reference so the browser can return. |
 
 Reveal, timer management, reset, and removal of other players require moderator or member-management permission. Deletion on the active session page is controlled by the lock flag, not by moderator status.
 
@@ -218,18 +218,18 @@ After deployment, an admin should verify:
 
 ## Troubleshooting For Users
 
-| Problem | What To Try |
-| --- | --- |
-| Invite link does not work | Ask the moderator to resend the link and confirm the session still exists. |
-| Your name appears twice | Ask the moderator to remove the duplicate participant. |
-| Vote does not update | Refresh the page, rejoin the session, or check network connectivity. |
-| Recent session is missing | Browser storage may have been cleared; use the invite link again. |
-| Cards are not visible | Refresh the page and confirm the session is active. |
-| Moderator controls are missing | Confirm you are the session creator or that member management is enabled. |
+| Problem                                                 | What To Try                                                                                                    |
+| ------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| Invite link does not work                               | Ask the moderator to resend the link and confirm the session still exists.                                     |
+| Your name appears twice                                 | Ask the moderator to remove the duplicate participant.                                                         |
+| Vote does not update                                    | Refresh the page, rejoin the session, or check network connectivity.                                           |
+| Recent session is missing                               | Browser storage may have been cleared; use the invite link again.                                              |
+| Cards are not visible                                   | Refresh the page and confirm the session is active.                                                            |
+| Moderator controls are missing                          | Confirm you are the session creator or that member management is enabled.                                      |
 | The timer shows a different time than on another screen | Device clocks differ, which can also shift when a browser triggers the shared reveal. Check the system clocks. |
-| The timer expired but nothing was revealed | Nobody had voted. Start the round again or reveal manually after the first vote. |
-| Stale participants clutter the session | A missing dot means no recent heartbeat. Confirm who has left, then remove their entries as a moderator. |
-| A participant is present but has no green dot | Ask them to reload the session. The dot returns within moments. |
+| The timer expired but nothing was revealed              | Nobody had voted. Start the round again or reveal manually after the first vote.                               |
+| Stale participants clutter the session                  | A missing dot means no recent heartbeat. Confirm who has left, then remove their entries as a moderator.       |
+| A participant is present but has no green dot           | Ask them to reload the session. The dot returns within moments.                                                |
 
 ## Appearance
 
@@ -254,4 +254,3 @@ When reporting an issue, include:
 - Console errors, if available.
 
 Send reports to `[Placeholder: support channel or issue tracker URL]`.
-

@@ -27,8 +27,20 @@ describe('RecentGames component', () => {
   });
   it('should display recent games when games found in local storage', async () => {
     const mockGames: PlayerGame[] = [
-      { id: 'abv', name: 'avengers', createdById: 'IronManId', createdBy: 'IronMan', playerId: 'abv' },
-      { id: 'xyz', name: 'endgame', createdById: 'SpiderManId', createdBy: 'SpiderMan', playerId: 'abc' },
+      {
+        id: 'abv',
+        name: 'avengers',
+        createdById: 'IronManId',
+        createdBy: 'IronMan',
+        playerId: 'abv',
+      },
+      {
+        id: 'xyz',
+        name: 'endgame',
+        createdById: 'SpiderManId',
+        createdBy: 'SpiderMan',
+        playerId: 'abc',
+      },
     ];
     vi.spyOn(playersService, 'getPlayerRecentGames').mockResolvedValue(mockGames);
 
@@ -76,8 +88,20 @@ describe('RecentGames component', () => {
 
   it('should navigate to the game when clicking on game', async () => {
     const mockGames: PlayerGame[] = [
-      { id: 'abc', name: 'avengers', createdById: 'IronManId', createdBy: 'IronMan', playerId: 'abc' },
-      { id: 'xyz', name: 'endgame', createdById: 'SpiderManId', createdBy: 'SpiderMan', playerId: 'aaa' },
+      {
+        id: 'abc',
+        name: 'avengers',
+        createdById: 'IronManId',
+        createdBy: 'IronMan',
+        playerId: 'abc',
+      },
+      {
+        id: 'xyz',
+        name: 'endgame',
+        createdById: 'SpiderManId',
+        createdBy: 'SpiderMan',
+        playerId: 'aaa',
+      },
     ];
     vi.spyOn(playersService, 'getPlayerRecentGames').mockResolvedValue(mockGames);
 

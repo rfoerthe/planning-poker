@@ -184,17 +184,13 @@ describe('GameArea component', () => {
     ];
 
     it('should mark participants that are refreshing and skip leftovers', () => {
-      renderWithRouter(
-        <GameArea game={mockGame} players={buildPlayers()} currentPlayerId='a1' />,
-      );
+      renderWithRouter(<GameArea game={mockGame} players={buildPlayers()} currentPlayerId='a1' />);
 
       expect(screen.getAllByTestId('presence-indicator')).toHaveLength(2);
     });
 
     it('should drop a participant that stopped refreshing, without new data', () => {
-      renderWithRouter(
-        <GameArea game={mockGame} players={buildPlayers()} currentPlayerId='a1' />,
-      );
+      renderWithRouter(<GameArea game={mockGame} players={buildPlayers()} currentPlayerId='a1' />);
 
       act(() => {
         vi.advanceTimersByTime(presenceTimeoutMs + presenceHeartbeatMs);

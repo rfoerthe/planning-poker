@@ -127,9 +127,16 @@ vi.mock('firebase/firestore', () => {
 
   // Simple snapshot shims
   class DocSnapshot {
-    constructor(private _exists: boolean, private _data?: any) {}
-    exists() { return this._exists; }
-    data() { return this._data; }
+    constructor(
+      private _exists: boolean,
+      private _data?: any,
+    ) {}
+    exists() {
+      return this._exists;
+    }
+    data() {
+      return this._data;
+    }
   }
 
   const getFirestore = (_app?: any) => ({ __db: true });
