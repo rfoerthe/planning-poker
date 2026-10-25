@@ -83,7 +83,8 @@ export const getPlayerRecentGames = async (): Promise<PlayerGame[]> => {
       playerGame.isModerator = isModerator(
         playerGame.createdById,
         getCurrentPlayerId(playerGame.id),
-        playerGame.isAllowMembersToManageSession)
+        playerGame.isAllowMembersToManageSession,
+      );
     } else {
       playerGame.existsInStore = false;
       playerGame.isModerator = true;
@@ -110,7 +111,13 @@ export const updatePlayerGames = (
 ) => {
   let playerGames: PlayerGame[] = getPlayerGamesFromCache();
 
-  playerGames.push({ id: gameId, name: gameName, createdById: createdById, createdBy: createdBy, playerId });
+  playerGames.push({
+    id: gameId,
+    name: gameName,
+    createdById: createdById,
+    createdBy: createdBy,
+    playerId,
+  });
 
   updatePlayerGamesInCache(playerGames);
 };
@@ -167,12 +174,14 @@ export const addPlayerToGame = (game: Game, playerName: string): void => {
 export const resetPlayers = async (gameId: string) => {
   const players = await getPlayersFromStore(gameId);
 
-  await Promise.all(players.map((player) => {
-    const updatedPlayer: Player = {
-      ...player,
-      status: Status.NotStarted,
-      value: -3,
-    };
-    return updatePlayerInStore(gameId, updatedPlayer);
-  }));
+  await Promise.all(
+    players.map((player) => {
+      const updatedPlayer: Player = {
+        ...player,
+        status: Status.NotStarted,
+        value: -3,
+      };
+      return updatePlayerInStore(gameId, updatedPlayer);
+    }),
+  );
 };

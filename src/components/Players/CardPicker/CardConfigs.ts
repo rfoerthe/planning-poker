@@ -126,7 +126,15 @@ export const isValidCustomCardValue = (input: string): boolean => /^\d{1,3}$/.te
 
 /* Cool to warm with rising value, two neighbouring cards per shade — the same
    progression the built-in decks use. */
-const customColorRamp = ['#9EC8FE', '#A3DFF2', '#9DD49A', '#F4DD94', '#F39893', '#D96C6C', '#9B59B6'];
+const customColorRamp = [
+  '#9EC8FE',
+  '#A3DFF2',
+  '#9DD49A',
+  '#F4DD94',
+  '#F39893',
+  '#D96C6C',
+  '#9B59B6',
+];
 
 /**
  * Builds a custom deck from the entered values.
@@ -149,7 +157,8 @@ export const getCustomCards = (values: string[]): CardConfig[] => {
       return { value: 0, displayValue: '0', color: 'var(--color-background-secondary)' };
     }
 
-    const color = customColorRamp[Math.min(Math.floor(coloredCount / 2), customColorRamp.length - 1)];
+    const color =
+      customColorRamp[Math.min(Math.floor(coloredCount / 2), customColorRamp.length - 1)];
     coloredCount += 1;
     return { value: number, displayValue: String(number), color };
   });

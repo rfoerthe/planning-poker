@@ -197,10 +197,12 @@ describe('Poker component', () => {
     const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
 
     onSnapshot
-      .mockImplementationOnce((ref: any, cb: (snap: any) => void, errorCb: (error: Error) => void) => {
-        errorCb(new Error('permission denied'));
-        return vi.fn();
-      })
+      .mockImplementationOnce(
+        (ref: any, cb: (snap: any) => void, errorCb: (error: Error) => void) => {
+          errorCb(new Error('permission denied'));
+          return vi.fn();
+        },
+      )
       .mockImplementationOnce((ref: any, cb: (snap: any) => void) => {
         cb({ forEach: (_: any) => {} });
         return vi.fn();

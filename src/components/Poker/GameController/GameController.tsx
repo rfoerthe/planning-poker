@@ -85,9 +85,7 @@ export const GameController: React.FC<GameControllerProps> = ({
                 data-testid='reveal-button'
                 title={t('session.actions.revealTitle')}
                 onClick={() => finishGame(game.id)}
-                disabled={
-                  game.gameStatus === Status.Finished || game.gameStatus === Status.Started
-                }
+                disabled={game.gameStatus === Status.Finished || game.gameStatus === Status.Started}
               >
                 <VisibilityIcon fontSize='small' />
                 <span className='SessionActionLabel'>{t('session.actions.reveal')}</span>

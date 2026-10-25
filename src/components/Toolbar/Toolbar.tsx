@@ -109,8 +109,9 @@ export const Toolbar = ({
   const { t } = useTranslation();
   const isCompact = useMediaQuery('(max-width: 760px)');
   const [themeMenuAnchorEl, setThemeMenuAnchorEl] = React.useState<null | HTMLElement>(null);
-  const [secondaryMenuAnchorEl, setSecondaryMenuAnchorEl] =
-    React.useState<null | HTMLElement>(null);
+  const [secondaryMenuAnchorEl, setSecondaryMenuAnchorEl] = React.useState<null | HTMLElement>(
+    null,
+  );
   const [isDrawerOpen, setIsDrawerOpen] = React.useState(false);
   const isThemeMenuOpen = Boolean(themeMenuAnchorEl);
   const isSecondaryMenuOpen = Boolean(secondaryMenuAnchorEl);

@@ -150,8 +150,7 @@ const getNumericVotes = (players: Player[], numericCards: CardConfig[]): Numeric
 
 const getAbstentionCount = (players: Player[]): number => {
   return players.filter(
-    (player) =>
-      player.status === Status.Finished && player.value !== undefined && player.value < 0,
+    (player) => player.status === Status.Finished && player.value !== undefined && player.value < 0,
   ).length;
 };
 
@@ -234,7 +233,8 @@ const getOutliers = (votes: NumericVote[]): NumericVote[] => {
 
 const getStandardDeviation = (values: number[]): number => {
   const mean = values.reduce((sum, value) => sum + value, 0) / values.length;
-  const variance = values.reduce((sum, value) => sum + Math.pow(value - mean, 2), 0) / values.length;
+  const variance =
+    values.reduce((sum, value) => sum + Math.pow(value - mean, 2), 0) / values.length;
 
   return Math.sqrt(variance);
 };

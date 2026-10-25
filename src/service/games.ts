@@ -95,7 +95,7 @@ export const stopTimer = async (gameId: string) => {
 };
 
 export const removeGame = async (gameId: string) => {
-  const game = await getGameFromStore(gameId)
+  const game = await getGameFromStore(gameId);
   if (game?.isLocked) {
     return;
   }

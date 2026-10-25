@@ -9,7 +9,8 @@ import {
   isPlayerInGameStore,
   removeGameFromCache,
   addPlayerToGame,
-  resetPlayers, updatePlayerName,
+  resetPlayers,
+  updatePlayerName,
 } from './players';
 import * as fb from '../repository/firebase';
 import * as storage from '../repository/localStorage';
@@ -136,11 +137,11 @@ describe('Players service', () => {
       const spyPlayer = vi.spyOn(fb, 'updatePlayerInStore');
       vi.spyOn(fb, 'getPlayerFromStore').mockResolvedValueOnce(mockPlayer);
 
-      await updatePlayerName(mockGame.id, mockPlayer.id, "Tester1");
+      await updatePlayerName(mockGame.id, mockPlayer.id, 'Tester1');
 
       expect(spyPlayer).toHaveBeenCalledWith(
         mockGame.id,
-        expect.objectContaining({ name: "Tester1"}),
+        expect.objectContaining({ name: 'Tester1' }),
       );
     });
 
@@ -149,7 +150,7 @@ describe('Players service', () => {
       const spyPlayer = vi.spyOn(fb, 'updatePlayerInStore');
       vi.spyOn(fb, 'getPlayerFromStore').mockResolvedValueOnce(undefined);
 
-      await updatePlayerName(mockGame.id, mockPlayer.id, "Tester1");
+      await updatePlayerName(mockGame.id, mockPlayer.id, 'Tester1');
 
       expect(spyPlayer).toHaveBeenCalledTimes(0);
     });

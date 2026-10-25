@@ -66,16 +66,14 @@ describe('GameController component', () => {
   it('should not display a game average, whatever the deck', () => {
     // The estimate summary derives the average from the current votes and is
     // the only place that shows it.
-    [GameType.ShortFibonacci, GameType.TShirt, GameType.Custom].forEach(
-      (gameType) => {
-        const { unmount } = render(
-          <GameController game={{ ...mockGame, gameType }} currentPlayerId={mockCurrentPlayerId} />,
-        );
+    [GameType.ShortFibonacci, GameType.TShirt, GameType.Custom].forEach((gameType) => {
+      const { unmount } = render(
+        <GameController game={{ ...mockGame, gameType }} currentPlayerId={mockCurrentPlayerId} />,
+      );
 
-        expect(screen.queryByText(/Durchschnitt/)).not.toBeInTheDocument();
-        unmount();
-      },
-    );
+      expect(screen.queryByText(/Durchschnitt/)).not.toBeInTheDocument();
+      unmount();
+    });
   });
   it('should display exit option', () => {
     render(<GameController game={mockGame} currentPlayerId={mockCurrentPlayerId} />);

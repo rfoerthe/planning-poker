@@ -9,7 +9,7 @@ describe('InfoDialog component', () => {
     render(
       <InfoDialog title='title test' message='message test' onOk={onOkFunction}>
         <button data-testid='info-dialog-button'>InfoDialog button</button>
-      </InfoDialog>
+      </InfoDialog>,
     );
     const button = screen.getByTestId('info-dialog-button');
     fireEvent.click(button);
