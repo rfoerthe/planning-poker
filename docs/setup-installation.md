@@ -85,7 +85,7 @@ The test command runs the Vitest/Testing Library suite followed by Node.js integ
 pnpm lint
 ```
 
-Run linting before opening a pull request.
+The command runs [Oxlint](https://oxc.rs/docs/guide/usage/linter) with the rules in `.oxlintrc.json`. Oxlint parses TypeScript itself, so linting does not depend on the installed TypeScript version. Run linting before opening a pull request.
 
 ## Run Type Checking
 

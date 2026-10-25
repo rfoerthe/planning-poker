@@ -28,6 +28,6 @@ overrides:
   body-parser@1: ^1.20.9
   body-parser@2: ^2.4.0
   # Security: GHSA-q2hr-2g5m-vwhr, GHSA-qhr7-859c-m2p7 and GHSA-6j4f-fj2g-mc7p;
-  # brace-expansion 5 arrives through minimatch 10 in the ESLint toolchain. The
+  # brace-expansion 5 arrives through minimatch 10 via rimraf's glob 13. The
   # legacy 1.x and 2.x lines reach fixed releases within their parents' ranges.
   brace-expansion@5: ^5.0.12

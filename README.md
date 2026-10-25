@@ -71,7 +71,7 @@ Update `.env` with Firebase project values before testing real Firestore-backed 
 ```bash
 pnpm run dev      # Start the Vite development server
 pnpm test         # Run application and deploy-script tests
-pnpm lint         # Run ESLint
+pnpm lint         # Run Oxlint
 pnpm typecheck    # Run the TypeScript compiler without emitting output
 pnpm build        # Build production assets
 pnpm preview      # Preview the production build on port 5000
