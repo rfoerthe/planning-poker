@@ -187,7 +187,7 @@ Use this mode when:
 
 ### Command-Line Maintenance
 
-With dependencies installed and `.env` configured, operators can run:
+With dependencies installed and `.env` configured (or the `VITE_FB_*` variables exported), operators can run:
 
 ```bash
 pnpm games:list

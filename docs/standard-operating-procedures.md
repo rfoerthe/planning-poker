@@ -123,7 +123,7 @@ The workflow:
 
 ### Deployment Steps
 
-Confirm `VITE_FB_PROJECT_ID` and the other Firebase settings in `.env`, including any overrides exported in the shell or CI environment. Both deploy scripts load `.env` and explicitly use the resulting project ID for the build and Hosting target. `pnpm run deploy` combines a clean build and Hosting deployment; `pnpm run preview-deploy` publishes to a 14-day preview channel in the same project. See [Firebase Hosting Setup](setup-installation.md#firebase-hosting-setup).
+Confirm `VITE_FB_PROJECT_ID` and the other Firebase settings in `.env`, including any overrides exported in the shell or CI environment. Both deploy scripts load `.env` if it exists and explicitly use the resulting project ID for the build and Hosting target. `pnpm run deploy` combines a clean build and Hosting deployment; `pnpm run preview-deploy` publishes to a 14-day preview channel in the same project. See [Firebase Hosting Setup](setup-installation.md#firebase-hosting-setup).
 
 1. Check out the target release branch.
 2. Install dependencies:
@@ -144,7 +144,7 @@ Confirm `VITE_FB_PROJECT_ID` and the other Firebase settings in `.env`, includin
    pnpm run deploy
    ```
 
-   The script stops if `.env` or the project ID is missing, the build fails, or Firebase reports an error.
+   The script stops if the project ID is missing from both `.env` and the environment, the build fails, or Firebase reports an error.
 
 5. Validate production:
 
@@ -187,7 +187,7 @@ Authenticate to GHCR with an account permitted to push that package, or tag and 
 
 ### Command-Line Maintenance
 
-All commands use the Firebase web SDK with `.env` configuration and the same Firestore access rules as the browser. No service account or admin authentication is added.
+All commands use the Firebase web SDK with the configuration from `.env` or the exported environment and the same Firestore access rules as the browser. No service account or admin authentication is added.
 
 ```bash
 pnpm games:list

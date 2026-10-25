@@ -167,16 +167,16 @@ The repository includes `firebase.json` configured for a single-page application
 }
 ```
 
-The Firebase CLI is installed as a development dependency. The deploy scripts load `.env` using Node's `--env-file` option and pass `VITE_FB_PROJECT_ID` explicitly to the CLI as `--project`. There is no `.firebaserc` or repository-specific default project.
+The Firebase CLI is installed as a development dependency. The deploy scripts load `.env`, if it exists, using Node's `--env-file-if-exists` option and pass `VITE_FB_PROJECT_ID` explicitly to the CLI as `--project`. There is no `.firebaserc` or repository-specific default project.
 
-Set `VITE_FB_PROJECT_ID` and the other Firebase settings in `.env` to your target project, then log in and deploy:
+Set `VITE_FB_PROJECT_ID` and the other Firebase settings in `.env` (or export them, for example in CI or a Claude Code environment) to your target project, then log in and deploy:
 
 ```bash
 pnpm exec firebase login
 pnpm run deploy
 ```
 
-`pnpm run deploy` validates the project ID is present, cleans `dist`, builds the app, and deploys only Firebase Hosting. A missing `.env` or empty project ID stops the command before cleanup or deployment. A failed build prevents deployment; Firebase failures return a nonzero exit status.
+`pnpm run deploy` validates the project ID is present, cleans `dist`, builds the app, and deploys only Firebase Hosting. A missing or empty project ID stops the command before cleanup or deployment; a missing `.env` file alone does not, as long as the variables are exported. A failed build prevents deployment; Firebase failures return a nonzero exit status.
 
 For a preview:
 

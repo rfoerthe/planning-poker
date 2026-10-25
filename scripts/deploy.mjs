@@ -8,12 +8,12 @@ const [target, ...extraArgs] = process.argv.slice(2);
 const projectId = process.env.VITE_FB_PROJECT_ID?.trim();
 
 if (!['production', 'preview'].includes(target) || extraArgs.length > 0) {
-  console.error('Usage: node --env-file=.env scripts/deploy.mjs <production|preview>');
+  console.error('Usage: node --env-file-if-exists=.env scripts/deploy.mjs <production|preview>');
   process.exit(1);
 }
 
 if (!projectId) {
-  console.error('Missing VITE_FB_PROJECT_ID. Set it in .env before deploying.');
+  console.error('Missing VITE_FB_PROJECT_ID. Set it in .env or export it before deploying.');
   process.exit(1);
 }
 
