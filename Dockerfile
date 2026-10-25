@@ -8,7 +8,6 @@ WORKDIR /app
 
 # Copy package files and pnpm settings to install dependencies first (caching optimization)
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
-COPY patches/ ./patches/
 
 # Install the project's pinned pnpm version and dependencies
 RUN npm install -g "$(node -p "require('./package.json').packageManager")" && pnpm install --frozen-lockfile
