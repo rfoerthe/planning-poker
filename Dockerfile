@@ -7,7 +7,7 @@ FROM node:lts-alpine3.22 AS builder
 WORKDIR /app
 
 # Copy package files and pnpm settings to install dependencies first (caching optimization)
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .pnpmfile.cjs ./
 
 # Install the project's pinned pnpm version and dependencies
 RUN npm install -g "$(node -p "require('./package.json').packageManager")" && pnpm install --frozen-lockfile
