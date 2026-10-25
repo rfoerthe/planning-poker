@@ -10,7 +10,7 @@
     "@mui/material": "^9.4.0",
     "@types/react-lazy-load-image-component": "^1.6.5",
     "country-flag-icons": "^1.6.20",
-    "firebase": "^12.18.0",
+    "firebase": "^13.1.0",
     "i18next": "^26.4.0",
     "react": "19.2.6",
     "react-cookie-consent": "^10.0.2",
