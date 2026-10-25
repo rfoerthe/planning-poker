@@ -10,39 +10,24 @@ overrides:
   # pins @opentelemetry/core@^1 and is therefore stuck on GHSA-8988-4f7v-96qf.
   # Pubsub 6 is the release that moves to @opentelemetry/core@^2.
   '@google-cloud/pubsub': ^6.0.1
-  # Security: GHSA-8cw4-87c7-c6xx; Firebase still requests vulnerable csv-parse 5.
-  'firebase-tools>csv-parse': 7.0.2
-  # Security: GHSA-528h-pc64-c93x; the Firebase patch adapts its v1 stream API
-  # usage to the fixed v3 Node stream adapters.
-  'firebase-tools>stream-json': 3.5.0
   # Security: GHSA-x5fp-wj9c-mxmx and GHSA-4mjr-xmp4-gh2g. Some Express
   # dependencies pin qs exactly, so updating the lockfile alone is insufficient.
   qs@<6.16.0: 6.16.0
-  # Security: GHSA-2gqq-gqf2-x968 and six more undici advisories. The 7.x copy
-  # comes in through jsdom/vitest, the 8.x copy through node-gyp in firebase-tools.
-  undici@7: ^7.29.1
-  undici@8: ^8.10.2
-  # Security: GHSA-6qxp-vccf-f47h and three more; firebase-tools pins the MCP SDK at 1.30.
-  '@modelcontextprotocol/sdk': ^1.32.0
-  # Security: GHSA-5r4p-p66f-jhc7 and GHSA-hxh3-vqpv-xpqv; hono arrives via the MCP SDK.
-  hono: ^4.13.11
   # Security: GHSA-f596-whhp-79r4 and GHSA-m9gg-hp2v-232j. @firebase/firestore still
   # requests grpc-js 1.9; the override also dedupes google-gax onto the fixed release.
+  # This is the only one of these paths that reaches the shipped bundle.
   '@grpc/grpc-js': ^1.14.5
-  # Security: GHSA-2vr4-cq9g-pvrc and GHSA-j6r3-76f7-8jcv.
-  ip-address: ^10.7.1
-  # Security: GHSA-q2hr-2g5m-vwhr; both legacy brace-expansion lines are affected.
-  brace-expansion@1: ^1.1.21
-  brace-expansion@2: ^2.1.7
-  # Security: GHSA-68fv-2mgg-jv7q.
-  source-map-js: ^1.2.2
-  # Security: GHSA-jqcg-44mw-7w3h; Express 4 and 5 both pin proxy-addr 2.0.7.
-  proxy-addr: ^2.0.8
-  # Security: GHSA-9f6g-j8ch-79g4.
-  morgan: ^1.12.1
-  # Security: GHSA-58mr-gqgx-xq4g; fast-uri comes in through ajv.
-  fast-uri: ^3.1.7
-  # Security: GHSA-vc2v-76pw-4v95; compression comes in through superstatic.
-  compression: ^1.8.2
-patchedDependencies:
-  firebase-tools@15.28.2: patches/firebase-tools@15.28.2.patch
+  # Security: GHSA-rfgv-xxqx-mfg5, GHSA-xjj6-f33q-929c and three more; firebase-tools
+  # asks for undici ^6.19.0, and the 6.x line is fixed from 6.29.1 on. The 7.x copy
+  # from jsdom and the 8.x copy from node-gyp resolve to fixed releases on their own.
+  undici@6: ^6.29.1
+  # Security: GHSA-mrhx-c7xc-m3w5; firebase-tools and the MCP SDK both ask for zod ^4.
+  zod: ^4.6.6
+  # Security: GHSA-27r3-jxmh-p828 on both body-parser lines: 1.x via firebase-tools,
+  # exegesis and Express 4, 2.x via the MCP SDK's Express 5.
+  body-parser@1: ^1.20.9
+  body-parser@2: ^2.4.0
+  # Security: GHSA-q2hr-2g5m-vwhr, GHSA-qhr7-859c-m2p7 and GHSA-6j4f-fj2g-mc7p;
+  # brace-expansion 5 arrives through minimatch 10 in the ESLint toolchain. The
+  # legacy 1.x and 2.x lines reach fixed releases within their parents' ranges.
+  brace-expansion@5: ^5.0.12
