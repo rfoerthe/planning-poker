@@ -41,6 +41,8 @@ jobs:
             ${{ runner.os }}-pnpm-store-
       - name: Install modules
         run: pnpm install --frozen-lockfile
+      - name: Check formatting
+        run: pnpm format:check
       - name: Run lint
         run: pnpm lint
         env:

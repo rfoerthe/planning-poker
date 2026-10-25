@@ -41,17 +41,13 @@
     "games:delete": "node --env-file=.env scripts/delete-games.mjs",
     "test": "vitest run && node --test scripts/*.test.mjs",
     "lint": "eslint .",
-    "typecheck": "tsc --noEmit"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
+    "typecheck": "tsc --noEmit",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "prepare": "husky"
   },
   "lint-staged": {
-    "src/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
-      "prettier --write"
-    ]
+    "*": "prettier --write --ignore-unknown"
   },
   "browserslist": {
     "production": [
