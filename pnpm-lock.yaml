@@ -59,8 +59,8 @@ importers:
         specifier: ^1.6.3
         version: 1.6.3(react@19.2.6)
       react-router:
-        specifier: ^7.18.3
-        version: 7.18.3(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
+        specifier: ^7.18.4
+        version: 7.18.4(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       typescript:
         specifier: 6.0.3
         version: 6.0.3
@@ -3561,8 +3561,8 @@ packages:
     peerDependencies:
       react: ^15.x.x || ^16.x.x || ^17.x.x || ^18.x.x || ^19.x.x
 
-  react-router@7.18.3:
-    resolution: {integrity: sha512-gyXgtdr5uACJ5b1Q4udzjVV+tb/rlHIMJKuJ0e89R4Kzgz47z/rgP0dIKxktqIEUhDHluGTPJJH/wRha7CyqsA==}
+  react-router@7.18.4:
+    resolution: {integrity: sha512-PUPQcMhMGRAslLcvtlPz/kmzBEWPhLdgLFrL7pLNepBL6dX0lWj4WD2cUYVgYCuT3jxvghYFg81cDTj44DhetQ==}
     engines: {node: '>=20.0.0'}
     peerDependencies:
       react: '>=18'
@@ -8052,7 +8052,7 @@ snapshots:
       lodash.throttle: 4.1.1
       react: 19.2.6
 
-  react-router@7.18.3(react-dom@19.2.6(react@19.2.6))(react@19.2.6):
+  react-router@7.18.4(react-dom@19.2.6(react@19.2.6))(react@19.2.6):
     dependencies:
       cookie: 1.1.1
       react: 19.2.6
