@@ -7,9 +7,7 @@ export const Footer = () => {
   return (
     <footer className='Footer'>
       <div className='FooterInner'>
-        <p className='FooterCredit'>
-          © 2021 @hellomuthu23 · © 2026 Roland Foerther
-        </p>
+        <p className='FooterCredit'>© 2021 @hellomuthu23 · © 2026 Roland Foerther</p>
         <p className='FooterVersion TabularNumbers'>
           {t('footer.version', { version: import.meta.env.PACKAGE_VERSION })}
         </p>
