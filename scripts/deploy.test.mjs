@@ -103,11 +103,19 @@ for (const envFile of [null, '', 'VITE_FB_PROJECT_ID="   "\n']) {
     const { cwd, run } = fixture(t, envFile);
     const result = run('deploy');
     assert.notEqual(result.status, 0);
-    assert.match(result.stderr, envFile === null ? /\.env/ : /Missing VITE_FB_PROJECT_ID/);
+    assert.match(result.stderr, /Missing VITE_FB_PROJECT_ID/);
     assert.deepEqual(result.calls, []);
     assert.ok(existsSync(join(cwd, 'dist/stale.txt')));
   });
 }
+
+test('without .env, an exported project is used for build and deployment', (t) => {
+  const { run } = fixture(t, null);
+  const result = run('deploy', { VITE_FB_PROJECT_ID: 'exported-project' });
+  assert.equal(result.status, 0, result.stderr);
+  assert.ok(result.calls.every((call) => call.projectId === 'exported-project'));
+  assert.equal(result.calls[1].args.at(-1), 'exported-project');
+});
 
 test('an exported project override reaches both the build and deployment', (t) => {
   const { run } = fixture(t);

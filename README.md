@@ -79,11 +79,11 @@ pnpm preview      # Preview the production build on port 5000
 
 ### Firebase Deployment
 
-Configure `.env` and authenticate with `pnpm exec firebase login`, then run `pnpm run deploy` for Hosting or `pnpm run preview-deploy` for a 14-day preview channel. Both commands clean and build the app, then deploy to `VITE_FB_PROJECT_ID` from the loaded environment. No `.firebaserc` is needed. See [Firebase Hosting Setup](docs/setup-installation.md#firebase-hosting-setup) for environment precedence and preview behavior.
+Configure `.env` (or export the `VITE_FB_*` variables) and authenticate with `pnpm exec firebase login`, then run `pnpm run deploy` for Hosting or `pnpm run preview-deploy` for a 14-day preview channel. Both commands clean and build the app, then deploy to `VITE_FB_PROJECT_ID` from the loaded environment. No `.firebaserc` is needed. See [Firebase Hosting Setup](docs/setup-installation.md#firebase-hosting-setup) for environment precedence and preview behavior.
 
 ### Maintenance Scripts
 
-These scripts talk to the Firestore project configured in `.env`, using the Firebase web SDK and the same project configuration and Firestore rules as the app. They do not use a service account or bypass access rules.
+These scripts talk to the Firestore project configured in `.env` or the exported `VITE_FB_*` variables, using the Firebase web SDK and the same project configuration and Firestore rules as the app. They do not use a service account or bypass access rules.
 
 ```bash
 pnpm games:list                  # List all sessions (locked ones last); --json for machine-readable output

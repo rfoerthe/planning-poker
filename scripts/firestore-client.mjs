@@ -1,6 +1,6 @@
 /**
  * Firestore access for the maintenance scripts. Uses the same web SDK config as
- * the app (VITE_FB_* from .env), so the scripts see the database exactly as a
+ * the app (VITE_FB_* from .env or the environment), so the scripts see the database exactly as a
  * browser client does — no service account needed.
  */
 import { initializeApp } from 'firebase/app';
@@ -12,7 +12,7 @@ const missing = requiredKeys.filter((key) => !process.env[key]);
 if (missing.length > 0) {
   console.error(
     `Missing environment variables: ${missing.join(', ')}\n` +
-      'Run the script via pnpm (it passes --env-file=.env) and make sure .env is filled.',
+      'Run the script via pnpm (it loads .env if present) and set them in .env or export them.',
   );
   process.exit(1);
 }
