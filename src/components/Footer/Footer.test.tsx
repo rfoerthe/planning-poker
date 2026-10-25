@@ -28,7 +28,8 @@ describe('Footer component', () => {
   });
   it('should render copyright', () => {
     render(<Footer />);
-    const element = screen.getByText('hellomuthu23');
+    const element = screen.getByText('© 2021 @hellomuthu23 · © 2026 Roland Foerther');
     expect(element).toBeInTheDocument();
+    expect(screen.queryByRole('link')).not.toBeInTheDocument();
   });
 });

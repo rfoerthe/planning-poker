@@ -4,6 +4,20 @@ All notable changes to this project are documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.1.5] - 2026-10-25
+
+### Changed
+
+- The footer now shows the plain-text copyright line "© 2021 @hellomuthu23 · © 2026 Roland Foerther" instead of the "Basiert auf dem Projekt von hellomuthu23" credit link. The unused `footer.basedOn` translation and link styles have been removed.
+- Runtime dependencies are updated: Firebase moves from 12.18 to 13.1, React and React DOM from 19.2.6 to 19.3.1, MUI from 9.4 to 9.5, React Router to 7.18.4, and i18next and react-i18next to their latest minor releases. No application code had to change for the Firebase major.
+- The development toolchain moves to Vitest 5, jsdom 30, `@testing-library/jest-dom` 7, Vite 8.3 and Firebase CLI 15.34. Vitest 5 requires Node.js 22.12 or later, so `engines.node` is now `^22.12.0 || >=24`. The unused `eslint-plugin-react`, whose peer range did not allow ESLint 10, has been removed.
+- The Docker build installs the pnpm version pinned in `packageManager` instead of the latest release.
+- The GitHub Actions workflow uses action releases that run on Node.js 24. Dependabot now checks npm and GitHub Actions weekly and groups minor and patch updates into one pull request per ecosystem.
+
+### Security
+
+- Resolved the open Dependabot alerts in transitive dependencies. Firebase CLI 15.34 drops the compatibility patch and the pinned 15.28.2 release; the remaining advisories in `undici` 6, `zod`, `body-parser` 1 and 2, and `brace-expansion` 5 are pinned to fixed releases through overrides in `pnpm-workspace.yaml`, and overrides that no longer constrained anything were dropped. `pnpm audit` reports no known vulnerabilities.
+
 ## [3.1.4] - 2026-09-23
 
 ### Added
@@ -62,7 +76,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Changed
 
 - Firestore connects through long polling from the start (`experimentalForceLongPolling`, with 10-second poll cycles) instead of the SDK's default streaming transport. The streaming channel is a request that stays open for up to a minute, and corporate proxies and TLS-inspecting firewalls stall exactly that kind of request; the SDK only worked around it after a detection phase that showed up as a 15–30 second hang on the first contact — typically for an invitee opening a join link from a company network. Forcing long polling skips the detection entirely, and the short cycles stay below typical proxy idle timeouts. The price is a little more request overhead for connections that never had the problem, which is negligible at the size of the documents this app moves.
-- Joining a session no longer waits for the server. The join page used to spend four to five sequential round trips before the board appeared: read the session to validate the link, read the own player entry, read the session *again* inside the join call, write the new player and wait for the acknowledgement, then subscribe. Now the two validation reads run in parallel, the join call takes the session the page already loaded instead of reading it a second time, and the write is not awaited — Firestore's latency compensation shows the new player on the board immediately while the write syncs in the background, the same pattern the card click has always relied on. What remains in front of the board is one parallel read.
+- Joining a session no longer waits for the server. The join page used to spend four to five sequential round trips before the board appeared: read the session to validate the link, read the own player entry, read the session _again_ inside the join call, write the new player and wait for the acknowledgement, then subscribe. Now the two validation reads run in parallel, the join call takes the session the page already loaded instead of reading it a second time, and the write is not awaited — Firestore's latency compensation shows the new player on the board immediately while the write syncs in the background, the same pattern the card click has always relied on. What remains in front of the board is one parallel read.
 - The Firebase SDK moved from 12.13 to 12.18.
 
 ### Added

@@ -395,7 +395,6 @@ export const de = {
   },
 
   footer: {
-    basedOn: 'Basiert auf dem Projekt von',
     version: 'v{{version}}',
   },
 
