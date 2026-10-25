@@ -13,7 +13,7 @@ const { command } = firebaseRequire('./lib/commands/auth-import.js');
 const accountImporter = firebaseRequire('./lib/accountImporter.js');
 const DatabaseImporter = firebaseRequire('./lib/database/import.js').default;
 
-// Exercise the installed, patched CLI. Replace all remote writes with local mocks.
+// Exercise the installed CLI. Replace all remote writes with local mocks.
 function authFixture(t, extension, content) {
   const directory = mkdtempSync(join(tmpdir(), 'planning-poker-auth-'));
   t.after(() => rmSync(directory, { recursive: true, force: true }));
