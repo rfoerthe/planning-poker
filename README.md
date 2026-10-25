@@ -38,7 +38,7 @@ Planning Poker is a free, open-source web application for Scrum and Agile teams 
 
 ## Quick Start
 
-Use a current Node 22.x release (at least 22.13.0) and the pinned `pnpm@11.1.1`; see the setup guide for requirements.
+Use a current Node 22.x release (at least 22.22.0) and the pinned `pnpm@11.1.1`; see the setup guide for requirements.
 
 ```bash
 pnpm install

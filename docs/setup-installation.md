@@ -4,13 +4,13 @@
 
 Install the following tools before working on Planning Poker:
 
-| Tool             | Required Version                                                    | Notes                                                                                                                       |
-| ---------------- | ------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
-| Node.js          | Current 22.x, at least `22.13.0`, or a compatible newer LTS release | `package.json` declares `>=22`, but the locked ESLint and jsdom versions require at least 22.13.0 on Node 22. CI uses 22.x. |
-| pnpm             | `11.1.1`                                                            | Use the version pinned in `packageManager`; the declared engine floor is `>=9.0.0`.                                         |
-| Git              | A version with worktree support                                     | Required for source control and isolated feature work.                                                                      |
-| Firebase project | Your development project with Firestore enabled                     | Required for real sessions; `.env.example` contains dummy values.                                                           |
-| Docker           | Optional                                                            | Required only for container builds.                                                                                         |
+| Tool             | Required Version                                                    | Notes                                                                                                              |
+| ---------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| Node.js          | Current 22.x, at least `22.22.0`, or a compatible newer LTS release | `engines.node` requires at least 22.22.0 on Node 22 (needed by React Router 8) or Node 24 and later. CI uses 22.x. |
+| pnpm             | `11.1.1`                                                            | Use the version pinned in `packageManager`; the declared engine floor is `>=9.0.0`.                                |
+| Git              | A version with worktree support                                     | Required for source control and isolated feature work.                                                             |
+| Firebase project | Your development project with Firestore enabled                     | Required for real sessions; `.env.example` contains dummy values.                                                  |
+| Docker           | Optional                                                            | Required only for container builds.                                                                                |
 
 ## Clone The Repository
 
